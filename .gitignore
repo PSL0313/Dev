@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Xcode 사용자별 설정
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# Xcode 빌드 산출물
+DerivedData/
+build/
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager 로컬 상태
+.build/
+.swiftpm/
+
+# 로컬 환경 설정 및 비밀값
+Configuration/Secrets.xcconfig
+flover9/App/GoogleService-Info.plist
+
+# 임시·백업 파일
+*.tmp
+*.swp
+*~
