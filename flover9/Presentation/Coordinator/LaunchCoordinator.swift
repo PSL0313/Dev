@@ -108,7 +108,7 @@ private extension LaunchCoordinator {
     // MARK: - Flover9 App Store 페이지 열기
     func openAppStore() {
         guard let url = URL(
-            string: "https://apps.apple.com/kr/app/github/id1477376905"
+            string: ""  // 수정필요
         ) else {
             return
         }
