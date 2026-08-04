@@ -9,7 +9,7 @@ final class AppDIContainer {
     // MARK: - 팔수 생성 객체
     // MARK: - 앱 실행 중 공유할 사용자 상태 저장소
     private let userSessionStore = UserSessionStore()
-    
+
     // MARK: - SupabaseClient
     private lazy var supabaseClient: SupabaseClient = {
         return SupabaseClient(
@@ -18,6 +18,11 @@ final class AppDIContainer {
         )
     }()
     
+    // MARK: - Firebase 오류 기록 객체
+    private lazy var errorLogger: ErrorLogging = {
+        FirebaseErrorLogger()
+    }()
+
     private lazy var authRepository: AuthRepositoryProtocol = {
         SupabaseAuthRepository(client: supabaseClient)
     }()
@@ -37,15 +42,18 @@ final class AppDIContainer {
      
     // MARK: - Usecases
     // 앱 접속 가능 여부 확인 UseCase
-    private lazy var checkAppAvailabilityUseCase:
-        CheckAppAvailabilityUseCaseProtocol = {
+    private lazy var checkAppAvailabilityUseCase: CheckAppAvailabilityUseCaseProtocol = {
             CheckAppAvailabilityUseCase(
                 repository: remoteConfigRepository
             )
         }()
     
     private lazy var authenticateWithAppleUseCase: AuthenticateWithAppleUseCaseProtocol = {
-        AuthenticateWithAppleUseCase(authRepository: authRepository, profileRepository: profileRepository, userSessionStore: userSessionStore)
+        AuthenticateWithAppleUseCase(
+            authRepository: authRepository,
+            profileRepository: profileRepository,
+            userSessionStore: userSessionStore
+        )
     }()
     
     private lazy var deleteAccountUseCase: DeleteAccountUseCaseProtocol = {
@@ -67,12 +75,16 @@ final class AppDIContainer {
     func getLaunchViewModel() -> LaunchViewModel {
         return LaunchViewModel(
             checkAppAvailabilityUseCase: checkAppAvailabilityUseCase,
-            restoreUserSessionUseCase: restoreUserSessionUseCase
+            restoreUserSessionUseCase: restoreUserSessionUseCase,
+            errorLogger: errorLogger
         )
     }
     
     func getSignInViewModel() -> SignInViewModel {
-        return SignInViewModel(authenticateWithAppleUseCase: authenticateWithAppleUseCase)
+        return SignInViewModel(
+            authenticateWithAppleUseCase: authenticateWithAppleUseCase,
+            errorLogger: errorLogger
+        )
     }
     
     // MARK: - 테스트 홈 화면 ViewModel 생성

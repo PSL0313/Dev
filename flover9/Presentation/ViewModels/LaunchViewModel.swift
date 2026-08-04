@@ -37,12 +37,16 @@ final class LaunchViewModel {
     
     // MARK: - Usecases
     private let restoreUserSessionUseCase: RestoreUserSessionUseCaseProtocol
-    
     private let checkAppAvailabilityUseCase: CheckAppAvailabilityUseCaseProtocol
+    private let errorLogger: ErrorLogging
     
-    init(checkAppAvailabilityUseCase: CheckAppAvailabilityUseCaseProtocol, restoreUserSessionUseCase: RestoreUserSessionUseCaseProtocol) {
+    init(checkAppAvailabilityUseCase: CheckAppAvailabilityUseCaseProtocol,
+         restoreUserSessionUseCase: RestoreUserSessionUseCaseProtocol,
+         errorLogger: ErrorLogging
+    ) {
         self.checkAppAvailabilityUseCase = checkAppAvailabilityUseCase
         self.restoreUserSessionUseCase = restoreUserSessionUseCase
+        self.errorLogger = errorLogger
     }
     
     // MARK: - action
@@ -76,11 +80,14 @@ final class LaunchViewModel {
                     }
                 }
             } catch let error as AuthError {
+                await errorLogger.record(error)
                 onRoute?(.failed(title: "Error", message: error.userMessage))// 인증 실패 상태 전달
             } catch let error as ProfileError {
+                await errorLogger.record(error)
                 onRoute?(.failed(title: "Error", message: error.userMessage))// 인증 실패 상태 전달
             } catch {
-                onRoute?(.failed(title: "Error", message: error.localizedDescription))// 인증 실패 상태 전달
+                await errorLogger.record(AuthError.unknown)
+                onRoute?(.failed(title: "Error", message: "알 수 없는 오류가 발생하였습니다. 개발자에게 문의해주세요."))// 인증 실패 상태 전달
             }
             
         }

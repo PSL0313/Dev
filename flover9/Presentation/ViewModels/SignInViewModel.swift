@@ -24,9 +24,11 @@ final class SignInViewModel {
 
     
     private let authenticateWithAppleUseCase: AuthenticateWithAppleUseCaseProtocol
+    private let errorLogger: ErrorLogging
 
-    init(authenticateWithAppleUseCase: AuthenticateWithAppleUseCaseProtocol) {
+    init(authenticateWithAppleUseCase: AuthenticateWithAppleUseCaseProtocol, errorLogger: ErrorLogging) {
         self.authenticateWithAppleUseCase = authenticateWithAppleUseCase
+        self.errorLogger = errorLogger
     }
 
     func action(input: Input) {
@@ -63,6 +65,7 @@ final class SignInViewModel {
             
             onRoute?(.authenticationCompleted)                 // 완료 후 런치 로딩 화면으로 복귀
         } catch let error as AuthError {
+            await errorLogger.record(error)             // Firebase에 필요한 오류만 기록
             onRoute?(
                 .failed(
                     title: "로그인 오류",
@@ -70,6 +73,7 @@ final class SignInViewModel {
                 )
             )
         } catch let error as ProfileError {
+            await errorLogger.record(error)             // Firebase에 필요한 오류만 기록
             onRoute?(
                 .failed(
                     title: "프로필 오류",
@@ -77,10 +81,11 @@ final class SignInViewModel {
                 )
             )
         } catch {
+            await errorLogger.record(AuthError.unknown)             // Firebase에 필요한 오류만 기록
             onRoute?(
                 .failed(
                     title: "오류",
-                    message: error.localizedDescription
+                    message: "알 수 없는 오류가 발생하였습니다. 개발자에게 문의해주세요."
                 )
             )
         }
