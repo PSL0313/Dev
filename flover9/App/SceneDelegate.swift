@@ -1,7 +1,5 @@
 import UIKit
 
-import UIKit
-
 // MARK: - 앱의 Window와 최상위 객체 그래프를 관리하는 객체
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -34,11 +32,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let window else { return }            // Window가 없으면 실행 불가
 
         let container = AppDIContainer()            // 새로운 DIContainer 생성
-        let navigationController =
-            UINavigationController()                // 현재 생성자에 필요한 Navigation
-
         let coordinator = AppCoordinator(
-            navigationController: navigationController,
             window: window,
             container: container
         )

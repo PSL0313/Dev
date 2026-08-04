@@ -6,12 +6,10 @@ final class AppCoordinator: BaseCoordinator {
     private let window: UIWindow
     private let container: AppDIContainer
     private let rootContainer = RootContainerViewController()
-    private let navigationController: UINavigationController
     
     var onRequestAppReset: (() -> Void)?           // SceneDelegate에 재시작 요청
     
-    init(navigationController: UINavigationController,window: UIWindow, container: AppDIContainer) {
-        self.navigationController = navigationController
+    init(window: UIWindow, container: AppDIContainer) {
         self.window = window
         self.container = container
     }
