@@ -7,9 +7,6 @@
 
 import UIKit
 import AuthenticationServices
-import Security
-import CryptoKit
-import SwiftUI
 
 @MainActor
 final class SignInViewController: UIViewController {
@@ -90,7 +87,7 @@ final class SignInViewController: UIViewController {
     }
     
 
-    func setupAppleLoginButton() {
+    private func setupAppleLoginButton() {
         
         // 버튼을 화면에 추가
         self.view.addSubview(titleLabel)
@@ -133,15 +130,23 @@ extension SignInViewController: ASAuthorizationControllerPresentationContextProv
     
     @objc
     private func handleAuthorizationAppleIDButtonPress() {
+        guard view.window != nil else { return }         // 표시할 Window가 없으면 인증 시작 불가
+        appleLoginButton.isEnabled = false               // 인증 요청 중 중복 탭 방지
+
         appleSignInService.startAppleSignIn(viewController: self) { [weak self] result in
             guard let self else { return }
+            appleLoginButton.isEnabled = true            // 인증 결과 수신 후 버튼 복원
             viewModel.action(input: .appleSignInCompleted(result))
         }
     }
     
     // 애플로그인 뷰를 뛰울 window
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        self.view.window!
+        guard let window = view.window else {
+            assertionFailure("Apple 로그인 화면을 표시할 Window가 없습니다.")
+            return ASPresentationAnchor()
+        }
+        return window
     }
     
 }

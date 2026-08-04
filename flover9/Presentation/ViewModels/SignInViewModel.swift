@@ -5,7 +5,6 @@
 //  Created by 박선린 on 7/28/26.
 //
 import Foundation
-import Supabase
 
 @MainActor
 final class SignInViewModel {
@@ -48,7 +47,7 @@ final class SignInViewModel {
             await signInWithApple(credential)
             
         case .failure(.cancelled):
-            onRoute?(.failed(title: "취소", message: "애플로그인이 취소되었습니다.")) // 취소 시 초기 상태 복귀
+            return                                      // 사용자가 닫은 경우 오류 화면을 표시하지 않음
             
         case .failure(let error):
             onRoute?(.failed(title: "Error", message: error.userMessage))// 인증 실패 상태 전달
