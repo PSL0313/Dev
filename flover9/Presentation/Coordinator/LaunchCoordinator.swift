@@ -32,7 +32,7 @@ final class LaunchCoordinator: BaseCoordinator {
     private func showLaunch() {
         // 뷰모델 생성
         let viewModel = container.getLaunchViewModel()
-        
+
         // 클로저 주입
         viewModel.onRoute = { [weak self] route in
             guard let self else { return }
@@ -107,13 +107,28 @@ final class LaunchCoordinator: BaseCoordinator {
 private extension LaunchCoordinator {
     // MARK: - Flover9 App Store 페이지 열기
     func openAppStore() {
-        guard let url = URL(
-            string: ""  // 수정필요
-        ) else {
-            return
+
+        let alert = UIAlertController(
+            title: "업데이트",                              // Alert 제목
+            message: "업데이트가 필요합니다. 확인을 누르면 Appstore로 이동합니다.",                          // 안내 내용
+            preferredStyle: .alert                     // 화면 중앙 Alert 형태
+        )
+
+        let confirmAction = UIAlertAction(
+            title: "확인",                             // 버튼 제목
+            style: .default
+        ) { _ in
+            guard let url = URL(
+                string: ""  // 수정필요
+            ) else {
+                return
+            }
+
+            UIApplication.shared.open(url)
         }
 
-        UIApplication.shared.open(url)
+        alert.addAction(confirmAction)                  // 확인 버튼 추가
+        rootContainer.present(alert, animated: true)                  // 현재 ViewController가 표시
     }
     
     // MARK: - 점검 중 화면
