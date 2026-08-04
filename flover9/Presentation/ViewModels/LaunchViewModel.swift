@@ -4,7 +4,7 @@
 //
 //  Created by 박선린 on 7/27/26.
 //
-import UIKit
+import Foundation
 
 
 @MainActor
@@ -17,9 +17,7 @@ final class LaunchViewModel {
     
     enum State {
         case loading
-        case reloading
         case loginRequired
-        case initialDataLoaded
         case updateRequired         
     }
     
@@ -39,6 +37,7 @@ final class LaunchViewModel {
     private let restoreUserSessionUseCase: RestoreUserSessionUseCaseProtocol
     private let checkAppAvailabilityUseCase: CheckAppAvailabilityUseCaseProtocol
     private let errorLogger: ErrorLogging
+    private var launchTask: Task<Void, Never>?      // 현재 실행 중인 앱 시작 작업
     
     init(checkAppAvailabilityUseCase: CheckAppAvailabilityUseCaseProtocol,
          restoreUserSessionUseCase: RestoreUserSessionUseCaseProtocol,
@@ -58,10 +57,13 @@ final class LaunchViewModel {
     }
     
     private func startLaunchProcess() {
+        launchTask?.cancel()                        // 이전 시작 작업과의 경쟁 방지
         onStateChanged?(.loading)
-        Task {
+        launchTask = Task { [weak self] in
+            guard let self else { return }
             do {
                 let isAppAvailable = await checkAppAvailabilityUseCase.execute()
+                try Task.checkCancellation()        // 취소된 작업은 경로를 변경하지 않음
                 switch isAppAvailable {
                 case .maintenance(let message): //점검 중
                     onRoute?(.maintenance(message: message))
@@ -70,6 +72,7 @@ final class LaunchViewModel {
                     onRoute?(.updateRequired)
                 case .available:    // 서비스 정상 동작 중
                     let isLogin = try await restoreUserSessionUseCase.execute()
+                    try Task.checkCancellation()    // 최신 실행 결과만 화면에 반영
                     
                     switch isLogin {
                     case true:
@@ -80,16 +83,23 @@ final class LaunchViewModel {
                     }
                 }
             } catch let error as AuthError {
+                guard !Task.isCancelled else { return }
                 await errorLogger.record(error)
                 onRoute?(.failed(title: "Error", message: error.userMessage))// 인증 실패 상태 전달
             } catch let error as ProfileError {
+                guard !Task.isCancelled else { return }
                 await errorLogger.record(error)
                 onRoute?(.failed(title: "Error", message: error.userMessage))// 인증 실패 상태 전달
             } catch {
+                guard !Task.isCancelled else { return }
                 await errorLogger.record(AuthError.unknown)
                 onRoute?(.failed(title: "Error", message: "알 수 없는 오류가 발생하였습니다. 개발자에게 문의해주세요."))// 인증 실패 상태 전달
             }
             
         }
+    }
+
+    deinit {
+        launchTask?.cancel()                        // ViewModel 해제 시 진행 중인 작업 종료
     }
 }

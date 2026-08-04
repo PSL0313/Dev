@@ -27,18 +27,22 @@ final class RestoreUserSessionUseCase: RestoreUserSessionUseCaseProtocol {
         guard let session =
                 try await authRepository.fetchCurrentSession()
         else {
+            await userSessionStore.clear()           // 인증 세션이 없으면 이전 사용자 캐시 제거
             return false                            // 저장된 세션 없음
         }
 
-        let profile =
-            try await profileRepository.fetchMyProfile()
-                                                        // 프로필 조회
+        do {
+            let profile = try await profileRepository.fetchMyProfile() // 프로필 조회
 
-        await userSessionStore.save(
-            session: session,
-            profile: profile
-        )                                               // 사용자 정보 저장
+            await userSessionStore.save(
+                session: session,
+                profile: profile
+            )                                           // 사용자 정보 저장
 
-        return true                                     // 복원 완료
+            return true                                 // 복원 완료
+        } catch {
+            await userSessionStore.clear()              // 불완전한 사용자 상태 제거
+            throw error
+        }
     }
 }

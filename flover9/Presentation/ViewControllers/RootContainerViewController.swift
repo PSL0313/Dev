@@ -80,7 +80,7 @@ final class RootContainerViewController: UIViewController {
     }
     
     func hideSignIn() {
-        launchViewController?.hideLSignIn()
+        launchViewController?.hideSignIn()
     }
     
 }

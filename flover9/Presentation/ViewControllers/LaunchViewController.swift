@@ -8,7 +8,7 @@
 import UIKit
 
 @MainActor
-class LaunchViewController: UIViewController {
+final class LaunchViewController: UIViewController {
     
     // 앱 로고
     let logoImageView: UIImageView = {
@@ -87,17 +87,10 @@ class LaunchViewController: UIViewController {
         switch state {
         case .loading:
             startLogoLoadingAnimation()
-        case .reloading:
-            hideLSignIn()
-            
         case .loginRequired:    // 로그인 필요
             stopLogoLoadingAnimation()
-            
-        case .initialDataLoaded:    // 초기 데이터 로드
-            stopLogoLoadingAnimation()
-            
         case .updateRequired:         // 앱 업데이트 필요
-            hideLSignIn(shouldRestartLaunchProcess: false)
+            hideSignIn(shouldRestartLaunchProcess: false)
             startLogoLoadingAnimation()
         }
     }
@@ -157,7 +150,7 @@ class LaunchViewController: UIViewController {
     }
     
     // MARK: - 로그인 화면을 제거하고 Launch 초기 화면으로 복원
-    func hideLSignIn(shouldRestartLaunchProcess: Bool = true) {
+    func hideSignIn(shouldRestartLaunchProcess: Bool = true) {
         guard let signInViewController else {
             if shouldRestartLaunchProcess {
                 viewModel.action(input: .startApp)
@@ -187,7 +180,9 @@ class LaunchViewController: UIViewController {
                 
                 self.signInConstraints.removeAll()                // 사용한 제약 참조 제거
                 self.signInViewController = nil                   // 로그인 VC 참조 제거
-                self.viewModel.action(input: .startApp)           // 앱 시작 상태 다시 확인
+                if shouldRestartLaunchProcess {
+                    self.viewModel.action(input: .startApp)       // 필요한 경우에만 앱 상태 재확인
+                }
             }
         )
     }
