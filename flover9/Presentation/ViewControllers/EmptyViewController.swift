@@ -1,5 +1,5 @@
 //
-//  EmtyViewController.swift
+//  EmptyViewController.swift
 //  flover9
 //
 //  Created by 박선린 on 7/27/26.
@@ -8,7 +8,7 @@
 import UIKit
 
 @MainActor
-class EmtyViewController: UIViewController {
+class EmptyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

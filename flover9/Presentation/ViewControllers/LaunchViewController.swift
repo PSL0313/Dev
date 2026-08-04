@@ -87,7 +87,7 @@ class LaunchViewController: UIViewController {
         switch state {
         case .loading:
             startLogoLoadingAnimation()
-        case .reLoding:
+        case .reloading:
             hideLSignIn()
             
         case .loginRequired:    // 로그인 필요

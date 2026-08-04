@@ -6,7 +6,7 @@ import Supabase
 /// 기능을 추가할 때 DataSource → Repository → UseCase 순서로 생성하고,
 /// 각 Feature에서 필요한 의존성만 노출합니다.
 final class AppDIContainer {
-    // MARK: - 팔수 생성 객체
+    // MARK: - 필수 생성 객체
     // MARK: - 앱 실행 중 공유할 사용자 상태 저장소
     private let userSessionStore = UserSessionStore()
 

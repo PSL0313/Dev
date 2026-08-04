@@ -17,7 +17,7 @@ final class LaunchViewModel {
     
     enum State {
         case loading
-        case reLoding
+        case reloading
         case loginRequired
         case initialDataLoaded
         case updateRequired         
