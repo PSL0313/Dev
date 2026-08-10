@@ -23,6 +23,12 @@ final class AppDIContainer {
         FirebaseErrorLogger()
     }()
 
+    // MARK: - Datasource
+    private lazy var feedRemoteDataSource: FeedRemoteDataSource = {
+        return SupabaseFeedRemoteDataSource(supabase: self.supabaseClient)
+    }()
+    
+    // MARK: - Repository
     private lazy var authRepository: AuthRepositoryProtocol = {
         SupabaseAuthRepository(client: supabaseClient)
     }()
@@ -31,11 +37,15 @@ final class AppDIContainer {
         SupabaseProfileRepository(client: supabaseClient)
     }()
     
+//    private
+    lazy var feedRepository: FeedRepositoryProtocol = {
+        return SupabaseFeedRepository(datasource: self.feedRemoteDataSource)
+    }()
+    
     // Remote Config 저장소
-    private lazy var remoteConfigRepository:
-        RemoteConfigRepositoryProtocol = {
-            FirebaseRemoteConfigRepository()
-        }()
+    private lazy var remoteConfigRepository:RemoteConfigRepositoryProtocol = {
+        FirebaseRemoteConfigRepository()
+    }()
 
     
     init() {}

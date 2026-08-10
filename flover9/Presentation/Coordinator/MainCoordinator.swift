@@ -69,7 +69,8 @@ private extension MainCoordinator {
         )
 
         return ProfileCoordinator(
-            navigationController: navigationController
+            navigationController: navigationController,
+            container: container
         )
     }
 }

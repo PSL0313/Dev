@@ -6,17 +6,22 @@
 //
 
 import UIKit
+import SwiftUI
 
 final class ProfileCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [any Coordinator] = []
+    private let container: AppDIContainer
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, container: AppDIContainer) {
         self.navigationController = navigationController
+        self.container = container
     }
     
     func start() {
-        let viewController = UIViewController()
+        let viewController = UIHostingController(
+            rootView: FeedGridTestView(repository:container.feedRepository)
+        )
         viewController.view.backgroundColor = .systemBlue
         viewController.title = "프로필"
 

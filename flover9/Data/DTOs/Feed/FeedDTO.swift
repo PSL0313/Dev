@@ -1,32 +1,31 @@
 //
-//  FeedRow.swift
-//  Flover9
+//  FeedDTO.swift
+//  flover9
 //
-//  Created by 박선린 on 5/12/26.
+//  Created by 박선린 on 8/7/26.
 //
-
 import Foundation
 
-struct FeedRow: Codable, Identifiable {
+struct FeedDTO: Decodable {
     let id: UUID
-    let userId: UUID
-    let email: String
-    let title: String
+    let userId: UUID?
+    let title: String?
     let sourceName: String?
     let description: String?
     let captureDate: Date
     let uploadedAt: Date
-    let source: FeedSource
+    let source: String
+    let permalink: String
 
     enum CodingKeys: String, CodingKey {
         case id
         case userId = "user_id"
-        case email
         case title
         case sourceName = "source_name"
         case description
         case captureDate = "capture_date"
         case uploadedAt = "uploaded_at"
         case source
+        case permalink
     }
 }
