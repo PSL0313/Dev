@@ -10,4 +10,5 @@ struct FeedMemberEntity: Identifiable, Equatable {
     let id: UUID
     let feedId: UUID
     let memberCode: MemberCode
+    
 }

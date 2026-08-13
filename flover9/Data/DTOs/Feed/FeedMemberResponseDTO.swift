@@ -6,7 +6,8 @@
 //
 import Foundation
 
-struct FeedMemberResponseDTO: Decodable {
+// MARK: - Supabase의 feed_members 행을 전달받는 응답 DTO
+nonisolated struct FeedMemberResponseDTO: Decodable, Sendable {
     let id: UUID
     let feedId: UUID
     let memberCode: MemberCode
@@ -19,7 +20,8 @@ struct FeedMemberResponseDTO: Decodable {
 }
 
 extension FeedMemberResponseDTO {
-    func toEntity() -> FeedMemberEntity {
+    // MARK: - 피드 멤버 응답 DTO를 Domain Entity로 변환
+    nonisolated func toEntity() -> FeedMemberEntity {
         FeedMemberEntity(id: self.id, feedId: self.feedId, memberCode: self.memberCode)
     }
 }

@@ -8,6 +8,7 @@
 import Foundation
 
 protocol FeedRepositoryProtocol {
-    func excute(limit: Int) async throws -> [FeedEntity]
+    func fetchFeeds(limit: Int) async throws -> [FeedEntity]
 
+    func fetchFeedMedia(feedID: UUID) async throws -> [FeedImageEntity]
 }

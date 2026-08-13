@@ -20,12 +20,6 @@ struct FeedGridTestView: View {
         self.repository = repository
     }
 
-    private var images: [FeedImageEntity] {
-        feeds
-            .flatMap(\.images)
-            .sorted { $0.sortOrder < $1.sortOrder }
-    }
-
     private let columns = [
         GridItem(.flexible(), spacing: 2),
         GridItem(.flexible(), spacing: 2),
@@ -49,8 +43,8 @@ struct FeedGridTestView: View {
                             columns: columns,
                             spacing: 2
                         ) {
-                            ForEach(images) { image in
-                                imageCell(image)
+                            ForEach(feeds) { feed in
+                                feedCell(feed)
                             }
                         }
                     }
@@ -59,31 +53,16 @@ struct FeedGridTestView: View {
             .navigationTitle("Feed Images Test")
         }
         .task {
-            do {
-                feeds = try await repository.excute(limit: 20)
-
-                for feed in feeds {
-                    print(
-                        "Feed:",
-                        feed.id,
-                        "images:",
-                        feed.images.count,
-                        "members:",
-                        feed.members.count
-                    )
-                }
-            } catch {
-                print(error)
-            }
+            await loadFeeds()
         }
     }
 }
 private extension FeedGridTestView {
 
     @ViewBuilder
-    func imageCell(_ image: FeedImageEntity) -> some View {
+    func feedCell(_ feed: FeedEntity) -> some View {
         GeometryReader { proxy in
-            AsyncImage(url: URL(string: image.imageURL)) { phase in
+            AsyncImage(url: feed.thumbnailURL) { phase in
                 switch phase {
                 case .empty:
                     ZStack {
@@ -123,7 +102,7 @@ private extension FeedGridTestView {
         defer { isLoading = false }
 
         do {
-            feeds = try await repository.excute(limit: 20)
+            feeds = try await repository.fetchFeeds(limit: 20)
         } catch {
             errorMessage = error.localizedDescription
         }
