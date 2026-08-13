@@ -8,9 +8,8 @@
 import UIKit
 import SwiftUI
 
-final class ProfileCoordinator: Coordinator {
+final class ProfileCoordinator: BaseCoordinator {
     var navigationController: UINavigationController
-    var childCoordinators: [any Coordinator] = []
     private let container: AppDIContainer
     
     init(navigationController: UINavigationController, container: AppDIContainer) {
@@ -18,10 +17,8 @@ final class ProfileCoordinator: Coordinator {
         self.container = container
     }
     
-    func start() {
-        let viewController = UIHostingController(
-            rootView: FeedGridTestView(repository:container.feedRepository)
-        )
+    override func start() {
+        let viewController = UIViewController()
         viewController.view.backgroundColor = .systemBlue
         viewController.title = "프로필"
 

@@ -24,8 +24,22 @@ final class AppDIContainer {
     }()
 
     // MARK: - Datasource
-    private lazy var feedRemoteDataSource: FeedRemoteDataSource = {
+    private lazy var feedRemoteDataSource: FeedRemoteDataSourceProtocol = {
         return SupabaseFeedRemoteDataSource(supabase: self.supabaseClient)
+    }()
+
+    // DataSource
+    private lazy var memberRemoteDataSource: MemberRemoteDataSourceProtocol = {
+        SupabaseMemberRemoteDataSource(
+            supabaseClient: supabaseClient
+        ) // 공유 Supabase 클라이언트 주입
+    }()
+
+    // 일정 원격 DataSource
+    private lazy var scheduleRemoteDataSource: ScheduleRemoteDataSourceProtocol = {
+        SupabaseScheduleRemoteDataSource(
+            supabaseClient: supabaseClient
+        ) // 공유 Supabase 클라이언트 주입
     }()
     
     // MARK: - Repository
@@ -37,9 +51,22 @@ final class AppDIContainer {
         SupabaseProfileRepository(client: supabaseClient)
     }()
     
-//    private
-    lazy var feedRepository: FeedRepositoryProtocol = {
+    private lazy var feedRepository: FeedRepositoryProtocol = {
         return SupabaseFeedRepository(datasource: self.feedRemoteDataSource)
+    }()
+
+    // 멤버 Repository
+    private lazy var memberRepository: MemberRepositoryProtocol = {
+        MemberRepository(
+            dataSource: memberRemoteDataSource
+        ) // 원격 DTO 조회 및 Domain Entity 변환 담당
+    }()
+
+    // 일정 Repository
+    private lazy var scheduleRepository: ScheduleRepositoryProtocol = {
+        ScheduleRepository(
+            dataSource: scheduleRemoteDataSource
+        ) // 원격 일정 DTO 조회 및 Domain 모델 변환 담당
     }()
     
     // Remote Config 저장소
@@ -80,6 +107,37 @@ final class AppDIContainer {
             profileRepository: profileRepository,
             userSessionStore: userSessionStore)
     }()
+
+    // 활성 멤버 목록 조회 UseCase
+    private lazy var fetchMembersUseCase: FetchMembersUseCaseProtocol = {
+        FetchMembersUseCase(
+            memberRepository: memberRepository
+        ) // Presentation에서 사용할 멤버 목록 기능 조립
+    }()
+
+    // 표지용 일정 목록 조회 UseCase
+    private lazy var fetchScheduleCoversUseCase: FetchScheduleCoversUseCaseProtocol = {
+        FetchScheduleCoversUseCase(
+            scheduleRepository: scheduleRepository
+        ) // 일정 표지 화면에 사용할 기능 조립
+    }()
+
+    // 일정 상세 정보 조회 UseCase
+    private lazy var fetchScheduleDetailUseCase: FetchScheduleDetailUseCaseProtocol = {
+        FetchScheduleDetailUseCase(
+            scheduleRepository: scheduleRepository
+        ) // 일정 상세 화면에 사용할 기능 조립
+    }()
+    
+    // 표지 화면용 일정 목록 UseCase 제공
+    func getFetchScheduleCoversUseCase() -> FetchScheduleCoversUseCaseProtocol {
+        fetchScheduleCoversUseCase
+    }
+
+    // 일정 상세 화면용 UseCase 제공
+    func getFetchScheduleDetailUseCase() -> FetchScheduleDetailUseCaseProtocol {
+        fetchScheduleDetailUseCase
+    }
     
     // MARK: - get ViewModels
     func getLaunchViewModel() -> LaunchViewModel {
@@ -94,6 +152,14 @@ final class AppDIContainer {
         return SignInViewModel(
             authenticateWithAppleUseCase: authenticateWithAppleUseCase,
             errorLogger: errorLogger
+        )
+    }
+    
+    // HomeViewModel
+    func getHomeViewModel() -> HomeViewModel {
+        HomeViewModel(
+            fetchMembersUseCase: fetchMembersUseCase,
+            fetchScheduleCoversUseCase: fetchScheduleCoversUseCase
         )
     }
     

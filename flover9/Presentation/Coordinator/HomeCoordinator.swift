@@ -7,13 +7,13 @@
 
 import UIKit
 
-final class HomeCoordinator: Coordinator {
+final class HomeCoordinator: BaseCoordinator {
     
-    var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
-    var onRequestAppReset: (() -> Void)?                         // 앱 전체 재시작 요청
+    var onRequestAppReset: (() -> Void)?               // 앱 전체 재시작 요청
+    var onReadyForShowHome: (() -> Void)?              // 초기 데이터 fetch 완료
     
-    private let container: AppDIContainer                        // 테스트 화면 의존성 생성 객체
+    private let container: AppDIContainer              // 테스트 화면 의존성 생성 객체
     
     init(
         navigationController: UINavigationController,
@@ -23,7 +23,27 @@ final class HomeCoordinator: Coordinator {
         self.container = container
     }
     
-    func start() {
+    override func start() {
+        let viewModel = container.getHomeViewModel()
+        viewModel.onRoute = { [weak self] route in
+            switch route {
+            case .fetchedHomeData:
+                self?.onReadyForShowHome?()
+            case .failed(let msg):
+                self?.showAlert(title: "에러", message: msg)
+            }
+        }
+        
+        let viewController = HomeViewController(viewModel: viewModel)
+
+        navigationController.setViewControllers(
+            [viewController],
+            animated: false
+        )
+        viewModel.action(.start)
+    }
+    
+    func start1() {
         let viewModel = container.getTestHomeViewModel()
         viewModel.onRoute = { [weak self] route in
             switch route {

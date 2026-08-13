@@ -7,7 +7,7 @@ final class AppCoordinator: BaseCoordinator {
     private let container: AppDIContainer
     private let rootContainer = RootContainerViewController()
     
-    var onRequestAppReset: (() -> Void)?           // SceneDelegate에 재시작 요청
+    var onRequestAppReset: (() -> Void)?            // SceneDelegate에 재시작 요청
     
     init(window: UIWindow, container: AppDIContainer) {
         self.window = window
@@ -59,6 +59,11 @@ private extension AppCoordinator {
             self?.onRequestAppReset?()                           // SceneDelegate에 전체 재시작 요청
         }
         
+        coordinator.onReadyForShowHome = { [weak self] in
+            // 런치뷰를 내리고 삭제하고 메인뷰를 화면에 보이기
+            self?.rootContainer.dismissLaunch()
+        }
+        
         // 자식코디네이터 배열에 추가
         addChild(coordinator)
         
@@ -69,8 +74,5 @@ private extension AppCoordinator {
         rootContainer.installMainBehindLaunch(
             coordinator.tabBarController
         )
-
-        // 런치뷰를 내리고 삭제하고 메인뷰를 화면에 보이기
-        rootContainer.dismissLaunch()
     }
 }
