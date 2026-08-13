@@ -143,8 +143,7 @@ extension SignInViewController: ASAuthorizationControllerPresentationContextProv
     // 애플로그인 뷰를 뛰울 window
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         guard let window = view.window else {
-            assertionFailure("Apple 로그인 화면을 표시할 Window가 없습니다.")
-            return ASPresentationAnchor()
+            fatalError()
         }
         return window
     }
