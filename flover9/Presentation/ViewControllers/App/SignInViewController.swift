@@ -75,6 +75,9 @@ final class SignInViewController: UIViewController {
         self.appleSignInService = appleSignInService
         super.init(nibName: nil, bundle: nil)
     }
+    
+    // MARK: - Deinit
+    deinit { print("SignInViewController deinit") }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {

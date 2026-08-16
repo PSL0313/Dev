@@ -48,6 +48,12 @@ final class LaunchViewModel {
         self.errorLogger = errorLogger
     }
     
+    // MARK: - Deinit
+    deinit {
+        launchTask?.cancel()                        // ViewModel 해제 시 진행 중인 작업 종료
+        print("LaunchViewModel deinit")
+    }
+    
     // MARK: - action
     func action(input event: Input) {
         switch event {
@@ -97,9 +103,5 @@ final class LaunchViewModel {
             }
             
         }
-    }
-
-    deinit {
-        launchTask?.cancel()                        // ViewModel 해제 시 진행 중인 작업 종료
     }
 }

@@ -30,6 +30,9 @@ final class SignInViewModel {
         self.errorLogger = errorLogger
     }
 
+    // MARK: - Deinit
+    deinit { print("SignInViewModel deinit") }
+    
     func action(input: Input) {
         switch input {
         case .appleSignInCompleted(let result):
