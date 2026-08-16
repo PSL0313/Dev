@@ -13,6 +13,7 @@
 		CC297E083020595F0009DD4A /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = CC297E073020595F0009DD4A /* FirebaseMessaging */; };
 		CC297E0A3020595F0009DD4A /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = CC297E093020595F0009DD4A /* FirebasePerformance */; };
 		CC297E0C3020595F0009DD4A /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = CC297E0B3020595F0009DD4A /* FirebaseRemoteConfig */; };
+		CCAFBC5B302DE67B00BEAE69 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = CCAFBC5A302DE67B00BEAE69 /* SnapKit */; };
 		CCBE833C30186B1C00FD819A /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = CCBE833B30186B1C00FD819A /* Supabase */; };
 /* End PBXBuildFile section */
 
@@ -79,6 +80,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC297E083020595F0009DD4A /* FirebaseMessaging in Frameworks */,
+				CCAFBC5B302DE67B00BEAE69 /* SnapKit in Frameworks */,
 				CC297E063020595F0009DD4A /* FirebaseCrashlytics in Frameworks */,
 				CC0B312A302B1FE1000EAF3F /* Kingfisher in Frameworks */,
 				CC297E0A3020595F0009DD4A /* FirebasePerformance in Frameworks */,
@@ -163,6 +165,7 @@
 				CC297E093020595F0009DD4A /* FirebasePerformance */,
 				CC297E0B3020595F0009DD4A /* FirebaseRemoteConfig */,
 				CC0B3129302B1FE1000EAF3F /* Kingfisher */,
+				CCAFBC5A302DE67B00BEAE69 /* SnapKit */,
 			);
 			productName = flover9;
 			productReference = CCE89F5630165BE20086D7B9 /* flover9.app */;
@@ -238,11 +241,11 @@
 				};
 			};
 			buildConfigurationList = CCE89F5130165BE20086D7B9 /* Build configuration list for PBXProject "flover9" */;
-			developmentRegion = en;
+			developmentRegion = ko;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
+				ko,
 			);
 			mainGroup = CCE89F4D30165BE20086D7B9;
 			minimizedProjectReferenceProxies = 1;
@@ -250,6 +253,7 @@
 				CCBE833A30186B1C00FD819A /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				CC297E023020595F0009DD4A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				CC0B3128302B1FE1000EAF3F /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				CCAFBC59302DE67B00BEAE69 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CCE89F5730165BE20086D7B9 /* Products */;
@@ -333,14 +337,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = flover9/flover9.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 8JYJ5G29NY;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = flover9/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = flover_9;
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Apple Music의 앨범 정보 조회와 음악 재생을 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -370,14 +376,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = flover9/flover9.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 8JYJ5G29NY;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = flover9/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = flover_9;
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Apple Music의 앨범 정보 조회와 음악 재생을 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -404,6 +412,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -468,6 +477,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -662,6 +672,14 @@
 				minimumVersion = 12.17.0;
 			};
 		};
+		CCAFBC59302DE67B00BEAE69 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		CCBE833A30186B1C00FD819A /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
@@ -702,6 +720,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CC297E023020595F0009DD4A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseRemoteConfig;
+		};
+		CCAFBC5A302DE67B00BEAE69 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCAFBC59302DE67B00BEAE69 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 		CCBE833B30186B1C00FD819A /* Supabase */ = {
 			isa = XCSwiftPackageProductDependency;
