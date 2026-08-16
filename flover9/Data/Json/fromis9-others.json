@@ -1,0 +1,704 @@
+{
+  "schemaVersion": 2,
+  "albums": [
+    {
+      "id": "하나뿐인 내편 OST Part.6",
+      "artistIds": [
+        "hayoung"
+      ],
+      "platformIds": {
+        "appleMusic": "1794997759",
+        "youtubeMusic": "OLAK5uy_mboCNVPOAyYeAJSC52tV_MyYS8RXs6wJQ",
+        "melon": "10216678"
+      },
+      "tracks": [
+        {
+          "id": "other-1794997759-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1794997761",
+            "youtubeMusic": "gP8T5g4NEbI",
+            "melon": "31385513"
+          }
+        },
+        {
+          "id": "other-1794997759-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1794997763",
+            "youtubeMusic": "xy0r3g9UXpI",
+            "melon": "31385514"
+          }
+        }
+      ]
+    },
+    {
+      "id": "초면에 사랑합니다 OST Part.6",
+      "artistIds": [
+        "jiwon",
+        "nagyung"
+      ],
+      "platformIds": {
+        "appleMusic": "1464653442",
+        "youtubeMusic": "OLAK5uy_kFRzEmDaCTcLfilmex4XspQwO_Jf0Yv2M",
+        "melon": "10287685"
+      },
+      "tracks": [
+        {
+          "id": "other-1464653442-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1464653443",
+            "youtubeMusic": "Zvfr2i2V11c",
+            "melon": "31812135"
+          }
+        },
+        {
+          "id": "other-1464653442-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1464653444",
+            "youtubeMusic": "OVSCuXUHiL8",
+            "melon": "31812136"
+          }
+        }
+      ]
+    },
+    {
+      "id": "라켓소년단 OST Part.5",
+      "artistIds": [
+        "jiwon"
+      ],
+      "platformIds": {
+        "appleMusic": "1576046335",
+        "youtubeMusic": "OLAK5uy_lFej1ulj3hOig7uV_tPM0DslLTN1kSsx4",
+        "melon": "10649683"
+      },
+      "tracks": [
+        {
+          "id": "other-1576046335-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1576046588",
+            "youtubeMusic": "EdQfkUZWR-c",
+            "melon": "33673914"
+          }
+        },
+        {
+          "id": "other-1576046335-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1576046589",
+            "youtubeMusic": "mPFE6qaNphU",
+            "melon": "33673915"
+          }
+        }
+      ]
+    },
+    {
+      "id": "싸이월드 BGM 2021",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1744451827",
+        "youtubeMusic": "OLAK5uy_kZK8eLwDz9LznS5SzgHwdXBcJK37TnAsk",
+        "melon": "10707637"
+      },
+      "tracks": [
+        {
+          "id": "other-1744451827-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1744451828",
+            "youtubeMusic": "cYD0-OaRAmw",
+            "melon": "33921348"
+          }
+        },
+        {
+          "id": "other-1744451827-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1744451829",
+            "youtubeMusic": "q6XBs4Umn1w",
+            "melon": "33921349"
+          }
+        }
+      ]
+    },
+    {
+      "id": "크레이지 러브 OST Part.2",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1614185566",
+        "youtubeMusic": "OLAK5uy_klkl0_9n9IbPZJiLOj2fda9cTynOgtqRU",
+        "melon": "10890881"
+      },
+      "tracks": [
+        {
+          "id": "other-1614185566-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1614185571",
+            "youtubeMusic": "1stG1QGDm3E",
+            "melon": "34756253"
+          }
+        },
+        {
+          "id": "other-1614185566-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1614185581",
+            "youtubeMusic": "DVYXQfhClOA",
+            "melon": "34756254"
+          }
+        }
+      ]
+    },
+    {
+      "id": "나의 스웨덴세탁소 #2",
+      "artistIds": [
+        "hayoung"
+      ],
+      "platformIds": {
+        "appleMusic": "1615723536",
+        "youtubeMusic": "OLAK5uy_nvfFePf9gi8rDlS0yDEv_w46yDTYVWXSs",
+        "melon": "10897756"
+      },
+      "tracks": [
+        {
+          "id": "other-1615723536-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1615723537",
+            "youtubeMusic": "Nta2ulETLDM",
+            "melon": "34789458"
+          }
+        }
+      ]
+    },
+    {
+      "id": "달빛바다",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1635498595",
+        "youtubeMusic": "OLAK5uy_ntMBrLgY4lHxx5_szOglLFoUs8Bahko_Q",
+        "melon": "11011419"
+      },
+      "tracks": [
+        {
+          "id": "other-1635498595-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1635498600",
+            "youtubeMusic": "tc0oZUyMW1M",
+            "melon": "35453641"
+          }
+        },
+        {
+          "id": "other-1635498595-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1635498601",
+            "youtubeMusic": "YTB__rHkAOA",
+            "melon": "35453642"
+          }
+        }
+      ]
+    },
+    {
+      "id": "World Peace Project Vol.1",
+      "artistIds": [
+        "jiwon"
+      ],
+      "platformIds": {
+        "appleMusic": "1647354137",
+        "youtubeMusic": "OLAK5uy_nQvqx8f-WNdAcTgN1mmOST80ZKddz6uxY",
+        "melon": "11066242"
+      },
+      "tracks": [
+        {
+          "id": "other-1647354137-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1647354138",
+            "youtubeMusic": "oQqNSdMRfIQ",
+            "melon": "35680237"
+          }
+        },
+        {
+          "id": "other-1647354137-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1647354139",
+            "youtubeMusic": "NgwYU19aNhg",
+            "melon": "35680238"
+          }
+        }
+      ]
+    },
+    {
+      "id": "조선 정신과 의사 유세풍 2 OST Part.1",
+      "artistIds": [
+        "jiwon"
+      ],
+      "platformIds": {
+        "appleMusic": "1664070260",
+        "youtubeMusic": "OLAK5uy_nSRVLr1FRMCkUxxVGz7DkmZlZRRAbultU",
+        "melon": "11146250"
+      },
+      "tracks": [
+        {
+          "id": "other-1664070260-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1664070262",
+            "youtubeMusic": "KxIqjk55vx0",
+            "melon": "36031949"
+          }
+        },
+        {
+          "id": "other-1664070260-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1664070263",
+            "youtubeMusic": "tkmIPrHXFHg",
+            "melon": "36031950"
+          }
+        }
+      ]
+    },
+    {
+      "id": "네게 말해 (이 여름밤)",
+      "artistIds": [
+        "jiwon"
+      ],
+      "platformIds": {
+        "appleMusic": "1698675698",
+        "youtubeMusic": "OLAK5uy_nXhP_6vjHPB1FTFvNKv4tim6-Yn0hrmmg",
+        "melon": "11291332"
+      },
+      "tracks": [
+        {
+          "id": "other-1698675698-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1698675699",
+            "youtubeMusic": "jEZFw4kDW04",
+            "melon": "36639496"
+          }
+        },
+        {
+          "id": "other-1698675698-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1698675701",
+            "youtubeMusic": "il0Ry6Sqk58",
+            "melon": "36639497"
+          }
+        }
+      ]
+    },
+    {
+      "id": "Love Me Back(From 작전명 순정)",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1711158566",
+        "youtubeMusic": "OLAK5uy_nN5GbSYpPg4VTXPxbj2pv0xqwr4lJpPqE"
+      },
+      "tracks": [
+        {
+          "id": "other-1711158566-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1711158567",
+            "youtubeMusic": "EE8655GDT9k"
+          }
+        },
+        {
+          "id": "other-1711158566-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1711158571",
+            "youtubeMusic": "XaUasYxRitY"
+          }
+        }
+      ]
+    },
+    {
+      "id": "Stay together all day",
+      "artistIds": [
+        "hayoung"
+      ],
+      "platformIds": {
+        "appleMusic": "1770911455",
+        "youtubeMusic": "OLAK5uy_nrU53xyUMvesbLWQf6xzirr_7w0mKnGaA",
+        "melon": "11604605"
+      },
+      "tracks": [
+        {
+          "id": "other-1770911455-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1770911456",
+            "youtubeMusic": "k-EZFBFiD7o",
+            "melon": "38054898"
+          }
+        },
+        {
+          "id": "other-1770911455-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1770911457",
+            "youtubeMusic": "7ps2cY0dGck",
+            "melon": "38054899"
+          }
+        }
+      ]
+    },
+    {
+      "id": "취하는 로맨스 Part.8",
+      "artistIds": [
+        "hayoung",
+        "nagyung"
+      ],
+      "platformIds": {
+        "appleMusic": "1780483967",
+        "youtubeMusic": "OLAK5uy_mx3Qr1TbL5YaJ2Me4wNNjD-XRQwdScOio",
+        "melon": "11649449"
+      },
+      "tracks": [
+        {
+          "id": "other-1780483967-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1780483968",
+            "youtubeMusic": "psZZ_aparA4",
+            "melon": "38249277"
+          }
+        },
+        {
+          "id": "other-1780483967-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1780484449",
+            "youtubeMusic": "8lYl6CbEWh0",
+            "melon": "38249278"
+          }
+        }
+      ]
+    },
+    {
+      "id": "언제나 난 고양이",
+      "artistIds": [
+        "hayoung"
+      ],
+      "platformIds": {
+        "appleMusic": "1800143297",
+        "youtubeMusic": "OLAK5uy_lQUN_usDz07MTBMKHFBwRpXWZOFJl1k60",
+        "melon": "11731129"
+      },
+      "tracks": [
+        {
+          "id": "other-1800143297-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1800143298",
+            "youtubeMusic": "Um4SRLl1GII",
+            "melon": "38630193"
+          }
+        },
+        {
+          "id": "other-1800143297-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1800143299",
+            "youtubeMusic": "XADZqQ91Xos",
+            "melon": "38630194"
+          }
+        }
+      ]
+    },
+    {
+      "id": "We Are The One",
+      "artistIds": [
+        "jiwon"
+      ],
+      "platformIds": {
+        "appleMusic": "1807921262",
+        "youtubeMusic": "OLAK5uy_knPZJfH1O5aPNW2EX6SDtIBEoB0ZExjik",
+        "melon": "11772763"
+      },
+      "tracks": [
+        {
+          "id": "other-1807921262-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1807921263",
+            "youtubeMusic": "xZJ5f_LrSpI",
+            "melon": "38792768"
+          }
+        },
+        {
+          "id": "other-1807921262-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1807921264",
+            "youtubeMusic": "_JpasY3XnI0",
+            "melon": "38792769"
+          }
+        }
+      ]
+    },
+    {
+      "id": "트라이 Part.2",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "6785343652",
+        "youtubeMusic": "OLAK5uy_k1G8pyKjH6Hh03ZXKEuTK2I-a-H4ymw7o",
+        "melon": "11981574"
+      },
+      "tracks": [
+        {
+          "id": "other-1829625471-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "6785343653",
+            "melon": "39501606"
+          }
+        },
+        {
+          "id": "other-1829625471-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6785343654",
+            "melon": "39501607"
+          }
+        }
+      ]
+    },
+    {
+      "id": "잠이 안와",
+      "artistIds": [
+        "hayoung"
+      ],
+      "platformIds": {
+        "appleMusic": "1831901745",
+        "youtubeMusic": "OLAK5uy_mDXkt4pjmCpy5pAtn1VmKt6ZfK46gQCt8",
+        "melon": "12031798"
+      },
+      "tracks": [
+        {
+          "id": "other-1831901745-01",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1831901746",
+            "youtubeMusic": "rdMMwGuQhcg",
+            "melon": "39596630"
+          }
+        },
+        {
+          "id": "other-1831901745-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1831901747",
+            "youtubeMusic": "NQg8gSG-ou4",
+            "melon": "39596631"
+          }
+        }
+      ]
+    },
+    {
+      "id": "언더커버 미쓰홍 OST PART 1",
+      "artistIds": [
+        "hayoung"
+      ],
+      "platformIds": {
+        "appleMusic": "1867726144",
+        "youtubeMusic": "OLAK5uy_lY8eZxZdf0hbFQQz7mh_Yyo0L1V342zIw",
+        "melon": "12732381"
+      },
+      "tracks": [
+        {
+          "id": "other-1867726144-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1867726145",
+            "youtubeMusic": "Rb9oRIwgwkA",
+            "melon": "600940074"
+          }
+        },
+        {
+          "id": "other-1867726144-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1867726146",
+            "youtubeMusic": "GIJLIS6Hxig",
+            "melon": "600940075"
+          }
+        }
+      ]
+    },
+    {
+      "id": "Give U the Universe",
+      "artistIds": [
+        "hayoung"
+      ],
+      "platformIds": {
+        "appleMusic": "1875852685",
+        "youtubeMusic": "OLAK5uy_lY8eZxZdf0hbFQQz7mh_Yyo0L1V342zIw",
+        "melon": "12860371"
+      },
+      "tracks": [
+        {
+          "id": "other-1875852685-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1875852686",
+            "youtubeMusic": "Rb9oRIwgwkA",
+            "melon": "601298991"
+          }
+        },
+        {
+          "id": "other-1875852685-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1875852694",
+            "youtubeMusic": "GIJLIS6Hxig",
+            "melon": "601298992"
+          }
+        }
+      ]
+    },
+    {
+      "id": "What are we (feat. 박지원)",
+      "artistIds": [
+        "백호",
+        "jiwon"
+      ],
+      "platformIds": {
+        "spotify": "6FhNOEipXqOY1vjsPTHVAa"
+      },
+      "tracks": [
+        {
+          "id": "other-1718815784-01",
+          "artistIds": [
+            "백호",
+            "jiwon"
+          ],
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1718815785",
+            "youtubeMusic": "fUmG1J6OyrA",
+            "spotify": "0obzpcyr6SrKcBcm2oytW3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "A(E)ND",
+      "artistIds": [
+        "이현"
+      ],
+      "platformIds": {
+        "appleMusic": "1838464423",
+        "spotify": "1ZTstigketIx6gA8k1co9v"
+      },
+      "tracks": [
+        {
+          "id": "other-1838464423-gravity",
+          "artistIds": [
+            "이현",
+            "hayoung"
+          ],
+          "isTitleTrack": false,
+          "platformIds": {
+            "spotify": "4vH01FZS2tH4JiZrMRWTvx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "월간남친 Part 2",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1884557901",
+        "spotify": "6mCYF2uLo54ItZStvpX01y"
+      },
+      "tracks": [
+        {
+          "id": "other-1884557901-swipe-it-out",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1884557902",
+            "spotify": "3QgQhBHtQvRpAulIfNwcRG"
+          }
+        }
+      ]
+    },
+    {
+      "id": "신이랑 법률사무소 OST Part.4",
+      "artistIds": [
+        "jiwon"
+      ],
+      "platformIds": {
+        "appleMusic": "1889782891",
+        "spotify": "1D0D9wTkMgUxTyVSAsNhNt"
+      },
+      "tracks": [
+        {
+          "id": "other-1889782891-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1889782892",
+            "spotify": "1ymd1VFO6Rodf2hKVv03Ny"
+          }
+        },
+        {
+          "id": "other-1889782891-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1889782893",
+            "spotify": "3gO4oL2c5feeduF1GRwM1E"
+          }
+        }
+      ]
+    },
+    {
+      "id": "Love Story (청춘계시록 X 송하영)",
+      "artistIds": [
+        "hayoung"
+      ],
+      "platformIds": {
+        "appleMusic": "1896405060",
+        "spotify": "1e9AWqyJ8IP8DO40Easnd9"
+      },
+      "tracks": [
+        {
+          "id": "other-1896405060-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "spotify": "5PLxRSp7FmTsh963PdnTTi"
+          }
+        },
+        {
+          "id": "other-1896405060-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "spotify": "5V51VjgH4Ub0ZQXqNKGYgQ"
+          }
+        }
+      ]
+    }
+  ]
+}

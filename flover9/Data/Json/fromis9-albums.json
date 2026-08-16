@@ -1,0 +1,981 @@
+{
+  "schemaVersion": 2,
+  "albums": [
+    {
+      "id": "glass-shoes-2017",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1610965488",
+        "youtubeMusic": "OLAK5uy_khkpg6P9Xl2X7wCsEbjbAYsjAIkYBO-7A",
+        "spotify": "3tm1tbyC1FgCrtMraqJXBr",
+        "melon": "10115634"
+      },
+      "tracks": [
+        {
+          "id": "glass-shoes-2017-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1610965493",
+            "youtubeMusic": "7G3fLiRw9ns",
+            "spotify": "1VNuUzsWTp1WGf3mMeItvp",
+            "melon": "30758623"
+          }
+        }
+      ]
+    },
+    {
+      "id": "to-heart-2018",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1609199918",
+        "youtubeMusic": "OLAK5uy_nelKGeIBXwqL4oX9SLDVaKldMSITPVssk",
+        "spotify": "0b1tsnRd7eu0q4qaeCLsQa",
+        "melon": "10132496"
+      },
+      "tracks": [
+        {
+          "id": "to-heart-2018-01",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1609199930",
+            "youtubeMusic": "JJ_kfKeolD4",
+            "spotify": "3AjfYXJ8adAmjItk2cMkQf",
+            "melon": "30857317"
+          }
+        },
+        {
+          "id": "to-heart-2018-02",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1609200041",
+            "youtubeMusic": "FjvhLNWOeWM",
+            "spotify": "3PIzI4Bl2b7oZloFWTPAna",
+            "melon": "30857318"
+          }
+        },
+        {
+          "id": "to-heart-2018-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1609200045",
+            "youtubeMusic": "FQw-egUublA",
+            "spotify": "4vFgYhZDcv3ociO2QI5qAd",
+            "melon": "30857319"
+          }
+        },
+        {
+          "id": "to-heart-2018-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1609200051",
+            "youtubeMusic": "4dlYexMXJwk",
+            "spotify": "5IHqT5CMbpc35bh5aomwNK",
+            "melon": "30857320"
+          }
+        },
+        {
+          "id": "to-heart-2018-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1609200057",
+            "youtubeMusic": "TLvtoIy4Q30",
+            "spotify": "46TStqCoE5i72Tt9KKwKfc",
+            "melon": "30857321"
+          }
+        },
+        {
+          "id": "to-heart-2018-06",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1609200060",
+            "youtubeMusic": "5Y5tW1v0R68",
+            "spotify": "77MPFQ0JJIFzYeAFHk0BE3",
+            "melon": "30857322"
+          }
+        }
+      ]
+    },
+    {
+      "id": "to-day-2018",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1605587838",
+        "youtubeMusic": "OLAK5uy_n44O9IjjQTRAjq08Bh1M3fvljuzpI85ng",
+        "spotify": "6CqQ6nEVcrFkQ0gJRy5nWR",
+        "melon": "10173752"
+      },
+      "tracks": [
+        {
+          "id": "to-day-2018-01",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1605587844",
+            "youtubeMusic": "zV4J4FuXZ-o",
+            "spotify": "272dY1msBgIE37ru52UUj8",
+            "melon": "31115656"
+          }
+        },
+        {
+          "id": "to-day-2018-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1605588126",
+            "youtubeMusic": "uK3aeZIQKNA",
+            "spotify": "64SQK5GB7m6bnhV3lRSh19",
+            "melon": "31115657"
+          }
+        },
+        {
+          "id": "to-day-2018-03",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1605588132",
+            "youtubeMusic": "kgucu6DE0n4",
+            "spotify": "3CtpSwA8Z96ePP9nfTPz3Z",
+            "melon": "31115658"
+          }
+        },
+        {
+          "id": "to-day-2018-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1605588138",
+            "youtubeMusic": "47kyZZSm3D4",
+            "spotify": "6ijESfLTOyS7NeKVSH2gio",
+            "melon": "31115659"
+          }
+        },
+        {
+          "id": "to-day-2018-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1605588146",
+            "youtubeMusic": "6TWeJ9A8LHg",
+            "spotify": "3My99grIJuaoo7J4OuBFLB",
+            "melon": "31115660"
+          }
+        },
+        {
+          "id": "to-day-2018-06",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1605588152",
+            "youtubeMusic": "aqR9wb1ihyE",
+            "spotify": "1XYzHbCW1up8uBy8R9lhw4",
+            "melon": "31115661"
+          }
+        }
+      ]
+    },
+    {
+      "id": "from-9-2018",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1569905890",
+        "youtubeMusic": "OLAK5uy_mWs7JbNz2TdVecOO1svzeo-V3SRUhIcQs",
+        "spotify": "6M4WrayhANSknC8e4cOFue",
+        "melon": "10210361"
+      },
+      "tracks": [
+        {
+          "id": "from-9-2018-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1569905892",
+            "youtubeMusic": "PucPDc9qJto",
+            "spotify": "3RtapbUtHJgnVlZWahStUS",
+            "melon": "31345333"
+          }
+        },
+        {
+          "id": "from-9-2018-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1569905901",
+            "youtubeMusic": "UV3sSj9geSs",
+            "spotify": "1xHMtneI2pIHbBr20uysuc",
+            "melon": "31345334"
+          }
+        },
+        {
+          "id": "from-9-2018-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1569905903",
+            "youtubeMusic": "0ZsnEh8TWGE",
+            "spotify": "4DOZqnc0DsIQTI9d2Ow5c3",
+            "melon": "31345335"
+          }
+        }
+      ]
+    },
+    {
+      "id": "fun-factory-2019",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1570577418",
+        "youtubeMusic": "OLAK5uy_lohb-sfe7d-Grz9gKe-axyvnNnR3FQ8zw",
+        "spotify": "3uMKUGH8pf5hzeyw44aiTF",
+        "melon": "10293899"
+      },
+      "tracks": [
+        {
+          "id": "fun-factory-2019-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1570577419",
+            "youtubeMusic": "MnNBj8vyZjo",
+            "spotify": "3bD1rBz24Pnu6tjXf4wJxH",
+            "melon": "31848844"
+          }
+        },
+        {
+          "id": "fun-factory-2019-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1570577422",
+            "youtubeMusic": "xnDhMAxQMuA",
+            "spotify": "7hEOFmvRBctlsCDOVsIivm",
+            "melon": "31848845"
+          }
+        },
+        {
+          "id": "fun-factory-2019-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1570577423",
+            "youtubeMusic": "DeC7KrvKNO4",
+            "spotify": "1ZCGVuv3EIYK8d30kOdmq7",
+            "melon": "31848846"
+          }
+        }
+      ]
+    },
+    {
+      "id": "my-little-society-2020",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1606892941",
+        "youtubeMusic": "OLAK5uy_kCDNXO3AiImirh2jkbQa36Fv1NcmfFFpU",
+        "spotify": "6XPT0rwyyZnG4Z2lJAych2",
+        "melon": "10491722"
+      },
+      "tracks": [
+        {
+          "id": "my-little-society-2020-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1606893217",
+            "youtubeMusic": "2hZmEBfy4nE",
+            "spotify": "2ZpL1wqiiQ3DUWEjo8CgFL",
+            "melon": "32931708"
+          }
+        },
+        {
+          "id": "my-little-society-2020-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1606893220",
+            "youtubeMusic": "ukZmA7StD8U",
+            "spotify": "0l7HoOCQOKZpg5MV2hXw57",
+            "melon": "32931709"
+          }
+        },
+        {
+          "id": "my-little-society-2020-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1606893229",
+            "youtubeMusic": "ceDQD2glnW4",
+            "spotify": "7tJZdJM1j4zuGbPCWeCXAH",
+            "melon": "32931710"
+          }
+        },
+        {
+          "id": "my-little-society-2020-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1606893242",
+            "youtubeMusic": "j9Oh19mZG5k",
+            "spotify": "6w9MXvK5oeiq2ZGl7SJi0q",
+            "melon": "32931711"
+          }
+        },
+        {
+          "id": "my-little-society-2020-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1606893426",
+            "youtubeMusic": "35Qzgl-Kgg8",
+            "spotify": "7lEwL67fcPifcklqXvetSZ",
+            "melon": "32931712"
+          }
+        }
+      ]
+    },
+    {
+      "id": "9-way-ticket-2021",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1579028461",
+        "youtubeMusic": "OLAK5uy_kDqP_Vfo7bRnu_5RaMZZIJjmWh9YfjD-s",
+        "spotify": "5DPggk2zBmJYqtaUyLOlVW",
+        "melon": "10609342"
+      },
+      "tracks": [
+        {
+          "id": "9-way-ticket-2021-01",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1579028462",
+            "youtubeMusic": "N2uJljS4Btw",
+            "spotify": "3j3uz8PfkDapG5qukEaME3",
+            "melon": "33487707"
+          }
+        },
+        {
+          "id": "9-way-ticket-2021-02",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1579028464",
+            "youtubeMusic": "qQ3fFC6bw2I",
+            "spotify": "7oQqeRSV38YqkRv2UGvmbS",
+            "melon": "33487708"
+          }
+        },
+        {
+          "id": "9-way-ticket-2021-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1579028709",
+            "youtubeMusic": "OpJk8_4Vbi0",
+            "spotify": "7BspUwOx8KY13hboYSxBJ3",
+            "melon": "33487709"
+          }
+        }
+      ]
+    },
+    {
+      "id": "talk-and-talk-2021",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1582676469",
+        "youtubeMusic": "OLAK5uy_l1OGIfYQrIX0taK7CUz5jgrUTiKbYnSuw",
+        "spotify": "3GxaqNCf6F7KAs1aDBSLVe",
+        "melon": "10699687"
+      },
+      "tracks": [
+        {
+          "id": "talk-and-talk-2021-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1582676472",
+            "youtubeMusic": "pgXcMZ0MxUc",
+            "spotify": "6Q5e2XpyGzMLgA3ul491pu",
+            "melon": "33884383"
+          }
+        }
+      ]
+    },
+    {
+      "id": "midnight-guest-2022",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1604496144",
+        "youtubeMusic": "OLAK5uy_lkJtLSDGnnsMB3feujxmmxgVu5Qsdf4EA",
+        "spotify": "2WT1URsANJa9zhPsqzspMR",
+        "melon": "10842783"
+      },
+      "tracks": [
+        {
+          "id": "midnight-guest-2022-01",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1604496154",
+            "youtubeMusic": "w3gH3rHwqCk",
+            "spotify": "55R81qkDQVV8oEPHFyIF7l",
+            "melon": "34539149"
+          }
+        },
+        {
+          "id": "midnight-guest-2022-02",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1604496376",
+            "youtubeMusic": "QT60l6MSoz8",
+            "spotify": "7B9W7Qsy5M2kyUNjQYIEG8",
+            "melon": "34539150"
+          }
+        },
+        {
+          "id": "midnight-guest-2022-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1604496384",
+            "youtubeMusic": "8VGyWD8Pq9o",
+            "spotify": "0VMz722ypXCzbQF3mHeYii",
+            "melon": "34539151"
+          }
+        },
+        {
+          "id": "midnight-guest-2022-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1604496386",
+            "youtubeMusic": "0TfGtiD2HXc",
+            "spotify": "0Nz5F2P1RtZI7YTf7tFVml",
+            "melon": "34539152"
+          }
+        },
+        {
+          "id": "midnight-guest-2022-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1604496576",
+            "youtubeMusic": "l2S7HPsWW7Y",
+            "spotify": "0Hk3xtVqMJ1TSRqHeTcVye",
+            "melon": "34539153"
+          }
+        }
+      ]
+    },
+    {
+      "id": "from-our-memento-box-2022",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1629965210",
+        "youtubeMusic": "OLAK5uy_msz0OGPy-QYiwTn-4vYt1RqbSrGsy3_QI",
+        "spotify": "5HpgQwHm9jI5JcnmJqcCYo",
+        "melon": "10991127"
+      },
+      "tracks": [
+        {
+          "id": "from-our-memento-box-2022-01",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1629965221",
+            "youtubeMusic": "44AIBLEJfmQ",
+            "spotify": "2HVPvpRzWsC61u2wpqcBPw",
+            "melon": "35337880"
+          }
+        },
+        {
+          "id": "from-our-memento-box-2022-02",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1629965356",
+            "youtubeMusic": "1UJCm2ZzrnE",
+            "spotify": "3pqgVtpnQbBAZoWT4AEm1B",
+            "melon": "35337881"
+          }
+        },
+        {
+          "id": "from-our-memento-box-2022-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1629965360",
+            "youtubeMusic": "S7xpvOVfclg",
+            "spotify": "0m9rYzS9NLLN9ioiJA0pT1",
+            "melon": "35337882"
+          }
+        },
+        {
+          "id": "from-our-memento-box-2022-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1629965558",
+            "youtubeMusic": "xKI1gdlDzxc",
+            "spotify": "1Tvb3rwkROjE3lz7WX1pRs",
+            "melon": "35337883"
+          }
+        },
+        {
+          "id": "from-our-memento-box-2022-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1629965569",
+            "youtubeMusic": "pujG9jmL9QY",
+            "spotify": "2rkF5QMAi4PcG5gdWeTXQs",
+            "melon": "35337884"
+          }
+        }
+      ]
+    },
+    {
+      "id": "unlock-my-world-2023",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1689139194",
+        "youtubeMusic": "OLAK5uy_kAmlF-7YnOVl8YmyVIFl12aSWjjcY_sC4",
+        "spotify": "48DcB4A9LV3DugLTILN1D9",
+        "melon": "11258231"
+      },
+      "tracks": [
+        {
+          "id": "unlock-my-world-2023-01",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139196",
+            "youtubeMusic": "aZ_rZxIu-J8",
+            "spotify": "1jkoDKZBMInTDwGlqoPOFC",
+            "melon": "36502895"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-02",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1689139208",
+            "youtubeMusic": "-jjSeiXb_9Y",
+            "spotify": "4lIAPwAU6R8PAy2WhykC4i",
+            "melon": "36502896"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139209",
+            "youtubeMusic": "cMUcGLwNusU",
+            "spotify": "1zdl1HSCwuhwPIof0eADzj",
+            "melon": "36502897"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139213",
+            "youtubeMusic": "c_Ku4W2iCY0",
+            "spotify": "0FKgAMwHRaJANpIiCInC2h",
+            "melon": "36502898"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139215",
+            "youtubeMusic": "tLebrTow3-Q",
+            "spotify": "5UJUpVTzx0VQ960yvi77Pe",
+            "melon": "36502899"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-06",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139459",
+            "youtubeMusic": "wqYg1gz3EBI",
+            "spotify": "3cgAt9gbx3cWz9tpvJXneZ",
+            "melon": "36502900"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-07",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139461",
+            "youtubeMusic": "SfNagEVfftc",
+            "spotify": "2a1qLwJOAc2uYTrcs0cLhQ",
+            "melon": "36502901"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-08",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139464",
+            "youtubeMusic": "OHF_zI2lZIk",
+            "spotify": "4NPFma0onsuGO2wACs41Sl",
+            "melon": "36502902"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-09",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139471",
+            "youtubeMusic": "5ERZhs8xGVc",
+            "spotify": "0xfc5fhSz1FmSTvwDOwTR8",
+            "melon": "36502903"
+          }
+        },
+        {
+          "id": "unlock-my-world-2023-10",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1689139475",
+            "youtubeMusic": "-0VWWvubirY",
+            "spotify": "74mwyHRsGfQlDU2OMZELES",
+            "melon": "36502904"
+          }
+        }
+      ]
+    },
+    {
+      "id": "supersonic-2024",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1760411223",
+        "youtubeMusic": "OLAK5uy_kDGjklI51ARu0xeLclwnTlcsKwjIZ6ZQE",
+        "spotify": "1sxOavrEVy7krHpcbCsiJi",
+        "melon": "11564698"
+      },
+      "tracks": [
+        {
+          "id": "supersonic-2024-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1760411225",
+            "youtubeMusic": "MR2ela9evnk",
+            "spotify": "6oNLSQX8bcAdbCElZYju3v",
+            "melon": "37884934"
+          }
+        },
+        {
+          "id": "supersonic-2024-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1760411479",
+            "youtubeMusic": "54p-bKUx1JE",
+            "spotify": "4svequXK79GDI3cXJ8es4S",
+            "melon": "37884935"
+          }
+        },
+        {
+          "id": "supersonic-2024-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1760411503",
+            "youtubeMusic": "06_3xYmZUig",
+            "spotify": "1T6w8p9MoYI5Vgg1GPAlmv",
+            "melon": "37884936"
+          }
+        }
+      ]
+    },
+    {
+      "id": "from-2024",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1785983437",
+        "youtubeMusic": "OLAK5uy_mzywvlb8SmNgeuQi5XeeqAkBvVAK7cFyw",
+        "spotify": "1vheN8jdfNco8S7HOVpJv2",
+        "melon": "11676205"
+      },
+      "tracks": [
+        {
+          "id": "from-2024-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1785983445",
+            "youtubeMusic": "eeZzCoghZzw",
+            "spotify": "0SeorUWLzzIhccMySrbZ87",
+            "melon": "38385256"
+          }
+        }
+      ]
+    },
+    {
+      "id": "from-our-20s-2025",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1821787094",
+        "youtubeMusic": "OLAK5uy_n6eo2k-wLicG711lFzFVY_XZPCzV07UJI",
+        "spotify": "3jGURiEnUi4OoN879bBz0V",
+        "melon": "11865061"
+      },
+      "tracks": [
+        {
+          "id": "from-our-20s-2025-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1821787095",
+            "youtubeMusic": "IYYpLHBu-kY",
+            "spotify": "7t4Z19BqZ23ExgdiOP0nf6",
+            "melon": "39187517"
+          }
+        },
+        {
+          "id": "from-our-20s-2025-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1821787097",
+            "youtubeMusic": "T7jbYrgJk08",
+            "spotify": "7JAf2DJRxCuONezQxrpXQ3",
+            "melon": "39187518"
+          }
+        },
+        {
+          "id": "from-our-20s-2025-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1821787098",
+            "youtubeMusic": "-gN0ykmV1C4",
+            "spotify": "5miOIfzFRUeVpTcoZOGrx5",
+            "melon": "39187519"
+          }
+        },
+        {
+          "id": "from-our-20s-2025-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1821787100",
+            "youtubeMusic": "7M4hrsyS2mA",
+            "spotify": "0fGo8hPjNc0XsxbAVtj01g",
+            "melon": "39187520"
+          }
+        },
+        {
+          "id": "from-our-20s-2025-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1821787101",
+            "youtubeMusic": "-ArKRflpTxM",
+            "spotify": "5bfRs7cxilhbg2vpjYqxXg",
+            "melon": "39187521"
+          }
+        },
+        {
+          "id": "from-our-20s-2025-06",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1821787102",
+            "youtubeMusic": "b_CpQdKpmjQ",
+            "spotify": "7Ih8Sx165OzhYYKj2nrWvd",
+            "melon": "39187522"
+          }
+        }
+      ]
+    },
+    {
+      "id": "white-memories-2025",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1856551390",
+        "youtubeMusic": "OLAK5uy_ky3_k6VSDIsXuP5Swbs5CfqF6wObcC6YE",
+        "spotify": "4vnA4ZWgxrhxy5doVCGv9u",
+        "melon": "12416920"
+      },
+      "tracks": [
+        {
+          "id": "white-memories-2025-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1856551391",
+            "youtubeMusic": "JG6YHjbj4zQ",
+            "spotify": "7hCdtQsaKCBXrITaPNK2iE",
+            "melon": "600607173"
+          }
+        }
+      ]
+    },
+    {
+      "id": "like-you-better-japanese-2026",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "1889051077",
+        "spotify": "14H2Ftdjr8CAwwd2XdeiUA",
+        "melon": "13302288"
+      },
+      "tracks": [
+        {
+          "id": "like-you-better-japanese-2026-01",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "1889051080",
+            "youtubeMusic": "mfX0Zhm9PUA",
+            "spotify": "3vwJOa72nj5YxLJE7DarBx",
+            "melon": "601681623"
+          }
+        },
+        {
+          "id": "like-you-better-japanese-2026-02",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1889051353",
+            "youtubeMusic": "3201UJ09DmQ",
+            "spotify": "74r5xTR0j9ox9OjIozhw0t",
+            "melon": "601681624"
+          }
+        },
+        {
+          "id": "like-you-better-japanese-2026-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1889051355",
+            "youtubeMusic": "9mT-p9LeXQs",
+            "spotify": "398peLdmJWtQ0XPdKn90ax",
+            "melon": "601681625"
+          }
+        },
+        {
+          "id": "like-you-better-japanese-2026-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1889051357",
+            "youtubeMusic": "pm1EQyQBy8w",
+            "spotify": "3vDcSFai8Ero8Pf7Rvgeay",
+            "melon": "601681626"
+          }
+        },
+        {
+          "id": "like-you-better-japanese-2026-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1889051358",
+            "youtubeMusic": "CNUv23lCGqo",
+            "spotify": "5tiTmdKmAwISXisuJ6NlLe",
+            "melon": "601681627"
+          }
+        },
+        {
+          "id": "like-you-better-japanese-2026-06",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "1889051359",
+            "youtubeMusic": "WNHjPjcVnMk",
+            "spotify": "4ZQemPtP9n6dkvsyVRPzlJ",
+            "melon": "601681628"
+          }
+        }
+      ]
+    },
+    {
+      "id": "glow-me-2026",
+      "artistIds": [
+        "officialfromis9"
+      ],
+      "platformIds": {
+        "appleMusic": "6791520495",
+        "spotify": "5TavW70ILrvXyPabrm5z29",
+        "melon": "13816948"
+      },
+      "tracks": [
+        {
+          "id": "glow-me-2026-01",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520496",
+            "spotify": "6O2roeYRWNASSsHACwI0CA",
+            "melon": "602540013"
+          }
+        },
+        {
+          "id": "glow-me-2026-02",
+          "isTitleTrack": true,
+          "platformIds": {
+            "appleMusic": "6791520498",
+            "spotify": "70RQYCjVacuJgeYAmU2sXd",
+            "melon": "602540014"
+          }
+        },
+        {
+          "id": "glow-me-2026-03",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520499",
+            "spotify": "6eowftPZ08OtudenXoOqgn",
+            "melon": "602540015"
+          }
+        },
+        {
+          "id": "glow-me-2026-04",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520500",
+            "spotify": "67vnIarCQEa1gjy7k58mNS",
+            "melon": "602540016"
+          }
+        },
+        {
+          "id": "glow-me-2026-05",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520501",
+            "spotify": "2LGoNOeBalXXlwZYJNtVrN",
+            "melon": "602540017"
+          }
+        },
+        {
+          "id": "glow-me-2026-06",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520502",
+            "spotify": "2i8G56EGUGq3vfiwLA39OL",
+            "melon": "602540018"
+          }
+        },
+        {
+          "id": "glow-me-2026-07",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520503",
+            "spotify": "4f2HtsSQaYeU4aEyObWZvY",
+            "melon": "602540019"
+          }
+        },
+        {
+          "id": "glow-me-2026-08",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520504",
+            "spotify": "5VRXsYKeKT6Rc9suuKBdfI",
+            "melon": "602540020"
+          }
+        },
+        {
+          "id": "glow-me-2026-09",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520505",
+            "spotify": "6H5vPWMBuKcwazh4ki5PSC",
+            "melon": "602540021"
+          }
+        },
+        {
+          "id": "glow-me-2026-10",
+          "isTitleTrack": false,
+          "platformIds": {
+            "appleMusic": "6791520506",
+            "spotify": "6XKtyCDc0gvGK4NnmtfDCo",
+            "melon": "602540022"
+          }
+        }
+      ]
+    }
+  ]
+}
