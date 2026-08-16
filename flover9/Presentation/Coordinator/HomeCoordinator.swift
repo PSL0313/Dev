@@ -31,6 +31,8 @@ final class HomeCoordinator: BaseCoordinator {
                 self?.onReadyForShowHome?()
             case .failed(let msg):
                 self?.showAlert(title: "에러", message: msg)
+            case .moveToMemberProfileView(let member):
+                self?.showMemberProfileView(member: member)
             }
         }
         
@@ -86,5 +88,10 @@ final class HomeCoordinator: BaseCoordinator {
         )
         
         navigationController.present(alert, animated: true)
+    }
+    
+    private func showMemberProfileView(member: MemberEntity) {
+        let vc = MemberProfileViewViewController(member)
+        self.navigationController.pushViewController(vc, animated: true)
     }
 }

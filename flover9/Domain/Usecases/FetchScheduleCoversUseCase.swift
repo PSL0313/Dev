@@ -9,4 +9,9 @@ final class FetchScheduleCoversUseCase: FetchScheduleCoversUseCaseProtocol {
     func execute() async throws -> [ScheduleEntity] {
         try await scheduleRepository.fetchScheduleCovers() // 일정 요약 목록 조회
     }
+    
+    func execute(_ members: [MemberEntity]) async throws -> [HomeScheduleCardModel] {
+        let scheduleEntities = try await scheduleRepository.fetchScheduleCovers() // 일정 요약 목록 조회
+        return HomeScheduleCardModel.makes(from: scheduleEntities, members: members)
+    }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import MusicKit
 
 // MARK: - HomeViewModel
 final class HomeViewModel {
@@ -14,11 +15,16 @@ final class HomeViewModel {
     enum Route {
         case fetchedHomeData    // 홈데이터 모두 fetch 완료
         case failed(String)             // 홈탭 데이터 fetch 실패
+        case moveToMemberProfileView(MemberEntity)
     }
     
     // MARK: - Input
     enum Input {
         case start
+        case moveToMember(MemberEntity)
+        case moveToSchedule(UUID)
+        case moveToAlbum(Album)
+        case moveToAllSchedule
     }
     // MARK: - State
     enum State {
@@ -29,13 +35,21 @@ final class HomeViewModel {
     var onState: ((State) -> Void)?
     
     // MARK: - UseCase
-    private var fetchMembersUseCase: FetchMembersUseCaseProtocol
-    private var fetchScheduleCoversUseCase: FetchScheduleCoversUseCaseProtocol
+    private let fetchMembersUseCase: FetchMembersUseCaseProtocol
+    private let fetchScheduleCoversUseCase: FetchScheduleCoversUseCaseProtocol
+    
+    // MARK: - Store
+    private let musicAlbumStore: MusicAlbumStoreProtocol
+    
+    // MARK: - Service
+    private let appleMusicCatalogService: AppleMusicCatalogService
+    private let appleMusicAuthorizationService = AppleMusicAuthorizationService()
     
     // MARK: - Properties
     private(set) var members: [MemberEntity] = [] // 화면 데이터 보관
-    private(set) var schedules: [ScheduleEntity] = [] // 화면 데이터 보관
-    
+    private(set) var homeSchedulesCardData: [HomeScheduleCardModel] = [] // 화면 데이터 보관
+    private(set) var albums: [Album] = []
+    private(set) var others: [Album] = []
     var memberCount: Int {
         members.count
     }
@@ -45,10 +59,14 @@ final class HomeViewModel {
     // MARK: - Initializer
     init(
         fetchMembersUseCase: FetchMembersUseCaseProtocol,
-         fetchScheduleCoversUseCase: FetchScheduleCoversUseCaseProtocol
+         fetchScheduleCoversUseCase: FetchScheduleCoversUseCaseProtocol,
+        musicAlbumStore: MusicAlbumStoreProtocol,
+        appleMusicCatalogService: AppleMusicCatalogService
     ) {
         self.fetchMembersUseCase = fetchMembersUseCase
         self.fetchScheduleCoversUseCase = fetchScheduleCoversUseCase
+        self.musicAlbumStore = musicAlbumStore
+        self.appleMusicCatalogService = appleMusicCatalogService
     }
     
     // MARK: - deinit
@@ -58,6 +76,14 @@ final class HomeViewModel {
         switch input {
         case .start:
             start()
+        case .moveToMember(let member):
+            onRoute?(.moveToMemberProfileView(member))
+        case .moveToAllSchedule:
+            ()
+        case .moveToSchedule(let scheduleId):
+            print(scheduleId)
+        case .moveToAlbum(let album):
+            print(album.title)
         }
     }
     
@@ -75,33 +101,58 @@ private extension HomeViewModel {
     func start() {
         self.task = Task {
             do {
+                try await appleMusicAuthorizationService.requestAuthorization()
+                
                 // 구조적 병렬 작업 시작
                 async let membersTask: [MemberEntity] = fetchMembersUseCase.execute()
-                async let schedulesTask: [ScheduleEntity] = fetchScheduleCoversUseCase.execute()
-
-                let (members, draftSchedules) = try await (
+                async let albumsTask: Void = fetchAlbums()
+                
+                let (members, _) = try await (
                     membersTask,
-                    schedulesTask
+                    albumsTask
                 )
                 
-                let schedules = memberSortOrder(member: members, schedules: draftSchedules)
+                async let schedules: [HomeScheduleCardModel] = fetchScheduleCoversUseCase.execute(members)
                 
                 // 변수 저장
                 self.members = members
-                self.schedules = schedules
+                self.homeSchedulesCardData = try await schedules
                 
                 // 뷰컨에게 전달
                 onState?(.fetchedHomeData)
                 
-                // 코디네이터에게 전달
+                // 코디네이터에게 전달(스플래쉬뷰 종료 요청)
                 onRoute?(.fetchedHomeData)
+            } catch _ as AppleMusicAuthorizationError {
+                onRoute?(Route.failed("애플 뮤직을 거절하시면 사용하실 수 없습니다."))
             } catch let error as MemberError {
                 onRoute?(Route.failed(error.userMessage))
             } catch let error as ScheduleError {
                 onRoute?(Route.failed(error.userMessage))
+            }  catch let error as AppleMusicCatalogError {
+                onRoute?(Route.failed(error.message))
             } catch {
                 onRoute?(Route.failed(MemberError.unknown.userMessage))
             }
+        }
+    }
+}
+
+// MARK: - 앨범 정보 관련(애플 뮤직킷
+private extension HomeViewModel {
+    
+    func fetchAlbums() async throws {
+        do {
+            async let fetchAlbums = self.musicAlbumStore.albums()
+            async let fetchOthers = self.musicAlbumStore.otherAlbums()
+            
+            let (albums, others) = await (fetchAlbums, fetchOthers)
+            
+            self.albums = try await appleMusicCatalogService.fetchAlbums(from: albums)
+            self.others = try await appleMusicCatalogService.fetchAlbums(from: others)
+            
+        } catch {
+            throw error
         }
     }
 }
@@ -111,47 +162,5 @@ extension HomeViewModel {
     struct HomeData: Sendable, Equatable {
         let members: [MemberEntity] // 멤버 목록
         let upComingSchedules: [ScheduleEntity] // 가까운 스케쥴
-    }
-    
-    private func memberSortOrder(member: [MemberEntity], schedules: [ScheduleEntity]) -> [ScheduleEntity] {
-        var answer: [ScheduleEntity] = []
-        // MARK: - 멤버의 공식 정렬 순서 생성
-        let memberSortOrder = Dictionary(
-            uniqueKeysWithValues: members.map {
-                ($0.code, $0.sortOrder)
-            }
-        )
-        for schedule in schedules {
-            guard let memberCodes = schedule.participantMemberCodes else { continue }
-            
-            // 참여 멤버 코드를 공식 순서대로 정렬
-            let sortedMemberCodes = memberCodes.sorted {
-                let lhsOrder = memberSortOrder[$0] ?? Int.max
-                let rhsOrder = memberSortOrder[$1] ?? Int.max
-
-                return lhsOrder < rhsOrder
-            }
-            
-            answer.append(ScheduleEntity(
-                id: schedule.id,
-                title: schedule.title,
-                venueName: schedule.venueName,
-                type: schedule.type,
-                status: schedule.status,
-                startAt: schedule.startAt,
-                endAt: schedule.endAt,
-                isAllDay: schedule.isAllDay,
-                operationStartTime: schedule.operationStartTime,
-                operationEndTime: schedule.operationEndTime,
-                timeZone: schedule.timeZone,
-                thumbnailURL: schedule.thumbnailURL,
-                externalURL: schedule.externalURL,
-                externalContentID: schedule.externalContentID,
-                participantMemberCodes: sortedMemberCodes,
-                createdAt: schedule.createdAt,
-                updatedAt: schedule.updatedAt
-            ))
-        }
-        return answer
     }
 }

@@ -25,21 +25,6 @@ final class MemberCollectionViewCell: UICollectionViewCell {
         
         return imageView
     }()
-    // 멤버 이름을 표시하는 레이블
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-
-        label.font = .systemFont(
-            ofSize: 13,
-            weight: .medium
-        )                                       // 멤버 이름 폰트
-        label.textColor = .label                // 멤버 이름 색상
-        label.textAlignment = .center           // 텍스트 중앙 정렬
-        label.numberOfLines = 1                 // 이름을 한 줄로 제한
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        return label
-    }()
 
     // MARK: - 코드로 셀을 생성할 때 호출되는 초기화 함수
     override init(frame: CGRect) {
@@ -59,13 +44,11 @@ final class MemberCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         imageView.kf.cancelDownloadTask()       // 이전 이미지 다운로드 취소
         imageView.image = nil                   // 이전 멤버 사진 제거
-        nameLabel.text = nil                    // 이전 멤버 이름 제거
     }
 
     // MARK: - 전달받은 멤버 정보를 셀에 표시
     func configure(with member: MemberEntity?) {
         imageView.kf.setImage(with: member?.profileImageURL) // 멤버 이미지 표시(kf)
-        nameLabel.text = member?.displayName     // 멤버 이름 표시
     }
 }
 
@@ -76,7 +59,6 @@ private extension MemberCollectionViewCell {
     // MARK: - 셀 내부 레이아웃 설정
     func setLayout() {
         contentView.addSubview(imageView)
-        contentView.addSubview(nameLabel)       // 레이블을 셀에 추가
 
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(
@@ -95,24 +77,6 @@ private extension MemberCollectionViewCell {
                 equalTo: imageView.widthAnchor,
                 multiplier: 5.0 / 4.0
             ),  // 사진 비율 5 : 4 비율
-            nameLabel.topAnchor.constraint(
-                equalTo: imageView.bottomAnchor,
-                constant: 3
-            ),
-            nameLabel.leadingAnchor.constraint(
-                equalTo: contentView.leadingAnchor,
-                constant: 2
-            ),
-            nameLabel.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor,
-                constant: -2
-            ),
-            nameLabel.bottomAnchor.constraint(
-                equalTo: contentView.bottomAnchor
-            ),
-            nameLabel.heightAnchor.constraint(
-                equalToConstant: 20
-            )
             
         ])
     }

@@ -9,6 +9,10 @@ final class AppDIContainer {
     // MARK: - 필수 생성 객체
     // MARK: - 앱 실행 중 공유할 사용자 상태 저장소
     private let userSessionStore = UserSessionStore()
+    
+    private let musicAlbumStore: MusicAlbumStoreProtocol = {
+        MusicAlbumStore()
+    }()
 
     // MARK: - SupabaseClient
     private lazy var supabaseClient: SupabaseClient = {
@@ -159,7 +163,9 @@ final class AppDIContainer {
     func getHomeViewModel() -> HomeViewModel {
         HomeViewModel(
             fetchMembersUseCase: fetchMembersUseCase,
-            fetchScheduleCoversUseCase: fetchScheduleCoversUseCase
+            fetchScheduleCoversUseCase: fetchScheduleCoversUseCase,
+            musicAlbumStore: musicAlbumStore,
+            appleMusicCatalogService: makeAppleMusicCatalogService()
         )
     }
     
@@ -177,5 +183,9 @@ extension AppDIContainer {
     // MARK: - Apple 인증 화면을 처리하는 서비스 생성
     func makeAppleSignInService() -> AppleSignInService {
         AppleSignInService()                          
+    }
+    
+    func makeAppleMusicCatalogService() -> AppleMusicCatalogService {
+        AppleMusicCatalogService()
     }
 }

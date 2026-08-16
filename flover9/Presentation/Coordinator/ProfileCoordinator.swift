@@ -11,6 +11,7 @@ import SwiftUI
 final class ProfileCoordinator: BaseCoordinator {
     var navigationController: UINavigationController
     private let container: AppDIContainer
+    var onRequestAppReset: (() -> Void)?               // 앱 전체 재시작 요청
     
     init(navigationController: UINavigationController, container: AppDIContainer) {
         self.navigationController = navigationController
@@ -18,9 +19,8 @@ final class ProfileCoordinator: BaseCoordinator {
     }
     
     override func start() {
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .systemBlue
-        viewController.title = "프로필"
+        let viewController = MyViewController(viewModel: MyViewModel())
+        
 
         navigationController.setViewControllers(
             [viewController],
