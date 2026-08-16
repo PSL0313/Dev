@@ -22,6 +22,7 @@ final class MainCoordinator: BaseCoordinator {
         // 하위(자식)코디네이터 생성
         let homeCoordinator = makeHomeCoordinator()
         let profileCoordinator = makeProfileCoordinator()
+        let musicPlayerNavigationController = makeMusicPlayerNavigationController()
         
         
         // 하위(자식) 코디네이터 등록
@@ -40,16 +41,35 @@ final class MainCoordinator: BaseCoordinator {
         // 탭바에 연결할 화면들
         tabBarController.viewControllers = [
             homeCoordinator.navigationController,
-            profileCoordinator.navigationController,
             signOutTest.navigationController,
+            musicPlayerNavigationController,
+            profileCoordinator.navigationController
         ]
         
         // 탭바에 연결된 화면들 중 처음에 보여질 탭
         tabBarController.selectedIndex = 0
+        
+        tabBarController.tabBar.tintColor = .label
     }
 }
 
 private extension MainCoordinator {
+    /// 테스트용 Apple Music 플레이어 화면을 탭바에 추가합니다.
+    func makeMusicPlayerNavigationController() -> UINavigationController {
+        let viewController = TestMusicPlayerViewController()
+        let navigationController = UINavigationController(
+            rootViewController: viewController
+        )
+
+        navigationController.tabBarItem = UITabBarItem(
+            title: "플레이어",
+            image: UIImage(systemName: "play.circle"),
+            selectedImage: UIImage(systemName: "play.circle.fill")
+        )
+
+        return navigationController
+    }
+
     func makeHomeCoordinator() -> HomeCoordinator {
         let navigationController = UINavigationController()
         navigationController.tabBarItem = UITabBarItem(
@@ -79,10 +99,15 @@ private extension MainCoordinator {
             image: UIImage(systemName: "person"),
             selectedImage: UIImage(systemName: "person.fill")
         )
-
-        return ProfileCoordinator(
+        let coordinator = ProfileCoordinator(
             navigationController: navigationController,
             container: container
         )
+        
+        coordinator.onRequestAppReset = { [weak self] in
+            self?.onRequestAppReset?()                           // 하위 요청을 상위로 전달
+        }
+        
+        return coordinator
     }
 }
