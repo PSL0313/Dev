@@ -604,32 +604,9 @@
       ]
     },
     {
-      "id": "A(E)ND",
-      "artistIds": [
-        "이현"
-      ],
-      "platformIds": {
-        "appleMusic": "1838464423",
-        "spotify": "1ZTstigketIx6gA8k1co9v"
-      },
-      "tracks": [
-        {
-          "id": "other-1838464423-gravity",
-          "artistIds": [
-            "이현",
-            "hayoung"
-          ],
-          "isTitleTrack": false,
-          "platformIds": {
-            "spotify": "4vH01FZS2tH4JiZrMRWTvx"
-          }
-        }
-      ]
-    },
-    {
       "id": "월간남친 Part 2",
       "artistIds": [
-        "officialfromis9"
+        "월간남친 OST"
       ],
       "platformIds": {
         "appleMusic": "1884557901",
@@ -638,6 +615,9 @@
       "tracks": [
         {
           "id": "other-1884557901-swipe-it-out",
+          "artistIds": [
+            "월간남친 OST"
+          ],
           "isTitleTrack": true,
           "platformIds": {
             "appleMusic": "1884557902",
