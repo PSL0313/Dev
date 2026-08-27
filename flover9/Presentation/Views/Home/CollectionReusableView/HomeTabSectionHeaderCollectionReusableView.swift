@@ -19,7 +19,7 @@ class HomeTabSectionHeaderCollectionReusableView: UICollectionReusableView {
     // MARK: - UI
     private lazy var sectionTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 10, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .bold)
         label.textColor = .label
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -30,7 +30,7 @@ class HomeTabSectionHeaderCollectionReusableView: UICollectionReusableView {
         let button = UIButton()
         let image = UIImage(
             systemName: "chevron.right",
-            withConfiguration: UIImage.SymbolConfiguration(pointSize: 12)
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 18)
         )
         button.backgroundColor = .clear
         button.tintColor = .label
@@ -87,13 +87,12 @@ class HomeTabSectionHeaderCollectionReusableView: UICollectionReusableView {
             ])
     }
     
-    func configure(upComingScheduleType: HomeTabSectionHeaderType, selectedAction: @escaping () -> Void) {
-        sectionTitleLabel.text = upComingScheduleType.title()
+    func configure(headerType: HomeTabSectionHeaderType, selectedAction: @escaping () -> Void) {
+        sectionTitleLabel.text = headerType.title()
         self.selectedAction = selectedAction
         stackView.isHidden = false
-        moreButton.isHidden = false
 
-        switch upComingScheduleType {
+        switch headerType {
         case .member:
             stackView.isHidden = true
         case .upComingSchedule:

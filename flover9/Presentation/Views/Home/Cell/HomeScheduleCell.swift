@@ -389,8 +389,8 @@ private extension HomeScheduleCell {
         // 참고 이미지 기준 약 16pt 좌우,
         // 약 10pt 상하 내부 여백
         contentStackView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(10)
-            $0.verticalEdges.equalToSuperview().inset(10)
+            $0.horizontalEdges.equalToSuperview()/*.inset(10)*/
+            $0.verticalEdges.equalToSuperview()/*.inset(10)*/
         }
 
         // D-Day 배지는 왼쪽에만 붙이고

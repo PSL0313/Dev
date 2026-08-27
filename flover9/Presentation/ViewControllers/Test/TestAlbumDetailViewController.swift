@@ -206,7 +206,17 @@ private extension TestAlbumDetailViewController {
 
         artworkImageView.kf.setImage(
             with: album.artwork?.url(width: 1000, height: 1000)
-        )
+        ) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let value):
+                UIView.animate(withDuration: 1.1, animations: {
+                    self.view.backgroundColor = value.image.averageColor()
+                })
+            case .failure:
+                break
+            }
+        }
 
         tracks = album.tracks.map { Array($0) } ?? []
         configureTrackRows()

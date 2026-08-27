@@ -10,7 +10,7 @@ import MusicKit
 
 // MARK: - HomeViewController
 class HomeViewController: UIViewController {
-    
+
     // MARK: - UI
     // 홈 화면의 콘텐츠를 표시하는 컬렉션뷰
     private lazy var collectionView: UICollectionView = {
@@ -23,6 +23,7 @@ class HomeViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false         // 세로 스크롤바 숨김
         collectionView.isScrollEnabled = true
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.contentInsetAdjustmentBehavior = .never
 
         // 컬렉션뷰 섹션 헤더뷰등록
         collectionView.register(
@@ -30,13 +31,15 @@ class HomeViewController: UIViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: HomeTabSectionHeaderCollectionReusableView.identifier
         )
-        
+
+        collectionView.register(HomeHeroCell.self, forCellWithReuseIdentifier: HomeHeroCell.reuseIdentifier)
+
         // 멤버 리스트셀등록
         collectionView.register(
             MemberCollectionViewCell.self,
             forCellWithReuseIdentifier: MemberCollectionViewCell.reuseIdentifier
         )
-        
+
         // 스케쥴 셀 등록
         collectionView.register(
             HomeScheduleCell.self,
@@ -49,50 +52,55 @@ class HomeViewController: UIViewController {
             forCellWithReuseIdentifier:
                 MusicAlbumCollectionViewCell.reuseIdentifier
         )
-        
+
         return collectionView
     }()
-    
+
     // MARK: - Properties
     private let viewModel: HomeViewModel
-    
+
     // MARK: - 홈 컬렉션뷰의 섹션과 아이템을 관리하는 데이터 소스
     private var dataSource: UICollectionViewDiffableDataSource<HomeSection, HomeItem>!
-    
+
     // MARK: - Initializer
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     // MARK: - Deinit
     deinit { print("HomeViewController deinit") }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         // Layout
         setLayout()
-        
+
         // CollectionView Setting
         collectionView.delegate = self
         configureDataSource()
         configureSectionHeader()
-        
+
         // ViewModel Setting
         bindViewModel()
     }
-    
+
     private func bindViewModel() {
         viewModel.onState = { [weak self] state in
             guard let self else { return }
             switch state {
             case .fetchedHomeData:
                 applySnapshot()
+            case .fetchedAlbumData:
+                print("✅ fetchedAlbumData")
+                print("albums:", viewModel.albums.count)
+                print("others:", viewModel.others.count)
+                applyAlbumSnapshot()
             }
         }
     }
@@ -103,37 +111,39 @@ private extension HomeViewController {
     // setLayout
     private func setLayout() {
         self.view.backgroundColor = .systemBackground
-        
+
         self.view.addSubview(collectionView)
         self.navigationController?.navigationBar.isHidden = true
-        
+
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+
+        // 탭배 하단에 안쪽으로 탭바 높이 두기
+        collectionView.contentInset.bottom = tabBarController?.tabBar.bounds.height ?? 0
     }
 }
 
 
 // MARK: - CollectionViewDelegate
 extension HomeViewController: UICollectionViewDelegate {
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = dataSource.itemIdentifier(for: indexPath) else {
             return
         }
 
         switch item {
-        case .member(let member):
-            viewModel.action(.moveToMember(member))
-            print("멤버 선택:", member.displayName)
+        case .member:
+            print("그룹 선택")
 
         case .schedule(let schedule):
             viewModel.action(.moveToSchedule(schedule.id))
             print("일정 선택:", schedule.title)
-            
+
         case .albums(let album):
             let detailViewController = TestAlbumDetailViewController(
                 album: album
@@ -143,7 +153,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 animated: true
             )
             print("앨범 선택:", album.title)
-            
+
         case .otherAlbums(let album):
             let detailViewController = TestAlbumDetailViewController(
                 album: album
@@ -153,14 +163,14 @@ extension HomeViewController: UICollectionViewDelegate {
                 animated: true
             )
             print("앨범 선택:", album.title)
-            
+
         }
     }
 }
 
 // MARK: - 컬렉션뷰
 extension HomeViewController {
-        
+
     // MARK: - 아이템 종류에 따라 사용할 셀을 결정
     private func configureDataSource() {
         dataSource =
@@ -170,13 +180,17 @@ extension HomeViewController {
             case .member(let member):
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier:
-                        MemberCollectionViewCell.reuseIdentifier,
+                        HomeHeroCell.reuseIdentifier,
                     for: indexPath
-                ) as? MemberCollectionViewCell else {
+                ) as? HomeHeroCell else {
                     return UICollectionViewCell()
                 }
 
-                cell.configure(with: member) // 멤버 정보를 셀에 표시
+                cell.configure(members: member) // 멤버 정보를 셀에 표시
+                cell.didTapMember = { [weak self] member in
+                    guard let self else { return }
+                    self.viewModel.action(.moveToMember(member))
+                }
                 return cell
 
             case .schedule(let schedule):
@@ -204,12 +218,12 @@ extension HomeViewController {
             }
         }
     }
-    
+
     private func configureSectionHeader() {
         dataSource.supplementaryViewProvider = {
             [weak self] collectionView, kind, indexPath in
             guard let self else { return nil }
-            
+
             guard kind == UICollectionView.elementKindSectionHeader else {
                 return nil
             }
@@ -221,7 +235,7 @@ extension HomeViewController {
             }
 
             let section = sections[indexPath.section]
-            
+
             guard let header = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: HomeTabSectionHeaderCollectionReusableView.identifier,
@@ -230,25 +244,25 @@ extension HomeViewController {
                 return nil
             }
             switch section {
+            case .members:
+                header.configure(headerType: .member) {}
             case .schedules:
-                header.configure(upComingScheduleType: .upComingSchedule) { [weak self] in
+                header.configure(headerType: .upComingSchedule) { [weak self] in
                     guard let self else { return }
                     viewModel.action(.moveToAllSchedule)
                 }
             case .albums:
-                header.configure(upComingScheduleType: .albums) {}
+                header.configure(headerType: .albums) {}
 
             case .otherAlbums:
-                header.configure(upComingScheduleType: .otherAlbums) {}
+                header.configure(headerType: .otherAlbums) {}
 
-            case .members:
-                header.configure(upComingScheduleType: .member) {}
             }
-            
+
             return header
         }
     }
-    
+
     // MARK: - 현재 홈 데이터를 컬렉션뷰에 반영
     private func applySnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<
@@ -264,12 +278,10 @@ extension HomeViewController {
             .otherAlbums
         ])
 
-        // 멤버 데이터를 HomeItem으로 변환
-        let memberItems = viewModel.members.map { HomeItem.member($0) }
-
-        // 멤버 섹션에 멤버 아이템 추가
         snapshot.appendItems(
-            memberItems,
+            [
+                .member(viewModel.members)
+            ],
             toSection: .members
         )
 
@@ -283,28 +295,6 @@ extension HomeViewController {
             scheduleItems,
             toSection: .schedules
         )
-        
-        // 앨범 데이터를 HomeItem으로 변환
-        let albumItems = viewModel.albums.map {
-            HomeItem.albums($0)
-        }
-
-        // 앨범 섹션에 앨범 아이템 추가
-        snapshot.appendItems(
-            albumItems,
-            toSection: .albums
-        )
-        
-        // 그룹 앨범이외의 앨범 데이터를 HomeItem으로 변환
-        let otherAlbumItems = viewModel.others.map {
-            HomeItem.otherAlbums($0)
-        }
-
-        // 그룹 앨범 이외의 앨범 섹션에 앨범 아이템 추가
-        snapshot.appendItems(
-            otherAlbumItems,
-            toSection: .otherAlbums
-        )
 
         // 완성된 화면 상태를 데이터 소스에 전달
         dataSource.apply(
@@ -312,7 +302,35 @@ extension HomeViewController {
             animatingDifferences: true
         )
     }
-    
+
+    private func applyAlbumSnapshot() {
+        var snapshot = dataSource.snapshot()
+
+        snapshot.deleteItems(
+            snapshot.itemIdentifiers(inSection: .albums)
+        )
+
+        snapshot.deleteItems(
+            snapshot.itemIdentifiers(inSection: .otherAlbums)
+        )
+
+        snapshot.appendItems(
+            viewModel.albums.map { .albums($0) },
+            toSection: .albums
+        )
+
+        snapshot.appendItems(
+            viewModel.others.map { .otherAlbums($0) },
+            toSection: .otherAlbums
+        )
+
+        UIView.animate(withDuration: 0.2, animations: {
+            self.dataSource.apply(
+                snapshot,
+                animatingDifferences: true
+            )
+        })
+    }
 }
 
 
@@ -339,7 +357,7 @@ private extension HomeViewController {
             // 섹션 종류에 맞는 레이아웃 반환
             switch section {
             case .members:
-                return self.makeMemberSection()
+                return self.makeHeroSection()
             case .schedules:
                 return self.makeScheduleSection()
             case .albums:
@@ -349,9 +367,9 @@ private extension HomeViewController {
             }
         }
         return layout
-        
+
     }
-    
+
     // MARK: - 멤버 섹션의 크기와 배치 생성
     private func makeMemberSection() -> NSCollectionLayoutSection {
 
@@ -363,23 +381,23 @@ private extension HomeViewController {
          사용할 수 있는 대표적인 크기 지정 방식
 
          1. .fractionalWidth(비율)
-            부모 영역의 가로 크기를 기준으로 계산
-            1.0 = 부모 너비의 100%
-            0.5 = 부모 너비의 50%
+         부모 영역의 가로 크기를 기준으로 계산
+         1.0 = 부모 너비의 100%
+         0.5 = 부모 너비의 50%
 
          2. .fractionalHeight(비율)
-            부모 영역의 세로 크기를 기준으로 계산
-            1.0 = 부모 높이의 100%
-            0.5 = 부모 높이의 50%
+         부모 영역의 세로 크기를 기준으로 계산
+         1.0 = 부모 높이의 100%
+         0.5 = 부모 높이의 50%
 
          3. .absolute(고정값)
-            정확한 pt 단위로 고정
-            예: .absolute(100) = 항상 100pt
+         정확한 pt 단위로 고정
+         예: .absolute(100) = 항상 100pt
 
          4. .estimated(예상값)
-            우선 전달한 값을 사용한 다음,
-            내부 콘텐츠와 Auto Layout을 기준으로 실제 크기를 조정
-            예: .estimated(150)
+         우선 전달한 값을 사용한 다음,
+         내부 콘텐츠와 Auto Layout을 기준으로 실제 크기를 조정
+         예: .estimated(150)
          */
         let itemSize = NSCollectionLayoutSize(
 
@@ -395,7 +413,7 @@ private extension HomeViewController {
          NSCollectionLayoutItem
          - 컬렉션뷰 셀 한 개가 차지하는 레이아웃 공간을 의미
          - 여기서는 멤버 한 명을 표시하는 셀 한 개
-         
+
          layoutSize:
          - 위에서 만든 itemSize를 셀의 크기로 사용
          */
@@ -407,7 +425,7 @@ private extension HomeViewController {
          contentInsets
          - Item이 할당받은 영역 안쪽에 여백을 추가
          - 셀 전체의 위치를 이동하는 것이 아니라
-           셀이 실제로 표시되는 영역을 안쪽으로 줄임
+         셀이 실제로 표시되는 영역을 안쪽으로 줄임
 
          NSDirectionalEdgeInsets의 매개변수
 
@@ -486,7 +504,7 @@ private extension HomeViewController {
 
          .custom(...)
          - 각 Item의 위치와 크기를 직접 계산해야 하는
-           특수한 형태의 레이아웃에서 사용
+         특수한 형태의 레이아웃에서 사용
          */
 
         /*
@@ -497,12 +515,12 @@ private extension HomeViewController {
          group:
          - 이 Section에서 반복해서 사용할 Group
          - 데이터가 Group 하나의 수용량보다 많으면
-           Collection View가 Group을 추가로 반복해서 배치
+         Collection View가 Group을 추가로 반복해서 배치
          */
         let section = NSCollectionLayoutSection(
             group: group
         )
-        
+
 
         /*
          Section 전체의 안쪽 여백
@@ -510,10 +528,10 @@ private extension HomeViewController {
          Item의 contentInsets와 차이:
          - item.contentInsets:
          개별 셀마다 적용되는 안쪽 여백
-         
+
          - section.contentInsets:
          섹션 전체와 컬렉션뷰 가장자리 사이의 여백
-         
+
          즉, 아래 값은 멤버 셀 각각이 아니라
          멤버 섹션 전체 바깥쪽에 적용됨
          */
@@ -523,11 +541,38 @@ private extension HomeViewController {
             bottom: 16,    // 섹션 아래쪽에 16pt
             trailing: 16   // 섹션 오른쪽에 16pt
         )
-        
+
         // 완성된 멤버 섹션 레이아웃을 반환
         return section
     }
-    
+
+    // MARK: - Hero + Member
+    private func makeHeroSection()
+    -> NSCollectionLayoutSection {
+
+        let viewHeight: CGFloat = self.view.bounds.width *  9 / 16
+
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .absolute(viewHeight + 60)
+        )
+
+        let item = NSCollectionLayoutItem(
+            layoutSize: itemSize
+        )
+
+        let group = NSCollectionLayoutGroup.vertical(
+            layoutSize: itemSize,
+            subitems: [item]
+        )
+
+        let section = NSCollectionLayoutSection(
+            group: group
+        )
+
+        return section
+    }
+
     // MARK: - 일정 목록을 가로 스크롤 카드로 배치하는 섹션 생성
     private func makeScheduleSection() -> NSCollectionLayoutSection {
 
@@ -559,104 +604,167 @@ private extension HomeViewController {
             group: group
         )
 
-        
+
 
         // 일정 카드와 다음 일정 카드 사이 간격
         section.interGroupSpacing = 6
 
         // 일정 섹션 바깥쪽 여백
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
+            top:0,
             leading: 16,
-            bottom: 0,
+            bottom: 32,
             trailing: 16
         )
-        
-        // 헤더 사이즈
-        let headerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),  // 좌우 전체 사용
-            heightDimension: .estimated(20)         // 예상 높이
-        )
 
-        let header = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
+        //        // 헤더 사이즈
+        //        let headerSize = NSCollectionLayoutSize(
+        //            widthDimension: .fractionalWidth(1.0),  // 좌우 전체 사용
+        //            heightDimension: .estimated(32)         // 예상 높이
+        //        )
+        //
+        //        let header = NSCollectionLayoutBoundarySupplementaryItem(
+        //            layoutSize: headerSize,
+        //            elementKind: UICollectionView.elementKindSectionHeader,
+        //            alignment: .top
+        //        )
+        //
+        //        section.boundarySupplementaryItems = [header]
 
-        section.boundarySupplementaryItems = [header]
-        
         return section
     }
-    
+
     // MARK: - 앨범 목록을 가로 스크롤 카드로 배치하는 섹션 생성
+    //    private func makeAlbumSection() -> NSCollectionLayoutSection {
+    //
+    //        /*
+    //         앨범 셀 한 개의 크기
+    //
+    //         - 한 Group에 앨범 셀 두 개를 배치
+    //         - 각 셀은 Group 가로 공간의 절반을 사용
+    //         - 높이는 Group 전체를 사용하여 두 셀의 높이를 동일
+    //         */
+    //        let itemSize = NSCollectionLayoutSize(
+    //            widthDimension: .fractionalWidth(1.0 / 2.0),
+    //            heightDimension: .fractionalHeight(1.0)
+    //        )
+    //
+    //        // 앨범 표지와 앨범 정보를 표시할 실제 셀 한 개를 생성
+    //        let item = NSCollectionLayoutItem(
+    //            layoutSize: itemSize
+    //        )
+    //
+    //        /*
+    //         앨범 카드 두 장을 한 줄에 담는 Group 크기
+    //
+    //         너비:
+    //         - 화면에서 사용할 수 있는 가로 공간 전체를 사용
+    //         - Group 내부에서 이 공간을 앨범 셀 두 개가 나누어 사용
+    //
+    //         높이 250pt:
+    //         - 화면 너비에 따라 결정되는 정사각형 앨범 표지
+    //         - 표지와 앨범명 사이 여백 8pt
+    //         - 최대 두 줄 앨범명
+    //         - 발매일과 내부 간격을 표시할 공간을 포함
+    //         */
+    //        let groupSize = NSCollectionLayoutSize(
+    //            widthDimension: .fractionalWidth(1.0),
+    //            heightDimension: .absolute(250)
+    //        )
+    //
+    //        // 같은 크기의 앨범 셀을 한 Group 안에 두 개씩 가로로 배치
+    //        let group = NSCollectionLayoutGroup.horizontal(
+    //            layoutSize: groupSize,
+    //            repeatingSubitem: item,
+    //            count: 2
+    //        )
+    //
+    //        // 같은 줄에 있는 두 앨범 카드 사이에 12pt 간격
+    //        group.interItemSpacing = .fixed(12)
+    //
+    //        // 두 개의 앨범을 담은 Group을 아래 방향으로 반복하는 섹션
+    //        let section = NSCollectionLayoutSection(
+    //            group: group
+    //        )
+    //
+    //        // 앨범 두 개로 구성된 줄과 다음 줄 사이의 세로 간격
+    //        section.interGroupSpacing = 16
+    //
+    //        // 일정 섹션 바깥쪽 여백
+    //        section.contentInsets = NSDirectionalEdgeInsets(
+    //            top:0,
+    //            leading: 16,
+    //            bottom: 32,
+    //            trailing: 16
+    //        )
+    //
+    //        // 앨범 섹션 제목을 표시할 헤더의 크기입니다.
+    //        let headerSize = NSCollectionLayoutSize(
+    //            widthDimension: .fractionalWidth(1.0),
+    //            heightDimension: .estimated(35)
+    //        )
+    //
+    //        // 섹션 상단에 헤더를 배치합니다.
+    //        let header = NSCollectionLayoutBoundarySupplementaryItem(
+    //            layoutSize: headerSize,
+    //            elementKind: UICollectionView.elementKindSectionHeader,
+    //            alignment: .top
+    //        )
+    //
+    //        // 레이아웃이 헤더를 요청할 수 있도록 섹션에 등록합니다.
+    //        section.boundarySupplementaryItems = [header]
+    //
+    //        return section
+    //    }
     private func makeAlbumSection() -> NSCollectionLayoutSection {
 
         /*
          앨범 셀 한 개의 크기
-
-         - 한 Group에 앨범 셀 두 개를 배치합니다.
-         - 각 셀은 Group 가로 공간의 절반을 사용합니다.
-         - 높이는 Group 전체를 사용하여 두 셀의 높이를 동일하게 맞춥니다.
          */
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0 / 2.0),
+            widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
         )
 
-        // 앨범 표지와 앨범 정보를 표시할 실제 셀 한 개를 생성합니다.
+        // 앨범 표지와 앨범 정보를 표시할 실제 셀 한 개를 생성
         let item = NSCollectionLayoutItem(
             layoutSize: itemSize
         )
 
-        /*
-         앨범 카드 두 장을 한 줄에 담는 Group 크기
-
-         너비:
-         - 화면에서 사용할 수 있는 가로 공간 전체를 사용합니다.
-         - Group 내부에서 이 공간을 앨범 셀 두 개가 나누어 사용합니다.
-
-         높이 250pt:
-         - 화면 너비에 따라 결정되는 정사각형 앨범 표지
-         - 표지와 앨범명 사이 여백 8pt
-         - 최대 두 줄 앨범명
-         - 발매일과 내부 간격을 표시할 공간을 포함합니다.
-         */
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(250)
-        )
+                widthDimension: .absolute(140),
+                heightDimension: .absolute(180)
+            )
 
-        // 같은 크기의 앨범 셀을 한 Group 안에 두 개씩 가로로 배치합니다.
+        // 같은 크기의 앨범 셀을 한 Group 안에 두 개씩 가로로 배치
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,
-            repeatingSubitem: item,
-            count: 2
+            subitems: [item]
         )
 
-        // 같은 줄에 있는 두 앨범 카드 사이에 12pt 간격을 둡니다.
-        group.interItemSpacing = .fixed(12)
-
-        // 두 개의 앨범을 담은 Group을 아래 방향으로 반복하는 섹션입니다.
+        // 두 개의 앨범을 담은 Group을 아래 방향으로 반복하는 섹션
         let section = NSCollectionLayoutSection(
             group: group
         )
 
-        // 앨범 두 개로 구성된 줄과 다음 줄 사이의 세로 간격입니다.
-        section.interGroupSpacing = 16
+        // 가로 스크롤
+        section.orthogonalScrollingBehavior = .continuous
 
-        // 앨범 섹션과 화면 가장자리 사이의 여백입니다.
+        // 앨범 두 개로 구성된 줄과 다음 줄 사이의 세로 간격
+        section.interGroupSpacing = 12
+
+        // 일정 섹션 바깥쪽 여백
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
+            top:0,
             leading: 16,
-            bottom: 20,
+            bottom: 32,
             trailing: 16
         )
 
         // 앨범 섹션 제목을 표시할 헤더의 크기입니다.
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(32)
+            heightDimension: .estimated(35)
         )
 
         // 섹션 상단에 헤더를 배치합니다.
@@ -673,6 +781,13 @@ private extension HomeViewController {
     }
 }
 
+extension HomeViewController {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // 스크롤이 최상단 이상으로 올라가지 못하도록 상단 바운스 제어
+        collectionView.bounces = collectionView.contentOffset.y > 0
+    }
+}
+
 // MARK: - 홈 컬렉션뷰에서 표시할 섹션 종류
 nonisolated private enum HomeSection: Int, CaseIterable {
     case members       // 멤버 목록 섹션
@@ -683,7 +798,7 @@ nonisolated private enum HomeSection: Int, CaseIterable {
 
 // MARK: - 홈 컬렉션뷰에서 표시할 아이템 종류
 nonisolated private enum HomeItem: Hashable {
-    case member(MemberEntity)               // 멤버 한 명
+    case member([MemberEntity])               // 멤버 한 명
     case schedule(HomeScheduleCardModel)    // 일정 한 개
     case albums(Album)                             // 앨범
     case otherAlbums(Album)                        // OST등 프로미스나인 이외의 음원 활동
