@@ -98,13 +98,13 @@ private extension FeedGridTestView {
 
     @MainActor
     func loadFeeds() async {
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            feeds = try await repository.fetchFeeds(limit: 20)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+//        isLoading = true
+//        defer { isLoading = false }
+//
+//        do {
+//            feeds = try await repository.fetchFeeds(limit: 20)
+//        } catch {
+//            errorMessage = error.localizedDescription
+//        }
     }
 }

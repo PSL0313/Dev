@@ -5,7 +5,7 @@
 //  Created by 박선린 on 8/8/26.
 //
 
-enum MemberCode: String, Decodable{
+nonisolated enum MemberCode: String, Codable, Sendable, Equatable, Hashable {
     case hayoung
     case jiwon
     case chaeyoung

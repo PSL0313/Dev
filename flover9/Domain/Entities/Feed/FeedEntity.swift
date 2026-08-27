@@ -7,7 +7,7 @@
 import Foundation
 
 // MARK: - 앱의 화면과 비즈니스 로직에서 사용하는 피드 정보
-struct FeedEntity: Identifiable, Equatable {
+nonisolated struct FeedEntity: Identifiable, Sendable, Equatable {
     let id: UUID                       // 피드 식별자
     let title: String?                 // 피드 제목
     let sourceName: String?            // 콘텐츠 출처 이름

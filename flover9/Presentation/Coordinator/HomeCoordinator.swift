@@ -91,7 +91,7 @@ final class HomeCoordinator: BaseCoordinator {
     }
     
     private func showMemberProfileView(member: MemberEntity) {
-        let vc = MemberProfileViewViewController(member)
+        let vc = MemberProfileViewViewController(viewModel: container.getMemberProfileViewModel(member))
         self.navigationController.pushViewController(vc, animated: true)
     }
 }

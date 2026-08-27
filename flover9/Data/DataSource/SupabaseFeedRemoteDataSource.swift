@@ -16,38 +16,63 @@ final class SupabaseFeedRemoteDataSource: FeedRemoteDataSourceProtocol {
     }
 
     // MARK: - 특정 멤버와 연결된 피드 목록 요약 조회
-    func fetchFeeds(memberCode: MemberCode = .jiheon, limit: Int) async throws -> [FeedResponseDTO] {
+    func fetchFeeds(memberCode: MemberCode? = nil, limit: Int, offset: Int) async throws -> FeedPageDTO {
         do {
-            return try await supabase
+            guard limit > 0 else {
+                return FeedPageDTO(feeds: [], hasMore: false)
+            }
+
+            let feedMemberJoin = memberCode == nil ? "" : ", feed_members!inner()"
+
+            let columns = """
+            id,
+            user_id,
+            title,
+            source_name,
+            description,
+            capture_date,
+            uploaded_at,
+            source,
+            permalink,
+            thumbnail_url,
+            display_type,
+            content_count
+            \(feedMemberJoin)
+            """
+
+            // 쿼리 생성: 조회할 테이블과 칼럼 추가
+            var query = supabase
                 .from("feeds")
-                .select(
-                """
-                id,
-                user_id,
-                title,
-                source_name,
-                description,
-                capture_date,
-                uploaded_at,
-                source,
-                permalink,
-                thumbnail_url,
-                display_type,
-                content_count,
-                feed_members!inner()
-                """
-                )
-                .eq(
+                .select(columns)
+
+            // memberCode가 있을 때만 특정 멤버로 필터 추가
+            if let memberCode {
+                query = query.eq(
                     "feed_members.member",
                     value: memberCode.rawValue
                 )
+            }
+
+            // 범위 조회를 위한 오프셋 값
+            let start = max(offset, 0)
+
+            // 실행
+            let result: [FeedResponseDTO] = try await query
                 .order("capture_date", ascending: false)
                 .order("id", ascending: false)
-                .limit(limit)
+                .range(
+                    from: start,
+                    to: start + limit - 1
+                )
                 .execute()
                 .value
+
+            return FeedPageDTO(
+                feeds: result,
+                hasMore: result.count == limit
+            )
         } catch {
-            throw SupabaseDataError.map(error) // SDK 오류를 Data 계층 오류로 통일
+            throw SupabaseDataError.map(error)
         }
     }
 
