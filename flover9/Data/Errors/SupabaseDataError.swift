@@ -5,6 +5,7 @@
 //  Created by 박선린 on 8/11/26.
 //
 import Foundation
+import Functions
 import Supabase
 
 // MARK: - Supabase SDK 오류를 Data 계층에서 공통으로 분류한 오류
@@ -30,6 +31,9 @@ nonisolated enum SupabaseDataError: Error, Sendable, Equatable {
                  .cannotFindHost:
                 return .network
 
+            case .badServerResponse:
+                return .database
+
             default:
                 return .unknown
             }
@@ -37,6 +41,22 @@ nonisolated enum SupabaseDataError: Error, Sendable, Equatable {
 
         if let postgrestError = error as? PostgrestError {
             return mapPostgrestError(postgrestError)
+        }
+
+        if let functionsError = error as? FunctionsError {
+            switch functionsError {
+            case .httpError(let code, _):
+                switch code {
+                case 401, 403:
+                    return .unauthorized
+                case 404:
+                    return .notFound
+                default:
+                    return .database
+                }
+            case .relayError:
+                return .database
+            }
         }
 
         return .unknown

@@ -10,16 +10,15 @@ nonisolated enum FeedMediaType: String, Codable, Sendable, Equatable {
     case jpeg = "image/jpeg"                              // JPEG 이미지
     case png = "image/png"                                // PNG 이미지
     case webp = "image/webp"                              // WebP 이미지
-    case avif = "image/avif"                              // AVIF 이미지
+    case heic = "image/heic"                              // HEIC 이미지
     case mp4 = "video/mp4"                                // MP4 영상
-    case hls = "application/vnd.apple.mpegurl"            // HLS 재생 목록
 
     // MARK: - 이미지로 표시할 수 있는 콘텐츠인지 확인
     var isImage: Bool {
         switch self {
-        case .jpeg, .png, .webp, .avif:
+        case .jpeg, .png, .webp, .heic:
             return true                                    // 이미지 MIME 타입
-        case .mp4, .hls:
+        case .mp4:
             return false                                   // 영상 MIME 타입
         }
     }

@@ -60,6 +60,30 @@ final class FirebaseErrorLogger: ErrorLogging, @unchecked Sendable {
             logAnalytics(error)                 // 세션 상태 이상 기록
         }
     }
+
+    func record(_ error: MediaUploadError) async {
+        switch error {
+        case .emptyMedia,
+             .invalidFile,
+             .unsupportedMediaType,
+             .fileTooLarge,
+             .duplicatedSortOrder:
+            return                              // 사용자 입력 단계에서 안내할 오류
+
+        case .unauthenticated,
+             .permissionDenied,
+             .networkUnavailable,
+             .cleanupPending:
+            logAnalytics(error)                 // 운영 상태와 발생 빈도 기록
+
+        case .uploadFailed,
+             .finalizationFailed,
+             .serverUnavailable,
+             .unknown:
+            logAnalytics(error)
+            recordCrashlytics(error)            // 서버/R2 계약 오류 상세 기록
+        }
+    }
 }
 
 private extension FirebaseErrorLogger {
@@ -84,6 +108,16 @@ private extension FirebaseErrorLogger {
         )
     }
 
+    // MARK: - 미디어 업로드 오류 발생 횟수를 Analytics 이벤트로 기록
+    func logAnalytics(_ error: MediaUploadError) {
+        Analytics.logEvent(
+            "media_upload_error",
+            parameters: [
+                "error_type": String(describing: error)
+            ]
+        )
+    }
+
     // MARK: - 인증 오류의 상세 내용을 Crashlytics에 기록
     func recordCrashlytics(_ error: AuthError) {
         Crashlytics.crashlytics().record(
@@ -102,6 +136,19 @@ private extension FirebaseErrorLogger {
         Crashlytics.crashlytics().record(
             error: NSError(
                 domain: "Flover9.Profile",
+                code: errorCode(for: error),
+                userInfo: [
+                    NSLocalizedDescriptionKey: error.userMessage
+                ]
+            )
+        )
+    }
+
+    // MARK: - 미디어 업로드 오류의 상세 내용을 Crashlytics에 기록
+    func recordCrashlytics(_ error: MediaUploadError) {
+        Crashlytics.crashlytics().record(
+            error: NSError(
+                domain: "Flover9.MediaUpload",
                 code: errorCode(for: error),
                 userInfo: [
                     NSLocalizedDescriptionKey: error.userMessage
@@ -137,6 +184,25 @@ private extension FirebaseErrorLogger {
         case .networkUnavailable: return 2007
         case .serverUnavailable: return 2008
         case .unknown: return 2099
+        }
+    }
+
+    // MARK: - 미디어 업로드 오류에 안정적인 숫자 식별자 부여
+    func errorCode(for error: MediaUploadError) -> Int {
+        switch error {
+        case .unauthenticated: return 7000
+        case .permissionDenied: return 7001
+        case .emptyMedia: return 7002
+        case .invalidFile: return 7003
+        case .unsupportedMediaType: return 7004
+        case .fileTooLarge: return 7005
+        case .duplicatedSortOrder: return 7006
+        case .uploadFailed: return 7007
+        case .finalizationFailed: return 7008
+        case .cleanupPending: return 7009
+        case .networkUnavailable: return 7010
+        case .serverUnavailable: return 7011
+        case .unknown: return 7099
         }
     }
 }
