@@ -129,7 +129,10 @@ final class AppDIContainer {
     }()
 
     private lazy var deleteAccountUseCase: DeleteAccountUseCaseProtocol = {
-        DeleteAccountUseCase(authRepository: authRepository)
+        DeleteAccountUseCase(
+            authRepository: authRepository,
+            userSessionStore: userSessionStore
+        )
     }()
 
     private lazy var signOutUseCase: SignOutUseCaseProtocol = {

@@ -17,7 +17,7 @@ actor UserSessionStore {
         self.profile = profile                  // 사용자 프로필 저장
     }
 
-    // MARK: - 현재 사용자 정보 조회
+    // MARK: - 현재 사용자 정보 세션, 프로필 조회
     func currentUser() -> (session: AuthSession,profile: UserProfile)? {
         guard
             let session,
@@ -27,6 +27,11 @@ actor UserSessionStore {
         }
 
         return (session, profile)               // 현재 사용자 정보 반환
+    }
+    
+    /// 현재 사용자의 프로필만 조회
+    func currentUseRole() -> UserRole? {
+        return self.profile?.role
     }
 
     // MARK: - 수정된 프로필 교체

@@ -10,9 +10,14 @@
 final class DeleteAccountUseCase: DeleteAccountUseCaseProtocol {
 
     private let authRepository: AuthRepositoryProtocol
+    private let userSessionStore: UserSessionStore
 
-    init(authRepository: AuthRepositoryProtocol) {
+    init(
+        authRepository: AuthRepositoryProtocol,
+        userSessionStore: UserSessionStore
+    ) {
         self.authRepository = authRepository
+        self.userSessionStore = userSessionStore
     }
 
     func execute(credential: AppleSignInCredential) async throws {
@@ -23,5 +28,6 @@ final class DeleteAccountUseCase: DeleteAccountUseCaseProtocol {
         try await authRepository.deleteAccount(
             authorizationCode: authorizationCode
         )
+        await userSessionStore.clear()                 // 접수 완료 후 메모리 세션 제거
     }
 }
