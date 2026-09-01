@@ -209,7 +209,8 @@ final class AppDIContainer {
         return LaunchViewModel(
             checkAppAvailabilityUseCase: checkAppAvailabilityUseCase,
             restoreUserSessionUseCase: restoreUserSessionUseCase,
-            errorLogger: errorLogger
+            errorLogger: errorLogger,
+            musicAuthorizationService: makeMusicAuthorizationService()
         )
     }
 
@@ -247,13 +248,20 @@ final class AppDIContainer {
 
 }
 
+// MARK: - Platform
 extension AppDIContainer {
-    // MARK: - Apple 인증 화면을 처리하는 서비스 생성
+    // Apple 인증 화면을 처리하는 서비스 생성
     func makeAppleSignInService() -> AppleSignInService {
         AppleSignInService()
     }
 
+    // 애플 뮤직
     func makeAppleMusicCatalogService() -> AppleMusicCatalogService {
         AppleMusicCatalogService()
+    }
+    
+    // 애플 뮤직 권한 설정 상태와 요청 관리 객체
+    func makeMusicAuthorizationService() -> MusicAuthorizationService {
+        MusicAuthorizationService()
     }
 }

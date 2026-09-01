@@ -55,10 +55,6 @@ struct AppleMusicCatalogService {
             throw AppleMusicCatalogError.albumNotFound
         }
 
-        print("요청 ID:", id)
-        print("응답 ID:", album.id.rawValue)
-        print("재생 정보:", album.playParameters as Any)
-        
         return album
     }
     
