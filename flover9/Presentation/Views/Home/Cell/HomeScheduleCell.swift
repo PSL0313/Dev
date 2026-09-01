@@ -58,7 +58,7 @@ final class HomeScheduleCell: UICollectionViewCell {
         )
 
         label.textColor = .label
-        label.numberOfLines = 1
+        label.numberOfLines = 2
         label.lineBreakMode = .byTruncatingTail
 
         return label
@@ -254,7 +254,7 @@ final class HomeScheduleCell: UICollectionViewCell {
         stackView.alignment = .fill
 
         // 각 행 사이의 간격은 아래에서 별도로 조정한다.
-        stackView.spacing = 8
+        stackView.spacing = 0
 
         return stackView
     }()
@@ -368,10 +368,6 @@ private extension HomeScheduleCell {
     /// 셀 자체의 시각적 스타일을 설정한다.
     func configureUI() {
         contentView.backgroundColor = .systemBackground
-
-        // 참고 이미지의 카드 라운드 정도에 맞춤
-        contentView.layer.cornerRadius = 14
-        contentView.clipsToBounds = true
     }
 
     /// View hierarchy를 구성한다.
@@ -389,14 +385,14 @@ private extension HomeScheduleCell {
         // 참고 이미지 기준 약 16pt 좌우,
         // 약 10pt 상하 내부 여백
         contentStackView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview()/*.inset(10)*/
-            $0.verticalEdges.equalToSuperview()/*.inset(10)*/
+            $0.horizontalEdges.equalToSuperview()
+            $0.verticalEdges.equalToSuperview()
         }
 
         // D-Day 배지는 왼쪽에만 붙이고
         // trailing 제약을 주지 않는다.
         //
-        // 따라서 Label의 intrinsicContentSize만큼만
+        // Label의 intrinsicContentSize만큼만
         // 초록색 배경을 가진다.
         dDayLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()

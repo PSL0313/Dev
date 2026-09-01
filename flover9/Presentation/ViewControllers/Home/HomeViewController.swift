@@ -58,9 +58,10 @@ class HomeViewController: UIViewController {
 
     // MARK: - Properties
     private let viewModel: HomeViewModel
+    private let layoutFactory = HomeCollectionViewLayoutFactory()
 
     // MARK: - 홈 컬렉션뷰의 섹션과 아이템을 관리하는 데이터 소스
-    private var dataSource: UICollectionViewDiffableDataSource<HomeSection, HomeItem>!
+    private lazy var dataSource: UICollectionViewDiffableDataSource<HomeSection, HomeItem> = configureDataSource()
 
     // MARK: - Initializer
     init(viewModel: HomeViewModel) {
@@ -83,8 +84,6 @@ class HomeViewController: UIViewController {
 
         // CollectionView Setting
         collectionView.delegate = self
-        configureDataSource()
-        configureSectionHeader()
 
         // ViewModel Setting
         bindViewModel()
@@ -138,11 +137,9 @@ extension HomeViewController: UICollectionViewDelegate {
 
         switch item {
         case .member:
-            print("그룹 선택")
-
+            break
         case .schedule(let schedule):
             viewModel.action(.moveToSchedule(schedule.id))
-            print("일정 선택:", schedule.title)
 
         case .albums(let album):
             let detailViewController = TestAlbumDetailViewController(
@@ -172,7 +169,8 @@ extension HomeViewController: UICollectionViewDelegate {
 extension HomeViewController {
 
     // MARK: - 아이템 종류에 따라 사용할 셀을 결정
-    private func configureDataSource() {
+    private func configureDataSource() -> UICollectionViewDiffableDataSource<HomeSection, HomeItem> {
+        // 데이터소스 설정
         dataSource =
         UICollectionViewDiffableDataSource<HomeSection, HomeItem>(collectionView: collectionView ) { collectionView, indexPath, item in
 
@@ -217,9 +215,8 @@ extension HomeViewController {
                 return cell
             }
         }
-    }
-
-    private func configureSectionHeader() {
+        
+        // 섹션별 헤더 설정
         dataSource.supplementaryViewProvider = {
             [weak self] collectionView, kind, indexPath in
             guard let self else { return nil }
@@ -245,22 +242,24 @@ extension HomeViewController {
             }
             switch section {
             case .members:
-                header.configure(headerType: .member) {}
+                header.configure(headerType: .member)
             case .schedules:
                 header.configure(headerType: .upComingSchedule) { [weak self] in
                     guard let self else { return }
                     viewModel.action(.moveToAllSchedule)
                 }
             case .albums:
-                header.configure(headerType: .albums) {}
+                header.configure(headerType: .albums)
 
             case .otherAlbums:
-                header.configure(headerType: .otherAlbums) {}
+                header.configure(headerType: .otherAlbums)
 
             }
 
             return header
         }
+        
+        return dataSource
     }
 
     // MARK: - 현재 홈 데이터를 컬렉션뷰에 반영
@@ -277,9 +276,8 @@ extension HomeViewController {
             .albums,
             .otherAlbums
         ])
-
-        snapshot.appendItems(
-            [
+        
+        snapshot.appendItems([
                 .member(viewModel.members)
             ],
             toSection: .members
@@ -324,7 +322,7 @@ extension HomeViewController {
             toSection: .otherAlbums
         )
 
-        UIView.animate(withDuration: 0.2, animations: {
+        UIView.animate(withDuration: 0.5, animations: {
             self.dataSource.apply(
                 snapshot,
                 animatingDifferences: true
@@ -336,448 +334,18 @@ extension HomeViewController {
 
 // MARK: - CollectionView Layout
 private extension HomeViewController {
-    // MARK: - 홈 컬렉션뷰의 섹션별 레이아웃 생성
-    private func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout {
-            [weak self] sectionIndex, _ in
 
+    func createLayout() -> UICollectionViewLayout {
+        layoutFactory.makeLayout { [weak self] sectionIndex in
             guard let self else {
                 return nil
             }
 
-            // 현재 snapshot에서 sectionIndex에 해당하는 섹션을 조회
-            let sections = self.dataSource.snapshot().sectionIdentifiers
-
-            guard sections.indices.contains(sectionIndex) else {
-                return nil
-            }
-
-            let section = sections[sectionIndex]
-
-            // 섹션 종류에 맞는 레이아웃 반환
-            switch section {
-            case .members:
-                return self.makeHeroSection()
-            case .schedules:
-                return self.makeScheduleSection()
-            case .albums:
-                return self.makeAlbumSection()
-            case .otherAlbums:
-                return self.makeAlbumSection()
-            }
+            let sections = dataSource.snapshot().sectionIdentifiers
+            return sections.indices.contains(sectionIndex)
+                ? sections[sectionIndex]
+                : nil
         }
-        return layout
-
-    }
-
-    // MARK: - 멤버 섹션의 크기와 배치 생성
-    private func makeMemberSection() -> NSCollectionLayoutSection {
-
-        /*
-         NSCollectionLayoutSize
-         - widthDimension: 가로 크기를 결정
-         - heightDimension: 세로 크기를 결정
-
-         사용할 수 있는 대표적인 크기 지정 방식
-
-         1. .fractionalWidth(비율)
-         부모 영역의 가로 크기를 기준으로 계산
-         1.0 = 부모 너비의 100%
-         0.5 = 부모 너비의 50%
-
-         2. .fractionalHeight(비율)
-         부모 영역의 세로 크기를 기준으로 계산
-         1.0 = 부모 높이의 100%
-         0.5 = 부모 높이의 50%
-
-         3. .absolute(고정값)
-         정확한 pt 단위로 고정
-         예: .absolute(100) = 항상 100pt
-
-         4. .estimated(예상값)
-         우선 전달한 값을 사용한 다음,
-         내부 콘텐츠와 Auto Layout을 기준으로 실제 크기를 조정
-         예: .estimated(150)
-         */
-        let itemSize = NSCollectionLayoutSize(
-
-            // Item이 속한 Group 너비의 1/5을 사용
-            // 멤버 다섯 명을 한 줄에 배치하기 위한 너비
-            widthDimension: .fractionalWidth(1.0 / 5.0),
-
-            // Item이 속한 Group 높이의 100%를 사용
-            heightDimension: .fractionalHeight(1.0)
-        )
-
-        /*
-         NSCollectionLayoutItem
-         - 컬렉션뷰 셀 한 개가 차지하는 레이아웃 공간을 의미
-         - 여기서는 멤버 한 명을 표시하는 셀 한 개
-
-         layoutSize:
-         - 위에서 만든 itemSize를 셀의 크기로 사용
-         */
-        let item = NSCollectionLayoutItem(
-            layoutSize: itemSize
-        )
-
-        /*
-         contentInsets
-         - Item이 할당받은 영역 안쪽에 여백을 추가
-         - 셀 전체의 위치를 이동하는 것이 아니라
-         셀이 실제로 표시되는 영역을 안쪽으로 줄임
-
-         NSDirectionalEdgeInsets의 매개변수
-
-         top:
-         - 위쪽 안쪽 여백
-
-         leading:
-         - 글자 진행 방향의 시작 부분 여백
-         - 한국어·영어처럼 왼쪽에서 오른쪽으로 읽는 환경에서는 왼쪽
-
-         bottom:
-         - 아래쪽 안쪽 여백
-
-         trailing:
-         - 글자 진행 방향의 끝부분 여백
-         - 한국어·영어 환경에서는 오른쪽
-         */
-        item.contentInsets = NSDirectionalEdgeInsets(
-            top: 3,       // 셀 위쪽 여백 없음
-            leading: 3,   // 셀 왼쪽에 3pt 여백
-            bottom: 3,    // 셀 아래쪽 여백 없음
-            trailing: 3   // 셀 오른쪽에 3pt 여백
-        )
-
-        /*
-         Group 전체의 크기 설정
-
-         Group:
-         - 여러 Item을 한 번에 배치하는 공간
-         - 여기서는 멤버 셀 다섯 개를 담는 한 줄
-
-         widthDimension: .fractionalWidth(1.0)
-         - Section에서 사용할 수 있는 가로 공간의 100% 사용
-
-         heightDimension: .estimated(150)
-         - 그룹 높이를 우선 150pt로 예상
-         - 셀 내부 Auto Layout과 콘텐츠에 따라 실제 높이가 조정될 수 있음
-         */
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(90)
-        )
-
-        /*
-         NSCollectionLayoutGroup.horizontal
-         - Item을 가로 방향으로 배치하는 Group 생성
-
-         layoutSize:
-         - Group 전체의 크기
-         - 위에서 만든 groupSize 사용
-
-         repeatingSubitem:
-         - 반복해서 배치할 Item
-         - 여기서는 동일한 형태의 멤버 셀
-
-         count:
-         - 한 Group 안에 반복해서 배치할 Item 개수
-         - 5이므로 한 줄에 멤버 셀 다섯 개 배치
-         */
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            repeatingSubitem: item,
-            count: 5
-        )
-
-        /*
-         Group 배치 방향의 종류
-
-         .horizontal(...)
-         - Item을 왼쪽에서 오른쪽으로 배치
-         - 현재 멤버 목록처럼 한 줄에 여러 셀을 표시할 때 사용
-
-         .vertical(...)
-         - Item을 위에서 아래로 배치
-         - 여러 셀을 세로로 쌓을 때 사용
-
-         .custom(...)
-         - 각 Item의 위치와 크기를 직접 계산해야 하는
-         특수한 형태의 레이아웃에서 사용
-         */
-
-        /*
-         NSCollectionLayoutSection
-         - 하나 이상의 Group을 반복해서 표시하는 화면 영역
-         - 여기서는 멤버 목록 전체 영역
-
-         group:
-         - 이 Section에서 반복해서 사용할 Group
-         - 데이터가 Group 하나의 수용량보다 많으면
-         Collection View가 Group을 추가로 반복해서 배치
-         */
-        let section = NSCollectionLayoutSection(
-            group: group
-        )
-
-
-        /*
-         Section 전체의 안쪽 여백
-
-         Item의 contentInsets와 차이:
-         - item.contentInsets:
-         개별 셀마다 적용되는 안쪽 여백
-
-         - section.contentInsets:
-         섹션 전체와 컬렉션뷰 가장자리 사이의 여백
-
-         즉, 아래 값은 멤버 셀 각각이 아니라
-         멤버 섹션 전체 바깥쪽에 적용됨
-         */
-        section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,       // 섹션 위쪽에 16pt
-            leading: 16,   // 섹션 왼쪽에 16pt
-            bottom: 16,    // 섹션 아래쪽에 16pt
-            trailing: 16   // 섹션 오른쪽에 16pt
-        )
-
-        // 완성된 멤버 섹션 레이아웃을 반환
-        return section
-    }
-
-    // MARK: - Hero + Member
-    private func makeHeroSection()
-    -> NSCollectionLayoutSection {
-
-        let viewHeight: CGFloat = self.view.bounds.width *  9 / 16
-
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(viewHeight + 60)
-        )
-
-        let item = NSCollectionLayoutItem(
-            layoutSize: itemSize
-        )
-
-        let group = NSCollectionLayoutGroup.vertical(
-            layoutSize: itemSize,
-            subitems: [item]
-        )
-
-        let section = NSCollectionLayoutSection(
-            group: group
-        )
-
-        return section
-    }
-
-    // MARK: - 일정 목록을 가로 스크롤 카드로 배치하는 섹션 생성
-    private func makeScheduleSection() -> NSCollectionLayoutSection {
-
-        // 일정 카드 한 개의 크기
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),    // 소속 그룹 너비 전체 사용
-            heightDimension: .fractionalHeight(1.0)   // 소속 그룹 높이 전체 사용
-        )
-
-        // 실제 일정 셀 한 개를 의미
-        let item = NSCollectionLayoutItem(
-            layoutSize: itemSize
-        )
-
-        // 일정 카드 한 장을 담는 그룹 크기
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),   // 화면 너비의 100%
-            heightDimension: .absolute(100)           // 카드 높이 120pt
-        )
-
-        // 한 그룹 안에 일정 카드 한 개를 가로 방향으로 배치
-        let group = NSCollectionLayoutGroup.vertical(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
-
-        // 일정 그룹을 담는 섹션 생성
-        let section = NSCollectionLayoutSection(
-            group: group
-        )
-
-
-
-        // 일정 카드와 다음 일정 카드 사이 간격
-        section.interGroupSpacing = 6
-
-        // 일정 섹션 바깥쪽 여백
-        section.contentInsets = NSDirectionalEdgeInsets(
-            top:0,
-            leading: 16,
-            bottom: 32,
-            trailing: 16
-        )
-
-        //        // 헤더 사이즈
-        //        let headerSize = NSCollectionLayoutSize(
-        //            widthDimension: .fractionalWidth(1.0),  // 좌우 전체 사용
-        //            heightDimension: .estimated(32)         // 예상 높이
-        //        )
-        //
-        //        let header = NSCollectionLayoutBoundarySupplementaryItem(
-        //            layoutSize: headerSize,
-        //            elementKind: UICollectionView.elementKindSectionHeader,
-        //            alignment: .top
-        //        )
-        //
-        //        section.boundarySupplementaryItems = [header]
-
-        return section
-    }
-
-    // MARK: - 앨범 목록을 가로 스크롤 카드로 배치하는 섹션 생성
-    //    private func makeAlbumSection() -> NSCollectionLayoutSection {
-    //
-    //        /*
-    //         앨범 셀 한 개의 크기
-    //
-    //         - 한 Group에 앨범 셀 두 개를 배치
-    //         - 각 셀은 Group 가로 공간의 절반을 사용
-    //         - 높이는 Group 전체를 사용하여 두 셀의 높이를 동일
-    //         */
-    //        let itemSize = NSCollectionLayoutSize(
-    //            widthDimension: .fractionalWidth(1.0 / 2.0),
-    //            heightDimension: .fractionalHeight(1.0)
-    //        )
-    //
-    //        // 앨범 표지와 앨범 정보를 표시할 실제 셀 한 개를 생성
-    //        let item = NSCollectionLayoutItem(
-    //            layoutSize: itemSize
-    //        )
-    //
-    //        /*
-    //         앨범 카드 두 장을 한 줄에 담는 Group 크기
-    //
-    //         너비:
-    //         - 화면에서 사용할 수 있는 가로 공간 전체를 사용
-    //         - Group 내부에서 이 공간을 앨범 셀 두 개가 나누어 사용
-    //
-    //         높이 250pt:
-    //         - 화면 너비에 따라 결정되는 정사각형 앨범 표지
-    //         - 표지와 앨범명 사이 여백 8pt
-    //         - 최대 두 줄 앨범명
-    //         - 발매일과 내부 간격을 표시할 공간을 포함
-    //         */
-    //        let groupSize = NSCollectionLayoutSize(
-    //            widthDimension: .fractionalWidth(1.0),
-    //            heightDimension: .absolute(250)
-    //        )
-    //
-    //        // 같은 크기의 앨범 셀을 한 Group 안에 두 개씩 가로로 배치
-    //        let group = NSCollectionLayoutGroup.horizontal(
-    //            layoutSize: groupSize,
-    //            repeatingSubitem: item,
-    //            count: 2
-    //        )
-    //
-    //        // 같은 줄에 있는 두 앨범 카드 사이에 12pt 간격
-    //        group.interItemSpacing = .fixed(12)
-    //
-    //        // 두 개의 앨범을 담은 Group을 아래 방향으로 반복하는 섹션
-    //        let section = NSCollectionLayoutSection(
-    //            group: group
-    //        )
-    //
-    //        // 앨범 두 개로 구성된 줄과 다음 줄 사이의 세로 간격
-    //        section.interGroupSpacing = 16
-    //
-    //        // 일정 섹션 바깥쪽 여백
-    //        section.contentInsets = NSDirectionalEdgeInsets(
-    //            top:0,
-    //            leading: 16,
-    //            bottom: 32,
-    //            trailing: 16
-    //        )
-    //
-    //        // 앨범 섹션 제목을 표시할 헤더의 크기입니다.
-    //        let headerSize = NSCollectionLayoutSize(
-    //            widthDimension: .fractionalWidth(1.0),
-    //            heightDimension: .estimated(35)
-    //        )
-    //
-    //        // 섹션 상단에 헤더를 배치합니다.
-    //        let header = NSCollectionLayoutBoundarySupplementaryItem(
-    //            layoutSize: headerSize,
-    //            elementKind: UICollectionView.elementKindSectionHeader,
-    //            alignment: .top
-    //        )
-    //
-    //        // 레이아웃이 헤더를 요청할 수 있도록 섹션에 등록합니다.
-    //        section.boundarySupplementaryItems = [header]
-    //
-    //        return section
-    //    }
-    private func makeAlbumSection() -> NSCollectionLayoutSection {
-
-        /*
-         앨범 셀 한 개의 크기
-         */
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(1.0)
-        )
-
-        // 앨범 표지와 앨범 정보를 표시할 실제 셀 한 개를 생성
-        let item = NSCollectionLayoutItem(
-            layoutSize: itemSize
-        )
-
-        let groupSize = NSCollectionLayoutSize(
-                widthDimension: .absolute(140),
-                heightDimension: .absolute(180)
-            )
-
-        // 같은 크기의 앨범 셀을 한 Group 안에 두 개씩 가로로 배치
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
-
-        // 두 개의 앨범을 담은 Group을 아래 방향으로 반복하는 섹션
-        let section = NSCollectionLayoutSection(
-            group: group
-        )
-
-        // 가로 스크롤
-        section.orthogonalScrollingBehavior = .continuous
-
-        // 앨범 두 개로 구성된 줄과 다음 줄 사이의 세로 간격
-        section.interGroupSpacing = 12
-
-        // 일정 섹션 바깥쪽 여백
-        section.contentInsets = NSDirectionalEdgeInsets(
-            top:0,
-            leading: 16,
-            bottom: 32,
-            trailing: 16
-        )
-
-        // 앨범 섹션 제목을 표시할 헤더의 크기입니다.
-        let headerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(35)
-        )
-
-        // 섹션 상단에 헤더를 배치합니다.
-        let header = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-
-        // 레이아웃이 헤더를 요청할 수 있도록 섹션에 등록합니다.
-        section.boundarySupplementaryItems = [header]
-
-        return section
     }
 }
 
@@ -789,7 +357,7 @@ extension HomeViewController {
 }
 
 // MARK: - 홈 컬렉션뷰에서 표시할 섹션 종류
-nonisolated private enum HomeSection: Int, CaseIterable {
+nonisolated enum HomeSection: Int, CaseIterable {
     case members       // 멤버 목록 섹션
     case schedules     // 다가오는 일정 섹션
     case albums        // 앨범

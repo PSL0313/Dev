@@ -82,12 +82,16 @@ class HomeTabSectionHeaderCollectionReusableView: UICollectionReusableView {
         
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            ])
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -HomeLayoutMetric.headerToContentSpacing
+            )
+        ])
     }
     
-    func configure(headerType: HomeTabSectionHeaderType, selectedAction: @escaping () -> Void) {
+    func configure(headerType: HomeTabSectionHeaderType, selectedAction: @escaping () -> Void = {}) {
         sectionTitleLabel.text = headerType.title()
         self.selectedAction = selectedAction
         stackView.isHidden = false
@@ -96,6 +100,7 @@ class HomeTabSectionHeaderCollectionReusableView: UICollectionReusableView {
         case .member:
             stackView.isHidden = true
         case .upComingSchedule:
+            moreButton.isHidden = true
             return
         case .albums, .otherAlbums:
             moreButton.isHidden = true

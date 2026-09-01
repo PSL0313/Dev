@@ -135,14 +135,14 @@ final class HeroView: UIView {
 
     // MARK: - Audio Setting
     func setupAudioSession() {
-//        do {
-//            let session = AVAudioSession.sharedInstance()
-//            // .playback: 다른 오디오를 백그라운드로 보내거나 무시하고 내 소리를 재생
-//            try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
-//            try session.setActive(true)
-//        } catch {
-//            print("Audio Session 설정 실패: \(error.localizedDescription)")
-//        }
+        do {
+            let session = AVAudioSession.sharedInstance()
+            // .playback: 다른 오디오를 백그라운드로 보내거나 무시하고 내 소리를 재생
+            try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try session.setActive(true)
+        } catch {
+            print("Audio Session 설정 실패: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Configure
