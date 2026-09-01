@@ -65,14 +65,15 @@ final class FeedGridCell: UICollectionViewCell {
         hasMultipleImageView.isHidden = true
     }
 
-    func configure(with feed: FeedData) {
-        let isLocked = feed.source == .fromm && !feed.isOlderThanOneYear
+    func configure(with feed: FeedEntity) {
+        let isFromm = feed.source.lowercased() == "fromm"
+        let oneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: .now) ?? .now
+        let isLocked = isFromm && feed.captureDate >= oneYearAgo
         dimView.isHidden = !isLocked
         lockImageView.isHidden = !isLocked
+        hasMultipleImageView.isHidden = feed.contentCount <= 1
 
-
-        if let urlString = feed.thumbnailURL ?? feed.mediaItems.first(where: { !$0.isVideo })?.url,
-           let url = URL(string: urlString) {
+        if let url = feed.thumbnailURL {
 
             let processor = DownsamplingImageProcessor(size: downsamplingSize())
 
@@ -84,17 +85,13 @@ final class FeedGridCell: UICollectionViewCell {
             imageView.kf.setImage(
                 with: url,
                 options: [
-                    .processor(feed.source == .fromm ? processorForFrommImage : processor),
+                    .processor(isFromm ? processorForFrommImage : processor),
                     .scaleFactor(scale),
                     .transition(.fade(0.15))
                 ])
 
         } else {
             imageView.image = nil
-        }
-
-        if feed.mediaItems.count > 1 {
-            hasMultipleImageView.isHidden = false
         }
 
         self.imageView.backgroundColor = .systemBackground

@@ -91,7 +91,29 @@ final class HomeCoordinator: BaseCoordinator {
     }
     
     private func showMemberProfileView(member: MemberEntity) {
-        let vc = MemberProfileViewViewController(viewModel: container.getMemberProfileViewModel(member))
+        let viewModel = container.getMemberProfileViewModel(member)
+        viewModel.onRoute = { [weak self] route in
+            switch route {
+            case .moveToFeedDetail(let feed, let mediaItems):
+                self?.showFeedDetail(feed: feed, mediaItems: mediaItems)
+            case .failed(let message):
+                self?.showAlert(title: "에러", message: message)
+            }
+        }
+
+        let vc = MemberProfileViewViewController(viewModel: viewModel)
+        vc.hidesBottomBarWhenPushed = true
         self.navigationController.pushViewController(vc, animated: true)
+    }
+
+    private func showFeedDetail(
+        feed: FeedEntity,
+        mediaItems: [FeedImageEntity]
+    ) {
+        let viewController = FeedDetailBottomSheetViewController(
+            feed: feed,
+            mediaItems: mediaItems
+        )
+        navigationController.pushViewController(viewController, animated: true)
     }
 }

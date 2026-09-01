@@ -8,163 +8,36 @@
 import UIKit
 import SnapKit
 
-//final class MemberProfileViewViewController: UIViewController {
-//
-//    private let viewModel: MemberProfileViewModel
-//
-//    private let profileImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.contentMode = .scaleAspectFit
-//        imageView.clipsToBounds = true
-//        imageView.backgroundColor = .secondarySystemBackground
-//        imageView.layer.cornerRadius = 60
-//        return imageView
-//    }()
-//
-//    private let nameLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = .systemFont(ofSize: 24, weight: .bold)
-//        label.textColor = .label
-//        label.textAlignment = .center
-//        return label
-//    }()
-//
-//    private let codeLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = .systemFont(ofSize: 14, weight: .regular)
-//        label.textColor = .secondaryLabel
-//        label.textAlignment = .center
-//        return label
-//    }()
-//
-//    private let sortOrderLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = .systemFont(ofSize: 14)
-//        label.textColor = .label
-//        return label
-//    }()
-//
-//    private let activeLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = .systemFont(ofSize: 14)
-//        label.textColor = .label
-//        return label
-//    }()
-//
-//    private let entityTypeLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = .systemFont(ofSize: 14)
-//        label.textColor = .label
-//        return label
-//    }()
-//
-//    private let createdAtLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = .systemFont(ofSize: 14)
-//        label.textColor = .label
-//        label.numberOfLines = 0
-//        return label
-//    }()
-//
-//    init(viewModel: MemberProfileViewModel) {
-//        self.viewModel = viewModel
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//
-//    // MARK: - Deinit
-//    deinit { print("MemberProfileViewViewController deinit") }
-//
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//
-//        setLayout()
-//        configure()
-//    }
-//
-//    private func setLayout() {
-//        view.backgroundColor = .systemBackground
-//
-//        let infoStackView = UIStackView(arrangedSubviews: [
-//            sortOrderLabel,
-//            activeLabel,
-//            entityTypeLabel,
-//            createdAtLabel
-//        ])
-//
-//        infoStackView.axis = .vertical
-//        infoStackView.spacing = 12
-//        infoStackView.alignment = .fill
-//
-//        let stackView = UIStackView(arrangedSubviews: [
-//            profileImageView,
-//            nameLabel,
-//            codeLabel,
-//            infoStackView
-//        ])
-//
-//        stackView.axis = .vertical
-//        stackView.spacing = 16
-//        stackView.alignment = .fill
-//
-//        view.addSubview(stackView)
-//
-//        profileImageView.snp.makeConstraints {
-//            $0.width.equalTo(160)
-//            $0.height.equalTo(200)
-//        }
-//
-//        stackView.snp.makeConstraints {
-//            $0.top.equalTo(view.safeAreaLayoutGuide).offset(32)
-//            $0.leading.trailing.equalToSuperview().inset(24)
-//        }
-//
-//        profileImageView.snp.makeConstraints {
-//            $0.centerX.equalToSuperview()
-//        }
-//    }
-//
-//    private func configure() {
-//        nameLabel.text = viewmdoel.member.displayName
-//        codeLabel.text = viewmdoelmember.code
-//        sortOrderLabel.text = "정렬 순서: \(member.sortOrder)"
-//        activeLabel.text = "활성 상태: \(member.isActive ? "활성" : "비활성")"
-//        entityTypeLabel.text = "Entity Type: \(member.entityType)"
-//        createdAtLabel.text = "생성 시각: \(member.createdAt.formatted())"
-//
-//        if let url = member.profileImageURL {
-//            profileImageView.kf.setImage(with: url)
-//        } else {
-//            profileImageView.image = UIImage(systemName: "person.crop.circle.fill")
-//        }
-//    }
-//}
-
 final class MemberProfileViewViewController: UIViewController {
+    
     private enum SupplementaryKind {
         static let profileHeader = "profile-header"
         static let statusFooter = "status-footer"
     }
 
+    // MARK: - Properties
     private let viewModel: MemberProfileViewModel
 
+    // MARK: - UI
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
     private let refreshControl = UIRefreshControl()
     private let errorLabel = UILabel()
 
+    
+    // MARK: - Initializer
     init(viewModel: MemberProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - deinit
+    deinit { print("deinit: \(Self.self)") }
 
+    // MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -353,10 +226,6 @@ extension MemberProfileViewViewController: UICollectionViewDataSource {
         if let feed = viewModel.feed(at: indexPath.item) {
             cell.configure(with: feed)
         }
-
-        if indexPath.item >= max(viewModel.itemCount - 4, 0) {
-            loadMoreIfNeeded()
-        }
         return cell
     }
 
@@ -395,11 +264,23 @@ extension MemberProfileViewViewController: UICollectionViewDataSource {
 }
 
 extension MemberProfileViewViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let feed = viewModel.feed(at: indexPath.item) else { return }
+        
+        let oneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: .now) ?? .now
+        let isLockedFrommFeed = feed.source.lowercased() == "fromm"
+            && feed.captureDate >= oneYearAgo
+        guard !isLockedFrommFeed else { return }
+
+        viewModel.action(.moveToFeedDetail(feed))
+    }
+    
+    // 스크롤시 남은 높이가 240보다 작으면 피드 추가 요청
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard !viewModel.hasReachedEndOfFeeds else { return }
 
         let remaining = scrollView.contentSize.height - scrollView.contentOffset.y - scrollView.bounds.height
-        if remaining < 240 {
+        if remaining < 30 {
             loadMoreIfNeeded()
         }
     }

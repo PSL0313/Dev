@@ -8,17 +8,29 @@
 import Foundation
 
 final class MemberProfileViewModel {
+    enum Route {
+        case moveToFeedDetail(feed: FeedEntity, mediaItems: [FeedImageEntity])
+        case failed(String)
+    }
+
+    enum Input {
+        case moveToFeedDetail(FeedEntity)
+    }
+
     private enum Constant {
         static let pageSize = 30
     }
 
     // MARK: - Properties
     let member: MemberEntity
-    private(set) var feeds: [FeedData] = []
+    private(set) var feeds: [FeedEntity] = []
     private(set) var isInitialLoading = false
     private(set) var isLoadingMore = false
     private(set) var hasReachedEndOfFeeds = false
     private(set) var errorMessage: String?
+    private(set) var isLoadingFeedDetail = false
+
+    var onRoute: ((Route) -> Void)?
 
     var memberId: String? { member.code }
     var title: String { member.displayName }
@@ -82,16 +94,23 @@ final class MemberProfileViewModel {
 
         do {
             let page = try await fetchNextPage()
-            feeds.append(contentsOf: page.map(FeedData.init))
+            feeds.append(contentsOf: page)
             hasReachedEndOfFeeds = page.count < Constant.pageSize
         } catch {
             errorMessage = "추가 피드를 불러오지 못했어요"
         }
     }
 
-    func feed(at index: Int) -> FeedData? {
+    func feed(at index: Int) -> FeedEntity? {
         guard feeds.indices.contains(index) else { return nil }
         return feeds[index]
+    }
+
+    func action(_ input: Input) {
+        switch input {
+        case .moveToFeedDetail(let feed):
+            loadFeedDetail(feed)
+        }
     }
 }
 
@@ -109,7 +128,7 @@ private extension MemberProfileViewModel {
 
         do {
             let page = try await fetchNextPage()
-            feeds = page.map(FeedData.init)
+            feeds = page
             hasReachedEndOfFeeds = page.count < Constant.pageSize
         } catch {
             errorMessage = "피드를 불러오지 못했어요"
@@ -126,30 +145,23 @@ private extension MemberProfileViewModel {
             limit: Constant.pageSize
         )
     }
-}
 
-struct FeedData {
-    let id: UUID
-    let thumbnailURL: String?
-    let mediaItems: [FeedMediaItem] = []
-    let source: FeedSource
-    let captureDate: Date
-    let contentCount: Int
+    func loadFeedDetail(_ feed: FeedEntity) {
+        guard !isLoadingFeedDetail else { return }
+        isLoadingFeedDetail = true
 
-    var isOlderThanOneYear: Bool {
-        captureDate < (Calendar.current.date(byAdding: .year, value: -1, to: .now) ?? .now)
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { isLoadingFeedDetail = false }
+
+            do {
+                let mediaItems = try await FeedReadUseCase.fetchFeedMedia(feedID: feed.id)
+                onRoute?(.moveToFeedDetail(feed: feed, mediaItems: mediaItems))
+            } catch let error as FeedError {
+                onRoute?(.failed(error.userMessage))
+            } catch {
+                onRoute?(.failed(FeedError.unknown.userMessage))
+            }
+        }
     }
-
-    init(_ feed: FeedEntity) {
-        id = feed.id
-        thumbnailURL = feed.thumbnailURL?.absoluteString
-        source = FeedSource(rawValue: feed.source) ?? .official
-        captureDate = feed.captureDate
-        contentCount = feed.contentCount
-    }
-}
-
-struct FeedMediaItem {
-    let url: String
-    let isVideo: Bool
 }
