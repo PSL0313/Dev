@@ -23,7 +23,6 @@ final class HomeViewModel {
         case start
         case moveToMember(MemberEntity)
         case moveToSchedule(UUID)
-        case moveToAlbum(Album)
         case moveToAllSchedule
     }
     // MARK: - State
@@ -44,7 +43,6 @@ final class HomeViewModel {
 
     // MARK: - Service
     private let appleMusicCatalogService: AppleMusicCatalogService
-    private let appleMusicAuthorizationService = AppleMusicAuthorizationService()
 
     // MARK: - Properties
     private(set) var members: [MemberEntity] = [] // 화면 데이터 보관
@@ -83,8 +81,6 @@ final class HomeViewModel {
             ()
         case .moveToSchedule(let scheduleId):
             print(scheduleId)
-        case .moveToAlbum(let album):
-            print(album.title)
         }
     }
 
@@ -102,8 +98,6 @@ private extension HomeViewModel {
     func start() {
         self.task = Task {
             do {
-                try await appleMusicAuthorizationService.requestAuthorization()
-
                 // 구조적 병렬 작업 시작
                 async let membersTask: [MemberEntity] = fetchMembersUseCase.execute()
                 fetchAlbums()
@@ -123,8 +117,6 @@ private extension HomeViewModel {
 
                 // 코디네이터에게 전달(스플래쉬뷰 종료 요청)
                 onRoute?(.fetchedHomeData)
-            } catch _ as AppleMusicAuthorizationError {
-                onRoute?(Route.failed("애플 뮤직을 거절하시면 사용하실 수 없습니다."))
             } catch let error as MemberError {
                 onRoute?(Route.failed(error.userMessage))
             } catch let error as ScheduleError {

@@ -22,7 +22,6 @@ final class MainCoordinator: BaseCoordinator {
         // 하위(자식)코디네이터 생성
         let homeCoordinator = makeHomeCoordinator()
         let profileCoordinator = makeProfileCoordinator()
-        let musicPlayerNavigationController = makeMusicPlayerNavigationController()
         
         
         // 하위(자식) 코디네이터 등록
@@ -42,7 +41,6 @@ final class MainCoordinator: BaseCoordinator {
         tabBarController.viewControllers = [
             homeCoordinator.navigationController,
             signOutTest.navigationController,
-            musicPlayerNavigationController,
             profileCoordinator.navigationController
         ]
         
@@ -54,22 +52,6 @@ final class MainCoordinator: BaseCoordinator {
 }
 
 private extension MainCoordinator {
-    /// 테스트용 Apple Music 플레이어 화면을 탭바에 추가합니다.
-    func makeMusicPlayerNavigationController() -> UINavigationController {
-        let viewController = TestMusicPlayerViewController()
-        let navigationController = UINavigationController(
-            rootViewController: viewController
-        )
-
-        navigationController.tabBarItem = UITabBarItem(
-            title: "플레이어",
-            image: UIImage(systemName: "play.circle"),
-            selectedImage: UIImage(systemName: "play.circle.fill")
-        )
-
-        return navigationController
-    }
-
     func makeHomeCoordinator() -> HomeCoordinator {
         let navigationController = UINavigationController()
         navigationController.tabBarItem = UITabBarItem(

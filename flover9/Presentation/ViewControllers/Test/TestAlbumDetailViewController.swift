@@ -7,14 +7,12 @@ import UIKit
 import MusicKit
 import Kingfisher
 
-/// Apple Music의 앨범 화면 구성을 참고한 테스트용 상세 화면입니다.
-/// 별도의 ViewModel 없이 전달받은 `Album`을 직접 표시하고 재생을 제어합니다.
+/// 전달받은 앨범 정보와 트랙 목록을 읽기 전용으로 표시하는 상세 화면입니다.
 final class TestAlbumDetailViewController: UIViewController {
 
     // MARK: - Properties
 
     private let album: Album
-    private let musicPlayer = TestMusicPlayer.shared
     private var tracks: [Track] = []
 
     // MARK: - UI
@@ -87,48 +85,12 @@ final class TestAlbumDetailViewController: UIViewController {
         lines: 0
     )
 
-    private lazy var shuffleButton = makeCircleButton(
-        systemName: "shuffle",
-        accessibilityLabel: "앨범 셔플 재생",
-        action: #selector(didTapShuffleButton)
-    )
-
-    private lazy var playButton: UIButton = {
-        var configuration = UIButton.Configuration.filled()
-        configuration.title = "재생"
-        configuration.image = UIImage(systemName: "play.fill")
-        configuration.imagePadding = 8
-        configuration.baseBackgroundColor = .label
-        configuration.baseForegroundColor = .systemBackground
-        configuration.cornerStyle = .capsule
-
-        let button = UIButton(configuration: configuration)
-        button.addTarget(self, action: #selector(didTapPlayButton), for: .touchUpInside)
-        button.heightAnchor.constraint(equalToConstant: 54).isActive = true
-        return button
-    }()
-
-    private lazy var addButton = makeCircleButton(
-        systemName: "plus",
-        accessibilityLabel: "재생 대기열에 추가",
-        action: #selector(didTapAddButton)
-    )
-
-    private lazy var actionStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [shuffleButton, playButton, addButton])
-        stack.axis = .horizontal
-        stack.alignment = .center
-        stack.spacing = 16
-        return stack
-    }()
-
     private lazy var mainStackView: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [
             artworkContainerView,
             titleLabel,
             artistLabel,
             summaryLabel,
-            actionStackView,
             editorialLabel,
             trackStackView,
             footerLabel
@@ -137,7 +99,6 @@ final class TestAlbumDetailViewController: UIViewController {
         stack.spacing = 8
         stack.setCustomSpacing(20, after: artworkContainerView)
         stack.setCustomSpacing(20, after: summaryLabel)
-        stack.setCustomSpacing(24, after: actionStackView)
         stack.setCustomSpacing(18, after: editorialLabel)
         stack.setCustomSpacing(22, after: trackStackView)
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -172,21 +133,6 @@ private extension TestAlbumDetailViewController {
     func configureNavigationBar() {
         view.backgroundColor = .systemBackground
         navigationItem.largeTitleDisplayMode = .never
-
-        navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(
-                image: UIImage(systemName: "ellipsis"),
-                style: .plain,
-                target: nil,
-                action: nil
-            ),
-            UIBarButtonItem(
-                image: UIImage(systemName: "square.and.arrow.up"),
-                style: .plain,
-                target: nil,
-                action: nil
-            )
-        ]
     }
 
     func configureAlbum() {
@@ -225,23 +171,36 @@ private extension TestAlbumDetailViewController {
 
     func configureTrackRows() {
         for (index, track) in tracks.enumerated() {
-            let row = UIButton(type: .system)
-            row.tag = index
-            row.contentHorizontalAlignment = .leading
-            row.setTitleColor(.label, for: .normal)
-            row.titleLabel?.font = .preferredFont(forTextStyle: .body)
-            row.setTitle("\(index + 1)    \(title(of: track))", for: .normal)
-            row.addTarget(self, action: #selector(didTapTrack(_:)), for: .touchUpInside)
-
-            let moreImage = UIImageView(image: UIImage(systemName: "ellipsis"))
-            moreImage.tintColor = .secondaryLabel
-            moreImage.translatesAutoresizingMaskIntoConstraints = false
-            row.addSubview(moreImage)
+            let row = UIView()
+            let numberLabel = Self.makeLabel(
+                font: .preferredFont(forTextStyle: .body),
+                color: .secondaryLabel,
+                alignment: .right,
+                lines: 1
+            )
+            let trackTitleLabel = Self.makeLabel(
+                font: .preferredFont(forTextStyle: .body),
+                color: .label,
+                alignment: .left,
+                lines: 2
+            )
+            numberLabel.text = String(index + 1)
+            trackTitleLabel.text = title(of: track)
+            numberLabel.translatesAutoresizingMaskIntoConstraints = false
+            trackTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+            row.addSubview(numberLabel)
+            row.addSubview(trackTitleLabel)
 
             NSLayoutConstraint.activate([
                 row.heightAnchor.constraint(greaterThanOrEqualToConstant: 58),
-                moreImage.centerYAnchor.constraint(equalTo: row.centerYAnchor),
-                moreImage.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -4)
+                numberLabel.leadingAnchor.constraint(equalTo: row.leadingAnchor),
+                numberLabel.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+                numberLabel.widthAnchor.constraint(equalToConstant: 28),
+                trackTitleLabel.leadingAnchor.constraint(equalTo: numberLabel.trailingAnchor, constant: 12),
+                trackTitleLabel.trailingAnchor.constraint(equalTo: row.trailingAnchor),
+                trackTitleLabel.topAnchor.constraint(greaterThanOrEqualTo: row.topAnchor, constant: 8),
+                trackTitleLabel.bottomAnchor.constraint(lessThanOrEqualTo: row.bottomAnchor, constant: -8),
+                trackTitleLabel.centerYAnchor.constraint(equalTo: row.centerYAnchor)
             ])
 
             let separator = UIView()
@@ -287,61 +246,6 @@ private extension TestAlbumDetailViewController {
     }
 }
 
-// MARK: - Actions
-private extension TestAlbumDetailViewController {
-
-    @objc func didTapShuffleButton() {
-        performMusicTask { [album, musicPlayer] in
-            try await musicPlayer.shufflePlay(album: album)
-        }
-    }
-
-    @objc func didTapPlayButton() {
-        performMusicTask { [album, musicPlayer] in
-            try await musicPlayer.play(album: album)
-        }
-    }
-
-    @objc func didTapAddButton() {
-        performMusicTask(successMessage: "앨범을 대기열 마지막에 추가했습니다.") {
-            [album, musicPlayer] in
-            try await musicPlayer.addToQueue(album: album)
-        }
-    }
-
-    @objc func didTapTrack(_ sender: UIButton) {
-        guard tracks.indices.contains(sender.tag) else { return }
-        let track = tracks[sender.tag]
-
-        performMusicTask { [album, musicPlayer] in
-            try await musicPlayer.play(album: album, startingAt: track)
-        }
-    }
-
-    func performMusicTask(
-        successMessage: String? = nil,
-        operation: @escaping @MainActor () async throws -> Void
-    ) {
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            do {
-                try await operation()
-                if let successMessage {
-                    showAlert(title: "완료", message: successMessage)
-                }
-            } catch {
-                showAlert(title: "재생 오류", message: error.localizedDescription)
-            }
-        }
-    }
-
-    func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
-    }
-}
-
 // MARK: - View Factory
 private extension TestAlbumDetailViewController {
 
@@ -359,24 +263,6 @@ private extension TestAlbumDetailViewController {
         return label
     }
 
-    func makeCircleButton(
-        systemName: String,
-        accessibilityLabel: String,
-        action: Selector
-    ) -> UIButton {
-        var configuration = UIButton.Configuration.filled()
-        configuration.image = UIImage(systemName: systemName)
-        configuration.baseBackgroundColor = .secondarySystemFill
-        configuration.baseForegroundColor = .label
-        configuration.cornerStyle = .capsule
-
-        let button = UIButton(configuration: configuration)
-        button.accessibilityLabel = accessibilityLabel
-        button.addTarget(self, action: action, for: .touchUpInside)
-        button.widthAnchor.constraint(equalToConstant: 54).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 54).isActive = true
-        return button
-    }
 }
 
 // MARK: - Layout
@@ -412,9 +298,7 @@ private extension TestAlbumDetailViewController {
             artworkImageView.centerXAnchor.constraint(equalTo: artworkContainerView.centerXAnchor),
             artworkImageView.centerYAnchor.constraint(equalTo: artworkContainerView.centerYAnchor),
             artworkImageView.heightAnchor.constraint(equalTo: artworkContainerView.heightAnchor),
-            artworkImageView.widthAnchor.constraint(equalTo: artworkImageView.heightAnchor),
-
-            playButton.widthAnchor.constraint(greaterThanOrEqualTo: actionStackView.widthAnchor, multiplier: 0.48)
+            artworkImageView.widthAnchor.constraint(equalTo: artworkImageView.heightAnchor)
         ])
     }
 }
