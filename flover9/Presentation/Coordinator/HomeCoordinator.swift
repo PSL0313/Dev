@@ -8,13 +8,17 @@
 import UIKit
 
 final class HomeCoordinator: BaseCoordinator {
-    
+
     var navigationController: UINavigationController
     var onRequestAppReset: (() -> Void)?               // 앱 전체 재시작 요청
     var onReadyForShowHome: (() -> Void)?              // 초기 데이터 fetch 완료
-    
+
     private let container: AppDIContainer              // 테스트 화면 의존성 생성 객체
-    
+
+
+    // 커스텀 트렌지션 델리게이트
+    private let customTransitioningDelegate = CustomTransitioningDelegate()
+
     init(
         navigationController: UINavigationController,
         container: AppDIContainer
@@ -22,7 +26,7 @@ final class HomeCoordinator: BaseCoordinator {
         self.navigationController = navigationController
         self.container = container
     }
-    
+
     override func start() {
         let viewModel = container.getHomeViewModel()
         viewModel.onRoute = { [weak self] route in
@@ -35,7 +39,7 @@ final class HomeCoordinator: BaseCoordinator {
                 self?.showMemberProfileView(member: member)
             }
         }
-        
+
         let viewController = HomeViewController(viewModel: viewModel)
 
         navigationController.setViewControllers(
@@ -44,7 +48,7 @@ final class HomeCoordinator: BaseCoordinator {
         )
         viewModel.action(.start)
     }
-    
+
     func start1() {
         let viewModel = container.getTestHomeViewModel()
         viewModel.onRoute = { [weak self] route in
@@ -58,7 +62,7 @@ final class HomeCoordinator: BaseCoordinator {
                 )
             }
         }
-        
+
         let viewController = TestHomeViewController(
             viewModel: viewModel,
             appleSignInService: container.makeAppleSignInService()
@@ -69,7 +73,7 @@ final class HomeCoordinator: BaseCoordinator {
             animated: false
         )
     }
-    
+
     // MARK: - 테스트 요청 오류 Alert 표시
     private func showAlert(
         title: String,
@@ -86,10 +90,11 @@ final class HomeCoordinator: BaseCoordinator {
                 style: .default
             )
         )
-        
+
         navigationController.present(alert, animated: true)
     }
-    
+
+    // MARK: - 멤버 프로필(피드) 이동
     private func showMemberProfileView(member: MemberEntity) {
         let viewModel = container.getMemberProfileViewModel(member)
         viewModel.onRoute = { [weak self] route in
@@ -114,6 +119,17 @@ final class HomeCoordinator: BaseCoordinator {
             feed: feed,
             mediaItems: mediaItems
         )
-        navigationController.pushViewController(viewController, animated: true)
+
+        customTransitioningDelegate.attachInteraction(
+            to: viewController
+        )
+
+        viewController.modalPresentationStyle = .custom
+        viewController.transitioningDelegate = customTransitioningDelegate
+
+        navigationController.present(
+            viewController,
+            animated: true
+        )
     }
 }
