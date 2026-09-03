@@ -7,9 +7,10 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 final class MemberProfileViewViewController: UIViewController {
-    
+
     private enum SupplementaryKind {
         static let profileHeader = "profile-header"
         static let statusFooter = "status-footer"
@@ -23,7 +24,7 @@ final class MemberProfileViewViewController: UIViewController {
     private let refreshControl = UIRefreshControl()
     private let errorLabel = UILabel()
 
-    
+
     // MARK: - Initializer
     init(viewModel: MemberProfileViewModel) {
         self.viewModel = viewModel
@@ -33,7 +34,7 @@ final class MemberProfileViewViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - deinit
     deinit { print("deinit: \(Self.self)") }
 
@@ -103,9 +104,9 @@ final class MemberProfileViewViewController: UIViewController {
     }
 
     private func createLayout() -> UICollectionViewLayout {
-            UICollectionViewCompositionalLayout { [weak self] _, _ in
-                self?.makeSectionLayout()
-            }
+        UICollectionViewCompositionalLayout { [weak self] _, _ in
+            self?.makeSectionLayout()
+        }
     }
 
     private func makeSectionLayout() -> NSCollectionLayoutSection {
@@ -266,15 +267,78 @@ extension MemberProfileViewViewController: UICollectionViewDataSource {
 extension MemberProfileViewViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let feed = viewModel.feed(at: indexPath.item) else { return }
-        
+
         let oneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: .now) ?? .now
         let isLockedFrommFeed = feed.source.lowercased() == "fromm"
-            && feed.captureDate >= oneYearAgo
+        && feed.captureDate >= oneYearAgo
         guard !isLockedFrommFeed else { return }
 
         viewModel.action(.moveToFeedDetail(feed))
     }
-    
+
+    // 길게 눌렀을 때 반응하는 contextMenu(미리보기와 메뉴)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard let feed = viewModel.feed(at: indexPath.item) else { return nil}
+
+        let oneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: .now) ?? .now
+        let isLockedFrommFeed = feed.source.lowercased() == "fromm"
+        && feed.captureDate >= oneYearAgo
+        guard !isLockedFrommFeed else { return nil }
+
+        let imageView: UIImageView = {
+            let v = UIImageView()
+            v.kf.setImage(with: feed.thumbnailURL)
+            v.contentMode = .scaleAspectFill
+            v.backgroundColor = .systemBackground
+            v.translatesAutoresizingMaskIntoConstraints = false
+            return v
+        }()
+
+        return UIContextMenuConfiguration(
+            identifier: nil,
+            previewProvider: {
+                let previewVC = UIViewController()
+                previewVC.view.addSubview(imageView)
+                imageView.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+
+                previewVC.view.backgroundColor = .systemBackground
+                previewVC.preferredContentSize = CGSize(width: 300, height: 400)
+
+                return previewVC
+            },
+            actionProvider: { _ in
+
+                let saveAction = UIAction(
+                    title: "저장",
+                    image: UIImage(systemName: "square.and.arrow.down")
+                ) { _ in
+                    print("저장")
+                }
+
+                let shareAction = UIAction(
+                    title: "공유",
+                    image: UIImage(systemName: "square.and.arrow.up")
+                ) { _ in
+                    print("공유")
+                }
+
+                return UIMenu(
+                    title: "",
+                    children: [
+                        saveAction,
+                        shareAction
+                    ]
+                )
+            }
+        )
+    }
+
     // 스크롤시 남은 높이가 240보다 작으면 피드 추가 요청
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard !viewModel.hasReachedEndOfFeeds else { return }
