@@ -1,3 +1,9 @@
+//
+//  ScheduleDetailDTO.swift
+//  flover9
+//
+//  Created by 박선린 on 9/10/26.
+//
 import Foundation
 
 // MARK: - Supabase schedule_details 테이블의 일정 상세 응답 DTO
@@ -6,6 +12,7 @@ nonisolated struct ScheduleDetailDTO: Decodable, Sendable {
     let description: String?           // schedule_details.description
     let address: String?               // schedule_details.address
     let roadAddress: String?           // schedule_details.road_address
+    let applePlaceID: String?          // schedule_details.apple_place_id
     let latitude: Double?              // schedule_details.latitude
     let longitude: Double?             // schedule_details.longitude
     let notice: String?                // schedule_details.notice
@@ -18,6 +25,7 @@ nonisolated struct ScheduleDetailDTO: Decodable, Sendable {
         case description, address, latitude, longitude, notice
         case scheduleID = "schedule_id"
         case roadAddress = "road_address"
+        case applePlaceID = "apple_place_id"
         case reservationURL = "reservation_url"
         case externalURL = "external_url"
         case createdAt = "created_at"
@@ -37,7 +45,8 @@ nonisolated struct ScheduleDetailDTO: Decodable, Sendable {
             reservationURL: reservationURL,
             externalURL: externalURL,
             createdAt: createdAt,
-            updatedAt: updatedAt
+            updatedAt: updatedAt,
+            applePlaceID: applePlaceID
         )
     }
 }
