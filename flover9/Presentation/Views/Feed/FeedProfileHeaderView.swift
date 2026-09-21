@@ -9,15 +9,74 @@ import SnapKit
 import Kingfisher
 
 final class FeedProfileHeaderView: UICollectionReusableView {
+    
+    // MARK: - Action(Closure)
+    
+    private var frommURL: URL?
+    private var instagramURL: URL?
+    
+    
     static let reuseIdentifier = "FeedProfileHeaderView"
 
     private let avatarImageView = UIImageView()
+    
     private let nameLabel = UILabel()
-    private let subtitleLabel = UILabel()
-    private let postsValueLabel = UILabel()
-    private let photosValueLabel = UILabel()
-    private let postsTitleLabel = UILabel()
-    private let photosTitleLabel = UILabel()
+
+    private let isCaptinLabel = UILabel()
+
+    private let birthdayLabel = UILabel()
+    
+    private lazy var frommButton: UIButton = {
+        let btn = UIButton()
+        let logoImage = UIImage(named: "frommLogo")
+        btn.setImage(logoImage, for: .normal)
+        btn.imageView?.contentMode = .scaleAspectFit
+        btn.imageView?.snp.makeConstraints { make in
+            make.size.equalTo(CGSize(width: 48, height: 12))
+        }
+        btn.backgroundColor = .secondarySystemBackground
+        btn.layer.cornerRadius = 20.0 / 3.0
+        btn.layer.masksToBounds = true
+        btn.translatesAutoresizingMaskIntoConstraints = false
+    
+        
+        btn.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                openFromm(appURL: self.frommURL)
+            },
+            for: .touchUpInside
+        )
+        
+        return btn
+    }()
+    
+    private lazy var instagramButton: UIButton = {
+        let btn = UIButton()
+        let logoImage = UIImage(named: "instagramLogo")
+        btn.setImage(logoImage, for: .normal)
+        btn.imageView?.contentMode = .scaleAspectFit
+        btn.imageView?.snp.makeConstraints { make in
+            make.size.equalTo(CGSize(width: 44.0 / 3.0, height: 44.0 / 3.0))
+        }
+        btn.backgroundColor = .secondarySystemBackground
+        btn.layer.cornerRadius = 20.0 / 3.0
+        btn.layer.masksToBounds = true
+        btn.translatesAutoresizingMaskIntoConstraints = false
+    
+        
+        btn.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                
+                openInstagram(appURL: self.instagramURL)
+            },
+            for: .touchUpInside
+        )
+        
+        return btn
+    }()
+    
     private let dividerView = UIView()
     private let gridIconView = UIImageView()
 
@@ -37,16 +96,25 @@ final class FeedProfileHeaderView: UICollectionReusableView {
         super.prepareForReuse()
         avatarImageView.kf.cancelDownloadTask()
         avatarImageView.image = nil
+        isCaptinLabel.text = nil
+        isCaptinLabel.isHidden = true
+        birthdayLabel.text = nil
+        birthdayLabel.isHidden = true
     }
 
-    func configure(with viewModel: MemberProfileViewModel) {
-        nameLabel.text = viewModel.displayName
-        subtitleLabel.text = viewModel.subtitle
-        postsValueLabel.text = viewModel.postCountText
-        photosValueLabel.text = viewModel.photoCountText
+    func configure(with member: MemberEntity) {
+        nameLabel.text = member.displayName
+        isCaptinLabel.text = member.code == "hayoung" ? "[ Captin ]" : nil
+        isCaptinLabel.isHidden = member.code != "hayoung"
+        birthdayLabel.text = birthdayText(from: member.birthDate)
+        birthdayLabel.isHidden = member.birthDate == nil
+        
+        frommURL = member.frommURL
+        instagramURL = member.instagramURL
+        
 
         let scale = self.window?.windowScene?.screen.scale ?? 3.0
-        if let url = viewModel.profileImageURL {
+        if let url = member.profileImageURL {
             avatarImageView.kf.setImage(
                 with: url,
                 options: [
@@ -62,13 +130,12 @@ final class FeedProfileHeaderView: UICollectionReusableView {
     private func configureHierarchy() {
         addSubview(avatarImageView)
         addSubview(nameLabel)
-        addSubview(subtitleLabel)
-        addSubview(postsValueLabel)
-        addSubview(photosValueLabel)
-        addSubview(postsTitleLabel)
-        addSubview(photosTitleLabel)
+        addSubview(isCaptinLabel)
+        addSubview(birthdayLabel)
         addSubview(dividerView)
         addSubview(gridIconView)
+        addSubview(frommButton)
+        addSubview(instagramButton)
     }
 
     private func configureStyle() {
@@ -80,28 +147,17 @@ final class FeedProfileHeaderView: UICollectionReusableView {
         avatarImageView.backgroundColor = .systemBackground
         avatarImageView.tintColor = .systemBackground
 
-        nameLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        nameLabel.font = .systemFont(ofSize: 17, weight: .semibold)
         nameLabel.textColor = .label
+        nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        subtitleLabel.font = .systemFont(ofSize: 13, weight: .regular)
-        subtitleLabel.textColor = .label
+        isCaptinLabel.font = .systemFont(ofSize: 11, weight: .regular)
+        isCaptinLabel.textColor = .secondaryLabel
 
-        [postsValueLabel, photosValueLabel].forEach {
-            $0.font = .systemFont(ofSize: 18, weight: .semibold)
-            $0.textColor = .label
-            $0.textAlignment = .center
-        }
-
-        postsTitleLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        postsTitleLabel.textColor = .secondaryLabel
-        postsTitleLabel.text = "게시물"
-        postsTitleLabel.textAlignment = .center
-
-        photosTitleLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        photosTitleLabel.textColor = .secondaryLabel
-        photosTitleLabel.text = "사진"
-        photosTitleLabel.textAlignment = .center
-
+        birthdayLabel.font = .systemFont(ofSize: 11, weight: .regular)
+        birthdayLabel.textColor = .secondaryLabel
+        birthdayLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
         dividerView.backgroundColor = .systemBackground
 
         gridIconView.image = UIImage(systemName: "square.grid.3x3.fill")
@@ -115,44 +171,40 @@ final class FeedProfileHeaderView: UICollectionReusableView {
             make.top.equalToSuperview().inset(16)
             make.size.equalTo(CGSize(width: 88, height: 88))
         }
-
-        postsValueLabel.snp.makeConstraints { make in
-            make.top.equalTo(avatarImageView).offset(18)
-            make.leading.equalTo(avatarImageView.snp.trailing).offset(28)
-            make.width.equalTo(64)
-        }
-
-        photosValueLabel.snp.makeConstraints { make in
-            make.top.equalTo(postsValueLabel)
-            make.leading.equalTo(postsValueLabel.snp.trailing).offset(18)
-            make.width.equalTo(64)
-            make.trailing.lessThanOrEqualToSuperview().inset(20)
-        }
-
-        postsTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(postsValueLabel.snp.bottom).offset(4)
-            make.centerX.equalTo(postsValueLabel)
-        }
-
-        photosTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(photosValueLabel.snp.bottom).offset(4)
-            make.centerX.equalTo(photosValueLabel)
+        
+        isCaptinLabel.snp.makeConstraints { make in
+            make.leading.equalTo(avatarImageView.snp.trailing).offset(20)
+            make.top.equalTo(avatarImageView)
+            make.size.equalTo(CGSize(width: 52, height: 14))
         }
 
         nameLabel.snp.makeConstraints { make in
-            make.leading.equalTo(avatarImageView)
-            make.top.equalTo(avatarImageView.snp.bottom).offset(16)
-            make.trailing.equalToSuperview().inset(20)
+            make.leading.equalTo(isCaptinLabel)
+            make.top.equalTo(isCaptinLabel.snp.bottom).offset(2)
         }
 
-        subtitleLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(nameLabel)
-            make.top.equalTo(nameLabel.snp.bottom).offset(4)
+        birthdayLabel.snp.makeConstraints { make in
+            make.leading.equalTo(nameLabel.snp.trailing).offset(8)
+            make.firstBaseline.equalTo(nameLabel.snp.firstBaseline)
+            make.trailing.lessThanOrEqualToSuperview().inset(20)
+        }
+
+        frommButton.snp.makeConstraints { make in
+            make.leading.equalTo(nameLabel)
+            make.top.equalTo(nameLabel.snp.bottom).offset(8)
+            make.size.equalTo(CGSize(width: 64, height: 24))
+        }
+
+        instagramButton.snp.makeConstraints { make in
+            make.leading.equalTo(frommButton.snp.trailing).offset(8)
+            make.centerY.equalTo(frommButton)
+            make.trailing.lessThanOrEqualToSuperview().inset(20)
+            make.size.equalTo(CGSize(width: 88.0 / 3.0, height: 24))
         }
 
         dividerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.top.equalTo(subtitleLabel.snp.bottom).offset(18)
+            make.top.equalTo(avatarImageView.snp.bottom).offset(18)
             make.height.equalTo(1)
         }
 
@@ -161,6 +213,55 @@ final class FeedProfileHeaderView: UICollectionReusableView {
             make.centerX.equalToSuperview()
             make.size.equalTo(CGSize(width: 22, height: 22))
             make.bottom.equalToSuperview().inset(12)
+        }
+    }
+}
+
+
+private extension FeedProfileHeaderView {
+    func birthdayText(from birthDate: Date?) -> String? {
+        guard let birthDate else { return nil }
+
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy.MM.dd"
+        return formatter.string(from: birthDate)
+    }
+
+    func openFromm(
+        appURL: URL?
+    ) {
+        guard let appURL else { return }
+        UIApplication.shared.open(
+            appURL,
+            options: [:]
+        ) { success in
+            guard !success else { return }
+
+            UIApplication.shared.open(
+                URL(string:"https://apps.apple.com/app/id1641293296")!,
+                options: [:]
+            )
+        }
+    }
+    
+    func openInstagram(
+        appURL: URL?
+    ) {
+        guard let appURL else { return }
+        UIApplication.shared.open(
+            appURL,
+            options: [:]
+        ) { success in
+            guard !success else { return }
+            
+            
+            UIApplication.shared.open(
+                URL(string:"https://apps.apple.com/app/id389801252")!,
+                options: [:]
+            )
         }
     }
 }

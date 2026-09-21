@@ -32,19 +32,13 @@ final class MemberProfileViewModel {
 
     var onRoute: ((Route) -> Void)?
 
-    var memberId: String? { member.code }
-    var title: String { member.displayName }
-    var displayName: String { member.displayName }
-    var subtitle: String { "@\(member.code)" }
-    var postCountText: String { "\(feeds.count)" }
-    var photoCountText: String {
-        "\(feeds.reduce(0) { $0 + $1.contentCount })"
-    }
     var profileImageURL: URL? { member.profileImageURL }
     var itemCount: Int { feeds.count }
+    
     var canTriggerLoadMore: Bool {
         !feeds.isEmpty && !isInitialLoading && !isLoadingMore && !hasReachedEndOfFeeds
     }
+    
     var footerMessage: String? {
         if hasReachedEndOfFeeds && !feeds.isEmpty { return "모든 피드를 불러왔어요" }
         if let errorMessage, !feeds.isEmpty { return errorMessage }

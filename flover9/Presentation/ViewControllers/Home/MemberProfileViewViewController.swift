@@ -151,7 +151,7 @@ final class MemberProfileViewViewController: UIViewController {
         )
 
         // 멤버 아이디가 없는 경우(전체멤버) 상단 헤더 X
-        if viewModel.memberId == nil {
+        if viewModel.member.entityType == .official {
             section.boundarySupplementaryItems = [footer]
             return section
         }
@@ -180,7 +180,7 @@ final class MemberProfileViewViewController: UIViewController {
     }
 
     private func applySnapshot() {
-        title = viewModel.title
+        title = viewModel.member.displayName
         collectionView.reloadData()
 
         if let errorMessage = viewModel.errorMessage, viewModel.feeds.isEmpty {
@@ -244,7 +244,7 @@ extension MemberProfileViewViewController: UICollectionViewDataSource {
             ) as? FeedProfileHeaderView else {
                 return UICollectionReusableView()
             }
-            headerView.configure(with: viewModel)
+            headerView.configure(with: viewModel.member)
             return headerView
 
         case SupplementaryKind.statusFooter:
