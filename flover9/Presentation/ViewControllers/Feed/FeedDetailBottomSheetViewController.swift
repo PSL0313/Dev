@@ -56,6 +56,7 @@ final class FeedDetailBottomSheetViewController: UIViewController {
 
     private func configureViewer() {
         title = feed.title
+        view.backgroundColor = .black
         navigationItem.largeTitleDisplayMode = .never
         countLabel.font = .monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
         countLabel.textColor = .secondaryLabel
@@ -97,7 +98,7 @@ final class FeedDetailBottomSheetViewController: UIViewController {
     }
 
     private func configureCollectionView() {
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = .black
         collectionView.isPagingEnabled = true
         collectionView.alwaysBounceHorizontal = true
         collectionView.showsVerticalScrollIndicator = false
