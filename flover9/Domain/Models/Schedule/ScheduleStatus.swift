@@ -8,3 +8,15 @@ nonisolated enum ScheduleStatus: String, Sendable, Equatable, Codable {
     case cancelled                     // 일정이 취소됨
     case completed                     // 일정이 종료됨
 }
+
+extension ScheduleStatus {
+    func statusName() -> String {
+        switch self {
+        case .scheduled: "진행 예정"
+        case .delayed: "시작 지연"
+        case .postponed: "일정 연기"
+        case .cancelled: "취소된 일정"
+        case .completed: "종료된 일정"
+        }
+    }
+}

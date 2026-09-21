@@ -14,3 +14,21 @@ nonisolated enum ScheduleType: String, Sendable, Equatable, Codable {
     case event         // 팝업, 전시, 브랜드 행사 등 특별 행사
     case other         // 분류하기 어려운 일정
 }
+
+extension ScheduleType {
+    func categoryName() -> String {
+        switch self {
+        case .concert: "콘서트"
+        case .fanMeeting: "팬미팅"
+        case .fanSigning: "팬사인회"
+        case .musical: "뮤지컬"
+        case .festival: "페스티벌"
+        case .broadcast: "방송"
+        case .liveStream: "라이브"
+        case .release: "발매"
+        case .content: "콘텐츠"
+        case .event: "이벤트"
+        case .other: "일정"
+        }
+    }
+}
