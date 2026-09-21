@@ -1,11 +1,17 @@
+//
+//  ScheduleDTO.swift
+//  flover9
+//
+//  Created by 박선린 on 9/10/26.
+//
 import Foundation
 
 // MARK: - Supabase schedules 테이블의 일정 요약 응답 DTO
 nonisolated struct ScheduleDTO: Decodable, Sendable {
     let id: UUID                       // schedules.id
-    let title: String                  // schedules.title
+    let eventID: UUID
+    let event: ScheduleEventDTO
     let venueName: String?             // schedules.venue_name
-    let scheduleType: ScheduleType     // schedules.schedule_type
     let status: ScheduleStatus         // schedules.status
     let startAt: Date                  // schedules.start_at
     let endAt: Date?                   // schedules.end_at
@@ -21,9 +27,10 @@ nonisolated struct ScheduleDTO: Decodable, Sendable {
     let updatedAt: Date                // schedules.updated_at
 
     enum CodingKeys: String, CodingKey {
-        case id, title, status
+        case id, status
+        case eventID = "event_id"
+        case event = "schedule_events"
         case venueName = "venue_name"
-        case scheduleType = "schedule_type"
         case startAt = "start_at"
         case endAt = "end_at"
         case isAllDay = "is_all_day"
@@ -43,9 +50,7 @@ nonisolated struct ScheduleDTO: Decodable, Sendable {
 
         return ScheduleEntity(
             id: id,
-            title: title,
-            venueName: venueName,
-            type: scheduleType,
+            venueName: venueName ?? event.venueName,
             status: status,
             startAt: startAt,
             endAt: endAt,
@@ -53,12 +58,13 @@ nonisolated struct ScheduleDTO: Decodable, Sendable {
             operationStartTime: operationStartTime,
             operationEndTime: operationEndTime,
             timeZone: timeZone,
-            thumbnailURL: thumbnailURL,
-            externalURL: externalURL,
+            thumbnailURL: thumbnailURL ?? event.thumbnailURL,
+            externalURL: externalURL ?? event.externalURL,
             externalContentID: externalContentID,
             participantMemberCodes: participants?.isEmpty == false ? participants?.map{ $0.memberCode } : nil,
             createdAt: createdAt,
-            updatedAt: updatedAt
+            updatedAt: updatedAt,
+            event: event.toEntity()
         )
     }
 }

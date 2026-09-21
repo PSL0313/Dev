@@ -1,3 +1,9 @@
+//
+//  ScheduleParticipantDTO.swift
+//  flover9
+//
+//  Created by 박선린 on 9/10/26.
+//
 import Foundation
 
 // MARK: - schedule_members의 참여 멤버 코드를 전달받는 응답 DTO

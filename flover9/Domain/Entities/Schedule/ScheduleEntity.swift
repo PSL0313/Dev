@@ -1,11 +1,17 @@
+//
+//  ScheduleEntity.swift
+//  flover9
+//
+//  Created by 박선린 on 9/10/26.
+//
 import Foundation
 
 // MARK: - 일정 목록과 홈 화면에서 사용하는 일정 요약 정보
 nonisolated struct ScheduleEntity: Identifiable, Sendable, Equatable, Hashable {
     let id: UUID                       // 일정 식별자
-    let title: String                  // 일정 제목
+    var title: String { event.title }  // 행사에서 가져오는 제목
     let venueName: String?             // 목록에 표시할 간단한 장소명
-    let type: ScheduleType             // 일정 종류
+    var type: ScheduleType { event.type } // 행사에서 가져오는 유형
     let status: ScheduleStatus         // 일정 진행 상태
     let startAt: Date                  // 일정 시작 시각
     let endAt: Date?                   // 일정 종료 시각
@@ -19,4 +25,5 @@ nonisolated struct ScheduleEntity: Identifiable, Sendable, Equatable, Hashable {
     let participantMemberCodes: [String]? // nil이면 플로버 참여, 값이 있으면 참여 멤버 코드
     let createdAt: Date                // 데이터 생성 시각
     let updatedAt: Date                // 데이터 수정 시각
+    let event: ScheduleEventEntity    // 모든 일정에 필수인 공통 행사
 }
