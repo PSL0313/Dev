@@ -27,7 +27,10 @@ final class SupabaseMemberRemoteDataSource: MemberRemoteDataSourceProtocol {
                             is_active,
                             created_at,
                             entity_type,
-                            profile_image_url
+                            profile_image_url,
+                            fromm_url,
+                            instagram_url,
+                            birth_date
                         """)
                 .eq("entity_type", value: "member")
                 .eq("is_active", value: true)
@@ -54,7 +57,10 @@ final class SupabaseMemberRemoteDataSource: MemberRemoteDataSourceProtocol {
                             is_active,
                             created_at,
                             entity_type,
-                            profile_image_url
+                            profile_image_url,
+                            fromm_url,
+                            instagram_url,
+                            birth_date
                         """)
                 .eq("code", value: code.rawValue)
                 .eq("entity_type", value: "member")

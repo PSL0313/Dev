@@ -17,4 +17,7 @@ struct MemberEntity: Identifiable, Equatable, Sendable, Hashable {
     let createdAt: Date                     // 데이터 생성 시각
     let entityType: MemberEntityType        // 멤버 데이터 분류
     let profileImageURL: URL?               // 프로필 이미지 주소
+    let frommURL: URL?                      // Fromm 앱 직접 실행 주소
+    let instagramURL: URL?                  // Instagram 앱 직접 실행 주소
+    let birthDate: Date?                    // 생년월일(오피셜 엔터티는 nil)
 }

@@ -15,6 +15,9 @@ nonisolated struct MemberDTO: Decodable, Sendable {
     let createdAt: Date              // 행 생성 시각
     let entityType: String           // member 또는 official 분류값
     let profileImageURL: String?     // 프로필 이미지 주소
+    let frommURL: String?             // Fromm 앱 직접 실행 주소
+    let instagramURL: String?         // Instagram 앱 직접 실행 주소
+    let birthDate: String?            // 생년월일(yyyy-MM-dd)
 
     enum CodingKeys: String, CodingKey {
         case code
@@ -24,6 +27,9 @@ nonisolated struct MemberDTO: Decodable, Sendable {
         case createdAt = "created_at"
         case entityType = "entity_type"
         case profileImageURL = "profile_image_url"
+        case frommURL = "fromm_url"
+        case instagramURL = "instagram_url"
+        case birthDate = "birth_date"
     }
 }
 
@@ -52,7 +58,39 @@ extension MemberDTO {
             isActive: isActive,
             createdAt: createdAt,
             entityType: entityType,
-            profileImageURL: profileImageURL
+            profileImageURL: profileImageURL,
+            frommURL: try externalURL(from: frommURL),
+            instagramURL: try externalURL(from: instagramURL),
+            birthDate: try date(from: birthDate)
         )
+    }
+
+    // MARK: - nullable 외부 앱 주소를 URL로 변환
+    private nonisolated func externalURL(from rawURL: String?) throws -> URL? {
+        guard let rawURL else { return nil }
+        guard
+            let url = URL(string: rawURL),
+            url.scheme != nil
+        else {
+            throw MemberError.invalidMemberData
+        }
+        return url
+    }
+
+    // MARK: - PostgreSQL date 문자열을 날짜로 변환
+    private nonisolated func date(from rawDate: String?) throws -> Date? {
+        guard let rawDate else { return nil }
+
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.isLenient = false
+
+        guard let date = formatter.date(from: rawDate) else {
+            throw MemberError.invalidMemberData
+        }
+        return date
     }
 }
