@@ -28,20 +28,6 @@ final class TestHomeViewController: UIViewController {
         return button
     }()
     
-    private lazy var deleteAccountButton: UIButton = {
-        var configuration = UIButton.Configuration.filled()
-        configuration.title = "회원탈퇴"                         // 버튼 표시 문구
-        configuration.baseBackgroundColor = .systemRed           // 파괴적 작업 강조
-        
-        let button = UIButton(configuration: configuration)
-        button.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 사용
-        button.addTarget(
-            self,
-            action: #selector(deleteAccountButtonTapped),
-            for: .touchUpInside
-        )
-        return button
-    }()
     
     // MARK: - 테스트 화면 의존성 주입
     init(
@@ -71,8 +57,7 @@ final class TestHomeViewController: UIViewController {
         
         let stackView = UIStackView(
             arrangedSubviews: [
-                signOutButton,
-                deleteAccountButton
+                signOutButton
             ]
         )
         stackView.axis = .vertical                               // 버튼을 위아래로 배치
@@ -95,9 +80,6 @@ final class TestHomeViewController: UIViewController {
             ),
             signOutButton.heightAnchor.constraint(
                 equalToConstant: 52
-            ),
-            deleteAccountButton.heightAnchor.constraint(
-                equalToConstant: 52
             )
         ])
     }
@@ -110,10 +92,8 @@ final class TestHomeViewController: UIViewController {
             switch state {
             case .idle:
                 signOutButton.isEnabled = true                  // 사용자 입력 허용
-                deleteAccountButton.isEnabled = true            // 사용자 입력 허용
             case .loading:
                 signOutButton.isEnabled = false                 // 중복 요청 차단
-                deleteAccountButton.isEnabled = false           // 중복 요청 차단
             }
         }
     }
