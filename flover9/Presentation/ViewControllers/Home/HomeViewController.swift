@@ -89,6 +89,11 @@ class HomeViewController: UIViewController {
         bindViewModel()
     }
 
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        navigationController?.setNavigationBarHidden(true, animated: animated)
+//    }
+
     private func bindViewModel() {
         viewModel.onState = { [weak self] state in
             guard let self else { return }
@@ -244,10 +249,7 @@ extension HomeViewController {
             case .members:
                 header.configure(headerType: .member)
             case .schedules:
-                header.configure(headerType: .upComingSchedule) { [weak self] in
-                    guard let self else { return }
-                    viewModel.action(.moveToAllSchedule)
-                }
+                header.configure(headerType: .upComingSchedule)
             case .albums:
                 header.configure(headerType: .albums)
 

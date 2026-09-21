@@ -16,6 +16,7 @@ final class HomeViewModel {
         case fetchedHomeData    // 홈데이터 모두 fetch 완료
         case failed(String)             // 홈탭 데이터 fetch 실패
         case moveToMemberProfileView(MemberEntity)
+        case moveToScheduleDetailView(UUID)
     }
 
     // MARK: - Input
@@ -80,7 +81,7 @@ final class HomeViewModel {
         case .moveToAllSchedule:
             ()
         case .moveToSchedule(let scheduleId):
-            print(scheduleId)
+            onRoute?(.moveToScheduleDetailView(scheduleId))
         }
     }
 

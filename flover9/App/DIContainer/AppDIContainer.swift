@@ -40,7 +40,19 @@ final class AppDIContainer {
         FeedCache()
     }()
 
+    private lazy var scheduleCache: ScheduleCacheProtocol = {
+        ScheduleCache()
+    }()
+
+    private lazy var mapItemCache: MapItemCacheProtocol = {
+        MapItemCache()
+    }()
+
     // MARK: - Datasource
+    private lazy var mapItemDataSource: MapItemDataSourceProtocol = {
+        AppleMapItemDataSource()
+    }()
+
     private lazy var feedRemoteDataSource: FeedRemoteDataSourceProtocol = {
         return SupabaseFeedRemoteDataSource(supabase: self.supabaseClient)
     }()
@@ -67,6 +79,10 @@ final class AppDIContainer {
     }()
 
     // MARK: - Repository
+    private lazy var mapItemRepository: MapItemRepositoryProtocol = {
+        MapItemRepository(dataSource: mapItemDataSource, cache: mapItemCache)
+    }()
+
     private lazy var authRepository: AuthRepositoryProtocol = {
         SupabaseAuthRepository(client: supabaseClient)
     }()
@@ -93,7 +109,8 @@ final class AppDIContainer {
     // 일정 Repository
     private lazy var scheduleRepository: ScheduleRepositoryProtocol = {
         ScheduleRepository(
-            dataSource: scheduleRemoteDataSource
+            dataSource: scheduleRemoteDataSource,
+            cache: scheduleCache
         ) // 원격 일정 DTO 조회 및 Domain 모델 변환 담당
     }()
 
@@ -113,6 +130,14 @@ final class AppDIContainer {
     init() {}
 
     // MARK: - Usecases
+    private lazy var mapItemUseCase: MapItemUseCaseProtocol = {
+        MapItemUseCase(repository: mapItemRepository)
+    }()
+
+    func getMapItemUseCase() -> MapItemUseCaseProtocol {
+        mapItemUseCase
+    }
+
     // 앱 접속 가능 여부 확인 UseCase
     private lazy var checkAppAvailabilityUseCase: CheckAppAvailabilityUseCaseProtocol = {
             CheckAppAvailabilityUseCase(
@@ -243,6 +268,15 @@ final class AppDIContainer {
         MemberProfileViewModel(
             member: member,
             FeedReadUseCase: feedReadUseCase
+        )
+    }
+
+    func getScheduleDetailViewModel(scheduleID: UUID) -> ScheduleDetailViewModel {
+        ScheduleDetailViewModel(
+            scheduleID: scheduleID,
+            fetchScheduleDetailUseCase: fetchScheduleDetailUseCase,
+            mapItemUseCase: mapItemUseCase,
+            errorLogger: errorLogger
         )
     }
 

@@ -48,6 +48,7 @@ extension HomeScheduleCardModel {
             id: schedule.id,                                    // 일정 식별자
             dDayText: makeDDayText(
                 startAt: schedule.startAt,
+                endAt: schedule.endAt,
                 now: now,
                 timeZone: timeZone
             ),
@@ -98,6 +99,7 @@ extension HomeScheduleCardModel {
                 id: schedule.id,                                    // 일정 식별자
                 dDayText: makeDDayText(
                     startAt: schedule.startAt,
+                endAt: schedule.endAt,
                     now: now,
                     timeZone: timeZone
                 ),
@@ -147,9 +149,11 @@ private extension HomeScheduleCardModel {
     // MARK: - 일정 시작일을 기준으로 D-Day 문구 생성
     static func makeDDayText(
         startAt: Date,
+        endAt: Date?,
         now: Date,
         timeZone: TimeZone
     ) -> String {
+        if let endAt, startAt <= now, now < endAt { return "진행 중" }
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone                            // 일정 지역 날짜 기준 적용
 

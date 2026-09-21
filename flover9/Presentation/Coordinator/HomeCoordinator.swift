@@ -37,6 +37,8 @@ final class HomeCoordinator: BaseCoordinator {
                 self?.showAlert(title: "에러", message: msg)
             case .moveToMemberProfileView(let member):
                 self?.showMemberProfileView(member: member)
+            case .moveToScheduleDetailView(let scheduleId):
+                self?.showScheduleDetail(scheduleId: scheduleId)
             }
         }
 
@@ -74,7 +76,7 @@ final class HomeCoordinator: BaseCoordinator {
         )
     }
 
-    // MARK: - 테스트 요청 오류 Alert 표시
+    // MARK: - Alert 표시
     private func showAlert(
         title: String,
         message: String
@@ -111,6 +113,7 @@ final class HomeCoordinator: BaseCoordinator {
         self.navigationController.pushViewController(vc, animated: true)
     }
 
+    // MARK: - Detail Feed
     private func showFeedDetail(
         feed: FeedEntity,
         mediaItems: [FeedImageEntity]
@@ -131,5 +134,29 @@ final class HomeCoordinator: BaseCoordinator {
             viewController,
             animated: true
         )
+    }
+    
+    // MARK: - Detail Schedule
+    private func showScheduleDetail(scheduleId: UUID) {
+        let viewModel = container.getScheduleDetailViewModel(
+            scheduleID: scheduleId
+        )
+        viewModel.onRoute = { [weak self] route in
+            switch route {
+            case .openReservation(let url):
+                UIApplication.shared.open(url) { [weak self] opened in
+                    guard !opened else { return }
+                    Task { @MainActor in
+                        self?.showAlert(title: "페이지를 열 수 없어요", message: "잠시 후 다시 시도해 주세요.")
+                    }
+                }
+            case .calendarAddFailed(let msg):
+                self?.showAlert(title: "실패", message: msg)
+            }
+        }
+
+        let vc = DetailScheduleViewController(viewModel: viewModel)
+        self.navigationController.modalPresentationStyle = .pageSheet
+        self.navigationController.present(vc, animated: true)
     }
 }

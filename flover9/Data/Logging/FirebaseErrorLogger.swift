@@ -13,6 +13,16 @@ import Foundation
 // MARK: - Domain 오류를 Firebase Analytics와 Crashlytics에 기록
 final class FirebaseErrorLogger: ErrorLogging, @unchecked Sendable {
 
+    func record(_ error: ScheduleError) async {
+        logAnalytics(error)
+        switch error {
+        case .networkUnavailable, .notFound:
+            break
+        case .invalidScheduleData, .permissionDenied, .serverUnavailable, .unknown:
+            recordCrashlytics(error)
+        }
+    }
+
     func record(_ error: AuthError) async {
         switch error {
         case .cancelled:
@@ -87,6 +97,29 @@ final class FirebaseErrorLogger: ErrorLogging, @unchecked Sendable {
 }
 
 private extension FirebaseErrorLogger {
+
+    func logAnalytics(_ error: ScheduleError) {
+        Analytics.logEvent("schedule_error", parameters: ["error_type": String(describing: error)])
+    }
+
+    func recordCrashlytics(_ error: ScheduleError) {
+        Crashlytics.crashlytics().record(error: NSError(
+            domain: "Flover9.Schedule",
+            code: errorCode(for: error),
+            userInfo: [NSLocalizedDescriptionKey: error.userMessage]
+        ))
+    }
+
+    func errorCode(for error: ScheduleError) -> Int {
+        switch error {
+        case .notFound: return 8000
+        case .invalidScheduleData: return 8001
+        case .permissionDenied: return 8002
+        case .networkUnavailable: return 8003
+        case .serverUnavailable: return 8004
+        case .unknown: return 8099
+        }
+    }
 
     // MARK: - 인증 오류 발생 횟수를 Analytics 이벤트로 기록
     func logAnalytics(_ error: AuthError) {

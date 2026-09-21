@@ -1,18 +1,40 @@
+//
+//  ScheduleRepository.swift
+//  flover9
+//
+//  Created by 박선린 on 9/10/26.
+//
+
 import Foundation
 
-// MARK: - 일정 DataSource의 DTO를 Domain 모델로 변환하는 저장소
+// MARK: - 메모리 캐시 우선 조회 및 일정 DTO의 Domain 변환 담당
 final class ScheduleRepository: ScheduleRepositoryProtocol {
-    private let dataSource: ScheduleRemoteDataSourceProtocol // 원격 일정 데이터 제공자
+    private let dataSource: ScheduleRemoteDataSourceProtocol
+    private let cache: ScheduleCacheProtocol
+    // 초기화 전에 시작된 요청이 완료되어도 이전 데이터를 다시 캐싱하지 않는다.
+    private var cacheGeneration: UInt = 0
 
-    init(dataSource: ScheduleRemoteDataSourceProtocol) {
-        self.dataSource = dataSource // 외부에서 주입받은 데이터 제공자 보관
+    init(dataSource: ScheduleRemoteDataSourceProtocol, cache: ScheduleCacheProtocol) {
+        self.dataSource = dataSource
+        self.cache = cache
     }
 
     // MARK: - 표지에서 사용할 일정 요약 목록 조회
     func fetchScheduleCovers() async throws -> [ScheduleEntity] {
         do {
-            let schedules = try await dataSource.getScheduleCovers() // 일정 DTO 목록 조회
-            return schedules.map { $0.toEntity() }                   // 참여 멤버 코드를 포함한 Entity로 변환
+            let generation = cacheGeneration
+            if let schedules = await cache.covers() {
+                return schedules.map { $0.toEntity() }
+            }
+
+            let schedules = try await dataSource.fetchScheduleCovers()
+            guard schedules.allSatisfy({ $0.eventID == $0.event.id }) else {
+                throw ScheduleError.invalidScheduleData
+            }
+            if generation == cacheGeneration {
+                await cache.saveCovers(schedules)
+            }
+            return schedules.map { $0.toEntity() }
         } catch let error as ScheduleError {
             throw error                                              // 이미 분류된 Domain 오류 유지
         } catch {
@@ -23,26 +45,63 @@ final class ScheduleRepository: ScheduleRepositoryProtocol {
     // MARK: - 상세 화면에서 사용할 일정 정보 묶음 조회
     func fetchScheduleDetail(scheduleID: UUID) async throws -> ScheduleDetailContent {
         do {
-            async let scheduleDTO = dataSource.getSchedule(id: scheduleID) // 일정 요약 병렬 조회
-            async let detailDTO = dataSource.getScheduleDetail(scheduleID: scheduleID) // 상세 정보 병렬 조회
-            async let mediaDTOs = dataSource.getScheduleMedia(scheduleID: scheduleID) // 미디어 병렬 조회
+            let generation = cacheGeneration
+            if let response = await cache.detail(for: scheduleID) {
+                return response.toEntity()
+            }
 
-            let (schedule, detail, media) = try await (
-                scheduleDTO,
+            // 홈에서 이미 조회한 일정 요약은 재사용한다.
+            let schedule: ScheduleDTO
+            if let cachedSchedule = await cache.schedule(for: scheduleID) {
+                schedule = cachedSchedule
+            } else {
+                schedule = try await dataSource.fetchSchedule(id: scheduleID)
+            }
+            guard schedule.id == scheduleID, schedule.eventID == schedule.event.id else {
+                throw ScheduleError.invalidScheduleData
+            }
+            async let detailDTO = dataSource.fetchScheduleDetail(scheduleID: scheduleID)
+            async let mediaDTOs = dataSource.fetchScheduleMedia(scheduleID: scheduleID, eventID: schedule.eventID)
+
+            let (detail, media) = try await (
                 detailDTO,
                 mediaDTOs
             )
 
-            return ScheduleDetailContent(
-                schedule: schedule.toEntity(),                      // 참여 멤버 코드를 포함한 일정 Entity
-                detail: detail?.toEntity(),                         // 존재하는 경우 상세 Entity
-                media: media.map { $0.toEntity() }                  // 첨부 미디어 Entity 목록
+            guard detail == nil || detail?.scheduleID == scheduleID else {
+                throw ScheduleError.invalidScheduleData
+            }
+            let response = ScheduleDetailResponseDTO(
+                schedule: schedule,
+                detail: detail,
+                media: media
             )
+            // 일부 요청이 실패한 경우에는 불완전한 상세 결과를 저장하지 않는다.
+            if generation == cacheGeneration {
+                await cache.saveDetail(response)
+            }
+            return response.toEntity()
         } catch let error as ScheduleError {
             throw error                                              // 이미 분류된 Domain 오류 유지
         } catch {
             throw mapScheduleError(error)                            // Data 오류를 Domain 오류로 변환
         }
+    }
+
+    // MARK: - Reset
+    func resetCovers() async {
+        cacheGeneration &+= 1
+        await cache.resetCovers()
+    }
+
+    func reset(scheduleID: UUID) async {
+        cacheGeneration &+= 1
+        await cache.reset(scheduleID)
+    }
+
+    func resetAll() async {
+        cacheGeneration &+= 1
+        await cache.resetAll()
     }
 
     // MARK: - 범용 Supabase Data 오류를 일정 Domain 오류로 변환
