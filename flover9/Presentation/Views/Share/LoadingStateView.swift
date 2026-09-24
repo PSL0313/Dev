@@ -51,12 +51,37 @@ class LoadingStateView: UIView {
     }
     
     private func configureLayout() {
+        backgroundColor = .clear
         
         addSubview(stackView)
         
         stackView.snp.makeConstraints {
             $0.centerX.equalTo(self.snp.centerX)
             $0.centerY.equalTo(self.snp.centerY)
+        }
+    }
+    
+    private func configure(label: String?) {
+        if let label {
+            self.label.text = label
+        } else {
+            self.label.isHidden = true
+        }
+    }
+    
+    private func hidden() {
+        UIView.animate(withDuration: 0.5) { [weak self] in
+            guard let self else { return }
+            self.spinner.stopAnimating()
+            self.isHidden = true
+        }
+    }
+    
+    private func start() {
+        UIView.animate(withDuration: 0.5) { [weak self] in
+            guard let self else { return }
+            spinner.startAnimating()
+            self.isHidden = true
         }
     }
     
