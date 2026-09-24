@@ -14,7 +14,7 @@ nonisolated struct FeedEntity: Identifiable, Sendable, Equatable {
     let description: String?           // 피드 설명
     let captureDate: Date              // 콘텐츠가 촬영된 날짜
     let source: String                 // 원본 콘텐츠 출처
-    let permalink: String              // 원본 콘텐츠 고유 주소
+    let permalink: String?             // 원본 콘텐츠 고유 주소. 직접 작성한 피드는 없을 수 있다.
     let thumbnailURL: URL?             // 목록에서 사용할 대표 이미지 주소
     let displayType: FeedDisplayType   // 앱 화면에서 사용할 피드 표시 방식
     let contentCount: Int              // 피드에 포함된 전체 콘텐츠 개수

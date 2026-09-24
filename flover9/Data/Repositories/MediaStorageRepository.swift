@@ -20,6 +20,7 @@ final class MediaStorageRepository: MediaStorageRepositoryProtocol, @unchecked S
             let presignResponse = try await dataSource.presignFeedBatch(
                 request: PresignFeedBatchRequestDTO(
                     feedID: draft.id,
+                    feedURL: draft.permalink?.absoluteString,
                     media: draft.media.map {
                         PresignMediaItemDTO(
                             contentType: $0.contentType.rawValue,
@@ -51,7 +52,7 @@ final class MediaStorageRepository: MediaStorageRepositoryProtocol, @unchecked S
                     description: draft.description,
                     captureDate: ISO8601DateFormatter().string(from: draft.captureDate),
                     source: draft.source,
-                    permalink: draft.permalink.absoluteString,
+                    permalink: draft.permalink?.absoluteString,
                     memberCodes: draft.memberCodes.map(\.rawValue),
                     media: try draft.media.map { file in
                         guard let upload = completedByOrder[file.sortOrder] else {
@@ -124,6 +125,7 @@ final class MediaStorageRepository: MediaStorageRepositoryProtocol, @unchecked S
 
         guard
             uploads.count == files.count,
+            Set(uploads.map(\.sortOrder)).count == uploads.count,
             uploads.allSatisfy({ filesByOrder[$0.sortOrder] != nil })
         else {
             throw MediaUploadError.serverUnavailable

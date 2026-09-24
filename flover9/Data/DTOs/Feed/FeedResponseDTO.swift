@@ -16,7 +16,7 @@ nonisolated struct FeedResponseDTO: Decodable, Sendable {
     let captureDate: Date                     // feeds.capture_date
     let uploadedAt: Date                      // feeds.uploaded_at
     let source: String                        // feeds.source
-    let permalink: String                     // feeds.permalink
+    let permalink: String?                    // feeds.permalink, 원본 주소가 없는 앱 작성 피드는 nil
     let thumbnailURL: String?                 // feeds.thumbnail_url
     let displayType: String                   // feeds.display_type
     let contentCount: Int                     // feeds.content_count

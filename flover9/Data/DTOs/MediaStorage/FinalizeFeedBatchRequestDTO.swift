@@ -16,7 +16,7 @@ nonisolated struct FinalizeFeedBatchRequestDTO: Encodable, Sendable {
     let description: String?
     let captureDate: String
     let source: String
-    let permalink: String
+    let permalink: String?
     let memberCodes: [String]
     let media: [FinalizeFeedMediaItemDTO]
 }

@@ -15,7 +15,7 @@ struct FeedDTO: Decodable {
     let captureDate: Date
     let uploadedAt: Date
     let source: String
-    let permalink: String
+    let permalink: String?
 
     enum CodingKeys: String, CodingKey {
         case id
