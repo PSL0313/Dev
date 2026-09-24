@@ -17,6 +17,7 @@ final class HomeViewModel {
         case failed(String)             // 홈탭 데이터 fetch 실패
         case moveToMemberProfileView(MemberEntity)
         case moveToScheduleDetailView(UUID)
+        case moveToMelonMusicWave
     }
 
     // MARK: - Input
@@ -25,6 +26,7 @@ final class HomeViewModel {
         case moveToMember(MemberEntity)
         case moveToSchedule(UUID)
         case moveToAllSchedule
+        case moveToMelonMusicWave
     }
     // MARK: - State
     enum State {
@@ -82,6 +84,8 @@ final class HomeViewModel {
             ()
         case .moveToSchedule(let scheduleId):
             onRoute?(.moveToScheduleDetailView(scheduleId))
+        case .moveToMelonMusicWave:
+            onRoute?(.moveToMelonMusicWave)
         }
     }
 

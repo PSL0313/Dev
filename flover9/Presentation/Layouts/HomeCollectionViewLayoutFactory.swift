@@ -37,6 +37,8 @@ final class HomeCollectionViewLayoutFactory {
             switch section {
             case .members:
                 return makeHeroSection(environment: environment)
+            case .melonStreamingShortcut:
+                return makeMelonStreamingShortcut()
             case .schedules:
                 return makeScheduleSection()
             case .albums, .otherAlbums:
@@ -71,7 +73,7 @@ private extension HomeCollectionViewLayoutFactory {
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
             leading: 0,
-            bottom: HomeLayoutMetric.sectionSpacing,
+            bottom: 0,
             trailing: 0
         )
         return section
@@ -154,5 +156,36 @@ private extension HomeCollectionViewLayoutFactory {
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
+    }
+    
+    // 스트리밍 바로가기 카드 섹션을 생성( 실제로는 하나만 생성
+    func makeMelonStreamingShortcut() -> NSCollectionLayoutSection {
+        // 일정 제목 줄 수에 따라 실제 높이가 계산되도록 예상 높이를 사용
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalWidth(0.3)
+        )
+
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(300)
+        )
+        
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(
+            top: 12,
+            leading: 20,
+            bottom: 20,
+            trailing: 20
+        )
+
+        return section
     }
 }

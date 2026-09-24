@@ -52,6 +52,12 @@ class HomeViewController: UIViewController {
             forCellWithReuseIdentifier:
                 MusicAlbumCollectionViewCell.reuseIdentifier
         )
+        
+        // 스트리밍 바로가기
+        collectionView.register(
+            StreamingShortcutCell.self,
+            forCellWithReuseIdentifier: StreamingShortcutCell.reuseIdentifier
+        )
 
         return collectionView
     }()
@@ -143,6 +149,8 @@ extension HomeViewController: UICollectionViewDelegate {
         switch item {
         case .member:
             break
+        case .melonStreamingShortcut:
+            viewModel.action(.moveToMelonMusicWave)
         case .schedule(let schedule):
             viewModel.action(.moveToSchedule(schedule.id))
 
@@ -177,7 +185,7 @@ extension HomeViewController {
     private func configureDataSource() -> UICollectionViewDiffableDataSource<HomeSection, HomeItem> {
         // 데이터소스 설정
         dataSource =
-        UICollectionViewDiffableDataSource<HomeSection, HomeItem>(collectionView: collectionView ) { collectionView, indexPath, item in
+        UICollectionViewDiffableDataSource<HomeSection, HomeItem>(collectionView: collectionView ) { [weak self] collectionView, indexPath, item in
 
             switch item {
             case .member(let member):
@@ -195,7 +203,14 @@ extension HomeViewController {
                     self.viewModel.action(.moveToMember(member))
                 }
                 return cell
-
+            case .melonStreamingShortcut:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: StreamingShortcutCell.reuseIdentifier,
+                    for: indexPath
+                ) as? StreamingShortcutCell else {
+                    return StreamingShortcutCell()
+                }
+                return cell
             case .schedule(let schedule):
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier:
@@ -256,6 +271,8 @@ extension HomeViewController {
             case .otherAlbums:
                 header.configure(headerType: .otherAlbums)
 
+            case .melonStreamingShortcut:
+                break
             }
 
             return header
@@ -274,6 +291,7 @@ extension HomeViewController {
         // 컬렉션뷰에 표시할 섹션을 순서대로 추가
         snapshot.appendSections([
             .members,
+            .melonStreamingShortcut,
             .schedules,
             .albums,
             .otherAlbums
@@ -283,6 +301,11 @@ extension HomeViewController {
                 .member(viewModel.members)
             ],
             toSection: .members
+        )
+        
+        snapshot.appendItems(
+            [.melonStreamingShortcut],
+            toSection: .melonStreamingShortcut
         )
 
         // 일정 데이터를 HomeItem으로 변환
@@ -361,6 +384,7 @@ extension HomeViewController {
 // MARK: - 홈 컬렉션뷰에서 표시할 섹션 종류
 nonisolated enum HomeSection: Int, CaseIterable {
     case members       // 멤버 목록 섹션
+    case melonStreamingShortcut // 멜론 스트리밍 바로가기
     case schedules     // 다가오는 일정 섹션
     case albums        // 앨범
     case otherAlbums   // OST등 프로미스나인 이외의 음원 활동
@@ -369,6 +393,7 @@ nonisolated enum HomeSection: Int, CaseIterable {
 // MARK: - 홈 컬렉션뷰에서 표시할 아이템 종류
 nonisolated private enum HomeItem: Hashable {
     case member([MemberEntity])               // 멤버 한 명
+    case melonStreamingShortcut
     case schedule(HomeScheduleCardModel)    // 일정 한 개
     case albums(Album)                             // 앨범
     case otherAlbums(Album)                        // OST등 프로미스나인 이외의 음원 활동

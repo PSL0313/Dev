@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 final class HomeCoordinator: BaseCoordinator {
 
@@ -30,15 +31,18 @@ final class HomeCoordinator: BaseCoordinator {
     override func start() {
         let viewModel = container.getHomeViewModel()
         viewModel.onRoute = { [weak self] route in
+            guard let self else { return }
             switch route {
             case .fetchedHomeData:
-                self?.onReadyForShowHome?()
+                self.onReadyForShowHome?()
             case .failed(let msg):
-                self?.showAlert(title: "에러", message: msg)
+                self.showAlert(title: "에러", message: msg)
             case .moveToMemberProfileView(let member):
-                self?.showMemberProfileView(member: member)
+                self.showMemberProfileView(member: member)
             case .moveToScheduleDetailView(let scheduleId):
-                self?.showScheduleDetail(scheduleId: scheduleId)
+                self.showScheduleDetail(scheduleId: scheduleId)
+            case .moveToMelonMusicWave:
+                self.presentMusicWave()
             }
         }
 
@@ -158,5 +162,25 @@ final class HomeCoordinator: BaseCoordinator {
         let vc = DetailScheduleViewController(viewModel: viewModel)
         self.navigationController.modalPresentationStyle = .pageSheet
         self.navigationController.present(vc, animated: true)
+    }
+    
+    // MARK: - moveToMelonMusicWave
+    func presentMusicWave() {
+        guard let url = URL(
+            string: "https://into.melon.com/bridge/normal/musicwave/5NBXq1bGtX0CP8Qf-N_tmQ?type=channel&albumId=11564698&ajax_ts=266"
+        ) else {
+            return
+        }
+
+        let safari = SFSafariViewController(url: url)
+        
+        safari.modalPresentationStyle = .pageSheet
+
+        if let sheet = safari.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+
+        navigationController.present(safari, animated: true)
     }
 }
