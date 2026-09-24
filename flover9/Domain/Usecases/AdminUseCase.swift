@@ -1,3 +1,10 @@
+//
+//  AdminUseCase.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 관리 작업 직전에 권한과 입력값을 다시 검증

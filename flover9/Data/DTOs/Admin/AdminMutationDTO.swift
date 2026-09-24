@@ -1,3 +1,10 @@
+//
+//  AdminMutationDTO.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 수정할 칼럼만 전송해 소유자와 미디어 정보를 보존

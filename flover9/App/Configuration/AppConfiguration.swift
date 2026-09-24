@@ -1,3 +1,10 @@
+//
+//  AppConfiguration.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 앱 실행에 필요한 환경 설정 제공
@@ -31,4 +38,3 @@ enum AppConfiguration {
         return value
     }
 }
-

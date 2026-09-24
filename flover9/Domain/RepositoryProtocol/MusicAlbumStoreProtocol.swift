@@ -1,3 +1,10 @@
+//
+//  MusicAlbumStoreProtocol.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 /// 앱 번들에서 음악 카탈로그를 읽고 앨범을 조회하는 저장소의 규약입니다.

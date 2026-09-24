@@ -1,3 +1,10 @@
+//
+//  AdminEditorMode.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 생성과 수정을 구분해 잘못된 덮어쓰기 방지

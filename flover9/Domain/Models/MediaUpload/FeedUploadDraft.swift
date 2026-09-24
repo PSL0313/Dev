@@ -1,3 +1,10 @@
+//
+//  FeedUploadDraft.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - Presentation 계층이 작성한 피드 업로드 입력값

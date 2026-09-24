@@ -1,3 +1,10 @@
+//
+//  SceneDelegate.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import UIKit
 
 // MARK: - 앱의 Window와 최상위 객체 그래프를 관리하는 객체

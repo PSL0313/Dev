@@ -1,3 +1,10 @@
+//
+//  AdminMediaDTO.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 관리자 미디어 목록은 소유 대상과 관계없이 같은 형태로 표시

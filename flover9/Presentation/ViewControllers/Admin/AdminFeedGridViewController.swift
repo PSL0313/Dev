@@ -1,3 +1,10 @@
+//
+//  AdminFeedGridViewController.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import UIKit
 
 // MARK: - 일반 피드와 같은 3열 썸네일 목록에서 수정할 피드를 선택

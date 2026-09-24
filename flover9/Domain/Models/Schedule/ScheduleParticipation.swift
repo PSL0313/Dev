@@ -1,3 +1,10 @@
+//
+//  ScheduleParticipation.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 일정에 참여하는 주체를 화면과 비즈니스 로직에서 구분하는 모델

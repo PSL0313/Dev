@@ -1,3 +1,10 @@
+//
+//  AdminRepository.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 관리자 DTO 변환, Domain 오류 분류 및 캐시 무효화

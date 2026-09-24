@@ -1,3 +1,10 @@
+//
+//  AdminCoordinator.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import UIKit
 
 // MARK: - 관리자 화면 이동과 Alert를 관리. 임시 탭 연결과 기능은 분리한다.

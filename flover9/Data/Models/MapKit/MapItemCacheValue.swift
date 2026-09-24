@@ -1,3 +1,10 @@
+//
+//  MapItemCacheValue.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import MapKit
 
 // MKMapItem은 변경 가능한 참조 타입이므로 접근을 MainActor에 한정한다.

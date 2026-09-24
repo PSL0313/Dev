@@ -1,3 +1,10 @@
+//
+//  MusicCatalogEntity.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 앱에서 사용하는 로컬 음악 카탈로그

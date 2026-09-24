@@ -1,5 +1,5 @@
 //
-//  UserProfile.swift
+//  ReadUserProfileDTO.swift
 //  flover9
 //
 //  Created by 박선린 on 7/29/26.

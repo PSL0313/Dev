@@ -2,6 +2,8 @@
 //  MusicAlbumCollectionViewCell.swift
 //  flover9
 //
+//  Created by 박선린 on 9/24/26.
+//
 
 import UIKit
 import MusicKit

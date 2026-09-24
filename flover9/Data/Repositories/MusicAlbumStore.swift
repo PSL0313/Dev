@@ -1,3 +1,10 @@
+//
+//  MusicAlbumStore.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 /// 앱 번들에 포함된 음악 카탈로그 JSON을 메모리에 보관하는 저장소입니다.

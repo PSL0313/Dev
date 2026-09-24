@@ -1,3 +1,10 @@
+//
+//  ScheduleType.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 일정의 성격을 구분하는 도메인 모델

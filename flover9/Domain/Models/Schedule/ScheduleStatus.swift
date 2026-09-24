@@ -1,3 +1,10 @@
+//
+//  ScheduleStatus.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 import Foundation
 
 // MARK: - 일정의 현재 진행 상태를 나타내는 도메인 모델

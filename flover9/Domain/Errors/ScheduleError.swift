@@ -1,3 +1,10 @@
+//
+//  ScheduleError.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 // MARK: - 일정 조회와 데이터 변환 과정에서 사용하는 Domain 오류
 nonisolated enum ScheduleError: Error, Sendable, Equatable {
     case notFound                  // 요청한 일정을 찾지 못함

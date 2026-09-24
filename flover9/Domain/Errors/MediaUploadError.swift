@@ -1,3 +1,10 @@
+//
+//  MediaUploadError.swift
+//  flover9
+//
+//  Created by 박선린 on 9/24/26.
+//
+
 // MARK: - 미디어 업로드와 정리 과정의 Domain 오류
 nonisolated enum MediaUploadError: Error, Sendable, Equatable {
     case unauthenticated
