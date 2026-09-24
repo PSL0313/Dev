@@ -8,7 +8,7 @@
 import UIKit
 
 final class FeedDetailBottomSheetViewController: UIViewController {
-    private let feed: FeedEntity
+    private let viewerTitle: String?
     private let mediaItems: [FeedImageEntity]
     private let initialIndex: Int
     private let pageControl = UIPageControl()
@@ -17,7 +17,15 @@ final class FeedDetailBottomSheetViewController: UIViewController {
     private var hasAppliedInitialOffset = false
 
     init(feed: FeedEntity, mediaItems: [FeedImageEntity], initialIndex: Int = 0) {
-        self.feed = feed
+        self.viewerTitle = feed.title
+        self.mediaItems = mediaItems
+        self.initialIndex = initialIndex
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    // MARK: - 관리자 미리보기도 같은 읽기 전용 뷰어를 사용
+    init(title: String?, mediaItems: [FeedImageEntity], initialIndex: Int = 0) {
+        self.viewerTitle = title
         self.mediaItems = mediaItems
         self.initialIndex = initialIndex
         super.init(nibName: nil, bundle: nil)
@@ -55,7 +63,7 @@ final class FeedDetailBottomSheetViewController: UIViewController {
     }
 
     private func configureViewer() {
-        title = feed.title
+        title = viewerTitle
         view.backgroundColor = .black
         navigationItem.largeTitleDisplayMode = .never
         countLabel.font = .monospacedDigitSystemFont(ofSize: 13, weight: .semibold)

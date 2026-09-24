@@ -122,6 +122,10 @@ final class FeedDetailImageCell: UICollectionViewCell, UIScrollViewDelegate {
         player = nil
         videoContainerView.isHidden = true
         scrollView.isHidden = false
+        if url.isFileURL {
+            imageView.kf.setImage(with: .provider(LocalFileImageDataProvider(fileURL: url)))
+            return
+        }
         
         imageView.kf.setImage(
             with: url,

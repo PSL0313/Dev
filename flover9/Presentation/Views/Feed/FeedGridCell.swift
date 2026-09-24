@@ -15,37 +15,23 @@ final class FeedGridCell: UICollectionViewCell {
     private let hasMultipleImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "photo.stack")
-        imageView.tintColor = .systemGray
+        imageView.tintColor = .white
         return imageView
     }()
 
     private let dimView = UIView()
     private let lockImageView = UIImageView()
-
-//    private let progressView: UIProgressView = {
-//        let view = UIProgressView()
-//        view.tintColor = .systemBlue
-//        view.progress = 0
-//        return view
-//    }()
-
-    private let progressLayer: CAShapeLayer = {
-        let circularPath = UIBezierPath(
-            arcCenter: CGPoint(x: 50, y: 50),
-            radius: 40,
-            startAngle: -.pi / 2,
-            endAngle: .pi * 2,
-            clockwise: true
-        )
-        let progressLayer = CAShapeLayer()
-        progressLayer.path = circularPath.cgPath
-        progressLayer.strokeEnd = 0
-        progressLayer.strokeColor = UIColor.systemBlue.cgColor
-        progressLayer.fillColor = UIColor.clear.cgColor
-        progressLayer.lineWidth = 8
-        return progressLayer
+    
+    private let frommLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.text = "fromm"
+        return label
     }()
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureHierarchy()
@@ -65,13 +51,21 @@ final class FeedGridCell: UICollectionViewCell {
         hasMultipleImageView.isHidden = true
     }
 
-    func configure(with feed: FeedEntity) {
-        let isFromm = feed.source.lowercased() == "fromm"
+    func configure(with feed: FeedEntity, isManagement: Bool = false) {
+        imageView.contentMode = .scaleAspectFill
+        frommLabel.isHidden = !(feed.source.lowercased() == "fromm")
+        let isFromm = feed.source.lowercased() == "fromm" && !isManagement
         let oneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: .now) ?? .now
         let isLocked = isFromm && feed.captureDate >= oneYearAgo
         dimView.isHidden = !isLocked
         lockImageView.isHidden = !isLocked
         hasMultipleImageView.isHidden = feed.contentCount <= 1
+        
+        /// 출처가 fromm이지만 잠금 기간이 끝난 경우 이미지 교체
+        if isFromm == true && !isLocked {
+            lockImageView.isHidden = false
+            lockImageView.image = UIImage(systemName: "lock.open.fill")
+        }
 
         if let url = feed.thumbnailURL {
 
@@ -91,10 +85,21 @@ final class FeedGridCell: UICollectionViewCell {
                 ])
 
         } else {
-            imageView.image = nil
+            imageView.image = isManagement ? UIImage(systemName: feed.displayType == .shorts ? "play.rectangle" : "photo") : nil
+            if isManagement {
+                imageView.contentMode = .scaleAspectFit
+                imageView.tintColor = .secondaryLabel
+            }
         }
 
         self.imageView.backgroundColor = .systemBackground
+        
+        if isManagement {
+            frommLabel.backgroundColor = .black.withAlphaComponent(0.4)
+            frommLabel.layer.cornerRadius = frommLabel.bounds.height / 2
+            frommLabel.layer.cornerCurve = .continuous
+            frommLabel.layer.masksToBounds = true
+        }
     }
 
     private func downsamplingSize() -> CGSize {
@@ -107,6 +112,7 @@ final class FeedGridCell: UICollectionViewCell {
         contentView.addSubview(imageView)
         contentView.addSubview(dimView)
         contentView.addSubview(lockImageView)
+        contentView.addSubview(frommLabel)
         contentView.addSubview(hasMultipleImageView)
     }
 
@@ -121,6 +127,7 @@ final class FeedGridCell: UICollectionViewCell {
         dimView.isHidden = true
 
         lockImageView.image = UIImage(systemName: "lock.fill")
+        lockImageView.contentMode = .scaleAspectFill
         lockImageView.tintColor = .white
         lockImageView.isHidden = true
     }
@@ -133,6 +140,7 @@ final class FeedGridCell: UICollectionViewCell {
         dimView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
         lockImageView.translatesAutoresizingMaskIntoConstraints = false
+        frommLabel.translatesAutoresizingMaskIntoConstraints = false
         hasMultipleImageView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
@@ -140,9 +148,12 @@ final class FeedGridCell: UICollectionViewCell {
             lockImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             lockImageView.widthAnchor.constraint(equalToConstant: 20),
             lockImageView.heightAnchor.constraint(equalToConstant: 25),
+            
+            frommLabel.topAnchor.constraint(equalTo: lockImageView.bottomAnchor, constant: 5),
+            frommLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 
-            hasMultipleImageView.widthAnchor.constraint(equalToConstant: 20),
-            hasMultipleImageView.heightAnchor.constraint(equalToConstant: 20),
+            hasMultipleImageView.widthAnchor.constraint(equalToConstant: 15),
+            hasMultipleImageView.heightAnchor.constraint(equalToConstant: 15),
             hasMultipleImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             hasMultipleImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8)
         ])
