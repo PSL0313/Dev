@@ -43,17 +43,20 @@ final class ScheduleDescriptionView: UIView {
         addSubview(descriptionLabel)
         
         title.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview().inset(15)
+            $0.top.leading.trailing.equalToSuperview()
         }
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(title.snp.bottom).offset(15)
-            $0.leading.trailing.bottom.equalToSuperview().inset(15)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
     }
     
-    func configure(title: String = "소개", discription: String) {
+    func configure(title: String, titleColor: UIColor, discription: String, descriptionColor: UIColor = .label) {
         self.title.text = title
         self.descriptionLabel.text = discription
+        
+        self.title.textColor = titleColor
+        self.descriptionLabel.textColor = descriptionColor
     }
 }

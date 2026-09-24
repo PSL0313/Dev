@@ -20,6 +20,7 @@ struct ScheduleDetailPresentation {
     let bannerImageURL: URL?    // 배너 사진
     let canReserve: Bool        // 바로가기 주소 유무
     let description: String?    // 설명 및 소개
+    let notice: String?         // 주의사항
 
     init(content: ScheduleDetailContent) {
         self.title = content.schedule.title
@@ -31,6 +32,8 @@ struct ScheduleDetailPresentation {
         venue = Self.nonempty(schedule.venueName) ?? "장소가 아직 정해지지 않았어요"
         address = Self.nonempty(content.detail?.roadAddress)
             ?? Self.nonempty(content.detail?.address)
+        
+        notice = content.detail?.notice ?? content.schedule.event.notice
 
         // 같은 URL이 대표 이미지와 첨부 미디어에 함께 있어도 한 번만 표시한다.
         var seen = Set<URL>()

@@ -62,7 +62,14 @@ final class DetailScheduleViewController: UIViewController {
     }()
     
     /// 설명 및 공지 등 텍스트뷰
-    private let descriptionView = ScheduleDescriptionView()
+    private let descriptionsStackView = {
+        let stv = UIStackView()
+        stv.axis = .vertical
+        stv.spacing = 30
+        stv.alignment = .leading
+        stv.distribution = .fill
+        return stv
+    }()
     
     /// 내부 이미지 콘텐츠(행사 상세 이미지)
     private let mediaStackView: UIStackView = {
@@ -155,7 +162,7 @@ private extension DetailScheduleViewController {
         rootView.addSubview(mediaStackView)
         rootView.addSubview(bottomBlendView)
         rootView.addSubview(mapPreviewView)
-        rootView.addSubview(descriptionView)
+        rootView.addSubview(descriptionsStackView)
 
         scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.snp.makeConstraints {
@@ -196,13 +203,13 @@ private extension DetailScheduleViewController {
             $0.height.equalTo(0)
         }
         
-        descriptionView.snp.makeConstraints {
+        descriptionsStackView.snp.makeConstraints {
             $0.top.equalTo(mapPreviewView.snp.bottom).offset(15)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         
         mediaStackView.snp.makeConstraints {
-            $0.top.equalTo(descriptionView.snp.bottom).offset(15)
+            $0.top.equalTo(descriptionsStackView.snp.bottom).offset(15)
             $0.leading.trailing.equalToSuperview()
         }
         
@@ -263,14 +270,25 @@ private extension DetailScheduleViewController {
     }
     
     ///
-    private func configureDescription(_ description : String?) {
-        if let description {
-            descriptionView.configure(discription: description)
-        } else {
-            descriptionView.snp.makeConstraints {
+    private func configureDescription(description : String?, notice: String?) {
+        if description == nil && notice == nil {
+            descriptionsStackView.snp.makeConstraints {
                 $0.height.equalTo(0)
             }
         }
+        
+        if let description {
+            let v =  ScheduleDescriptionView()
+            descriptionsStackView.addArrangedSubview(v)
+            v.configure(title: "소개", titleColor: .label, discription: description)
+        }
+        
+        if let notice {
+            let v =  ScheduleDescriptionView()
+            descriptionsStackView.addArrangedSubview(v)
+            v.configure(title: "주의사항", titleColor: .red, discription: notice)
+        }
+        
     }
     
     func bind() {
@@ -297,7 +315,7 @@ private extension DetailScheduleViewController {
                 self.isHiddenMapPreView(mapItem: mapItem)
                 self.mapPreviewView.configure(mapItem: mapItem)
                 
-                self.configureDescription(presentation.description)
+                self.configureDescription(description: presentation.description, notice: presentation.notice)
                 
                 configureMedia(urls: presentation.imageURLs)
                 
