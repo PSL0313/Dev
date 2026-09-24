@@ -13,6 +13,18 @@ import Foundation
 // MARK: - Domain 오류를 Firebase Analytics와 Crashlytics에 기록
 final class FirebaseErrorLogger: ErrorLogging, @unchecked Sendable {
 
+    // MARK: - 사용자 입력 내용은 남기지 않고 관리자 오류 종류만 기록
+    func record(_ error: AdminError) async {
+        switch error {
+        case .invalidInput, .permissionDenied:
+            return
+        case .networkUnavailable, .notFound:
+            Analytics.logEvent("admin_error", parameters: ["error_code": adminErrorCode(error)])
+        case .serverUnavailable, .saveUnconfirmed:
+            recordAdminFailure(error)
+        }
+    }
+
     func record(_ error: ScheduleError) async {
         logAnalytics(error)
         switch error {
@@ -97,6 +109,25 @@ final class FirebaseErrorLogger: ErrorLogging, @unchecked Sendable {
 }
 
 private extension FirebaseErrorLogger {
+
+    func recordAdminFailure(_ error: AdminError) {
+        Crashlytics.crashlytics().record(error: NSError(
+            domain: "Flover9.Admin",
+            code: adminErrorCode(error),
+            userInfo: [NSLocalizedDescriptionKey: error.userMessage]
+        ))
+    }
+
+    func adminErrorCode(_ error: AdminError) -> Int {
+        switch error {
+        case .permissionDenied: return 9000
+        case .invalidInput: return 9001
+        case .networkUnavailable: return 9002
+        case .notFound: return 9003
+        case .serverUnavailable: return 9004
+        case .saveUnconfirmed: return 9005
+        }
+    }
 
     func logAnalytics(_ error: ScheduleError) {
         Analytics.logEvent("schedule_error", parameters: ["error_type": String(describing: error)])

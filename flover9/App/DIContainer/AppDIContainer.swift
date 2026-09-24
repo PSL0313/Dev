@@ -129,6 +129,31 @@ final class AppDIContainer {
 
     init() {}
 
+    // MARK: - 관리자 기능 의존성 조립
+    private lazy var adminRepository: AdminRepositoryProtocol = {
+        AdminRepository(
+            dataSource: SupabaseAdminRemoteDataSource(client: supabaseClient),
+            feedCache: feedCache,
+            scheduleRepository: scheduleRepository
+        )
+    }()
+
+    private lazy var adminUseCase: AdminUseCaseProtocol = {
+        AdminUseCase(repository: adminRepository, createFeedUseCase: createFeedUseCase)
+    }()
+
+    func getAdminDashboardViewModel() -> AdminDashboardViewModel {
+        AdminDashboardViewModel(useCase: adminUseCase)
+    }
+
+    func getAdminListViewModel(category: AdminCategory) -> AdminListViewModel {
+        AdminListViewModel(category: category, useCase: adminUseCase, logger: errorLogger)
+    }
+
+    func getAdminEditorViewModel(mode: AdminEditorMode) -> AdminEditorViewModel {
+        AdminEditorViewModel(mode: mode, useCase: adminUseCase, logger: errorLogger)
+    }
+
     // MARK: - Usecases
     private lazy var mapItemUseCase: MapItemUseCaseProtocol = {
         MapItemUseCase(repository: mapItemRepository)
