@@ -22,6 +22,9 @@ final class AppDIContainer {
         MusicAlbumStore()
     }()
 
+    // 좋아요를 누른 WallPaper(배경화면)을 불러오는 객체
+    lazy var wallpaperFavorites = WallpaperFavoritesStore()
+    
     // MARK: - SupabaseClient
     private lazy var supabaseClient: SupabaseClient = {
         return SupabaseClient(
@@ -35,6 +38,9 @@ final class AppDIContainer {
         FirebaseErrorLogger()
     }()
 
+    // MARK: - Initializer
+    init() {}
+    
     // MARK: - Cache
     private lazy var feedCache: FeedCacheProtocol = {
         FeedCache()
@@ -49,15 +55,17 @@ final class AppDIContainer {
     }()
 
     // MARK: - Datasource
+    // 맵 아이템
     private lazy var mapItemDataSource: MapItemDataSourceProtocol = {
         AppleMapItemDataSource()
     }()
 
+    // 피드 데이터
     private lazy var feedRemoteDataSource: FeedRemoteDataSourceProtocol = {
         return SupabaseFeedRemoteDataSource(supabase: self.supabaseClient)
     }()
 
-    // DataSource
+    // 멤버 데이터
     private lazy var memberRemoteDataSource: MemberRemoteDataSourceProtocol = {
         SupabaseMemberRemoteDataSource(
             supabaseClient: supabaseClient
@@ -77,21 +85,30 @@ final class AppDIContainer {
             supabaseClient: supabaseClient
         )
     }()
+    
+    // 배경화면
+    private lazy var wallpaperSource: WallpaperRemoteDataSourceProtocol = SupabaseWallpaperRemoteDataSource(client: supabaseClient)
+    // 배경화면 관리
+    private lazy var wallpaperAdminSource: WallpaperAdminRemoteDataSourceProtocol = SupabaseWallpaperAdminRemoteDataSource(client: supabaseClient)
+    
 
     // MARK: - Repository
+    // 맵 아이템
     private lazy var mapItemRepository: MapItemRepositoryProtocol = {
         MapItemRepository(dataSource: mapItemDataSource, cache: mapItemCache)
     }()
 
+    // Auth
     private lazy var authRepository: AuthRepositoryProtocol = {
         SupabaseAuthRepository(client: supabaseClient)
     }()
 
+    // 프로필
     private lazy var profileRepository: ProfileRepositoryProtocol = {
         SupabaseProfileRepository(client: supabaseClient)
     }()
 
-    // 피드 캐싱 객체
+    // 피드
     private lazy var feedRepository: FeedRepositoryProtocol = {
         return SupabaseFeedRepository(
             datasource: feedRemoteDataSource,
@@ -99,14 +116,14 @@ final class AppDIContainer {
         )
     }()
 
-    // 멤버 Repository
+    // 멤버
     private lazy var memberRepository: MemberRepositoryProtocol = {
         MemberRepository(
             dataSource: memberRemoteDataSource
         ) // 원격 DTO 조회 및 Domain Entity 변환 담당
     }()
 
-    // 일정 Repository
+    // 일정
     private lazy var scheduleRepository: ScheduleRepositoryProtocol = {
         ScheduleRepository(
             dataSource: scheduleRemoteDataSource,
@@ -126,9 +143,6 @@ final class AppDIContainer {
         FirebaseRemoteConfigRepository()
     }()
 
-
-    init() {}
-
     // MARK: - 관리자 기능 의존성 조립
     private lazy var adminRepository: AdminRepositoryProtocol = {
         AdminRepository(
@@ -137,7 +151,13 @@ final class AppDIContainer {
             scheduleRepository: scheduleRepository
         )
     }()
-
+    
+    // 배경화면
+    private lazy var wallpaperRepository: WallpaperRepositoryProtocol = WallpaperRepository(source: wallpaperSource)
+    
+    // 배경화면 관리
+    private lazy var wallpaperAdminRepository: WallpaperAdminRepositoryProtocol = WallpaperAdminRepository(source: wallpaperAdminSource)
+    
     private lazy var adminUseCase: AdminUseCaseProtocol = {
         AdminUseCase(repository: adminRepository, createFeedUseCase: createFeedUseCase)
     }()
@@ -253,6 +273,24 @@ final class AppDIContainer {
     func getDeleteFeedMediaUseCase() -> DeleteFeedMediaUseCaseProtocol {
         deleteFeedMediaUseCase
     }
+    
+    // 배경화면 다운로드
+    func makeDownloadWallpaperUseCase() -> DownloadWallpaperUseCase { DownloadWallpaperUseCase(repository: WallpaperDownloadRepository()) }
+
+    // WallPaper 관리
+    func makeManageWallpapersUseCase() -> ManageWallpapersUseCase {
+        ManageWallpapersUseCase(repository: wallpaperAdminRepository)
+    }
+    
+    func canManageWallpapers() async -> Bool {
+        (try? await makeManageWallpapersUseCase().context()) != nil
+    }
+    
+    // 시리즈별 검색
+    func makeBrowseWallpapersUseCase() -> BrowseWallpapersUseCase {
+        BrowseWallpapersUseCase(repository: wallpaperRepository)
+    }
+
 
     // MARK: - get ViewModels
     func getLaunchViewModel() -> LaunchViewModel {
@@ -305,6 +343,14 @@ final class AppDIContainer {
         )
     }
 
+    
+    func makeWallpaperHomeViewModel() -> WallpaperHomeViewModel {
+        WallpaperHomeViewModel(browse: makeBrowseWallpapersUseCase())
+    }
+    
+    func makeWallpaperSearchViewModel() -> WallpaperSearchViewModel {
+        WallpaperSearchViewModel(browse: makeBrowseWallpapersUseCase())
+    }
 }
 
 // MARK: - Platform

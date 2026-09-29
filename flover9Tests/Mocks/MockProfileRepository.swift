@@ -9,7 +9,7 @@ import Foundation
 @testable import flover9
 
 // MARK: - 프로필 결과를 원하는 상황으로 제어하는 테스트용 Repository
-actor MockProfileRepository: ProfileRepositoryProtocol {
+@MainActor final class MockProfileRepository: ProfileRepositoryProtocol {
     private var profile: UserProfile?                    // 프로필 조회 시 반환할 값
     private var profileError: (any Error)?               // 프로필 조회 시 던질 오류
 

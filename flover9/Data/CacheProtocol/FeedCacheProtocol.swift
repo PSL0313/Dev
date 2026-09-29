@@ -22,7 +22,9 @@ protocol FeedCacheProtocol: Actor {
         for feedID: UUID
     ) -> [FeedImageDTO]?
 
-
+    /// 가장 최신 피드를 가져옴
+    func latestFeed(for memberCode: MemberCode?) -> FeedResponseDTO?
+    
     // MARK: - Write
 
     /// DataSource에서 새로 받아온 데이터를 캐시에 추가
@@ -37,7 +39,12 @@ protocol FeedCacheProtocol: Actor {
         for feedID: UUID
     )
 
-
+    /// 새로고침으로 받아온 데이터를 피드 앞부분에 추가
+    func prepend(
+        _ feeds: [FeedResponseDTO],
+        for memberCode: MemberCode?
+    )
+    
     // MARK: - Server Pagination
 
     /// 캐시에 저장된 피드 개수 반환

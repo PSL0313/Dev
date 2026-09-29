@@ -14,5 +14,9 @@ protocol FeedRepositoryProtocol {
         limit: Int
     ) async throws -> [FeedEntity]
 
+    func fetchNewFeeds(
+        memberCode: MemberCode?
+    ) async throws -> [FeedEntity]
+    
     func fetchFeedMedia(feedID: UUID) async throws -> [FeedImageEntity]
 }

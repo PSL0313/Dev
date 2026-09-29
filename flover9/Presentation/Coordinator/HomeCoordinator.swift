@@ -11,6 +11,7 @@ import SafariServices
 final class HomeCoordinator: BaseCoordinator {
 
     var navigationController: UINavigationController
+    var onWallpaper: (() -> Void)?
     var onRequestAppReset: (() -> Void)?               // 앱 전체 재시작 요청
     var onReadyForShowHome: (() -> Void)?              // 초기 데이터 fetch 완료
 
@@ -47,6 +48,10 @@ final class HomeCoordinator: BaseCoordinator {
         }
 
         let viewController = HomeViewController(viewModel: viewModel)
+        viewController.onWallpaper = { [weak self] in self?.onWallpaper?() }
+        Task { [weak viewController, container] in
+            viewController?.wallpaperCoverURL = try? await container.makeBrowseWallpapersUseCase().home(category: nil).first?.coverURL
+        }
 
         navigationController.setViewControllers(
             [viewController],

@@ -9,7 +9,7 @@ import Foundation
 @testable import flover9
 
 // MARK: - 인증 결과를 원하는 상황으로 제어하는 테스트용 Repository
-actor MockAuthRepository: AuthRepositoryProtocol {
+@MainActor final class MockAuthRepository: AuthRepositoryProtocol {
     private var currentSession: AuthSession?             // 세션 조회 시 반환할 값
     private var currentSessionError: (any Error)?        // 세션 조회 시 던질 오류
 

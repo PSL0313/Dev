@@ -10,6 +10,8 @@ import MusicKit
 
 // MARK: - HomeViewController
 class HomeViewController: UIViewController {
+    var onWallpaper: (() -> Void)?
+    var wallpaperCoverURL: URL? { didSet { if isViewLoaded { collectionView.reloadData() } } }
 
     // MARK: - UI
     // 홈 화면의 콘텐츠를 표시하는 컬렉션뷰
@@ -32,6 +34,7 @@ class HomeViewController: UIViewController {
             withReuseIdentifier: HomeTabSectionHeaderCollectionReusableView.identifier
         )
 
+        collectionView.register(WallpaperEntryCell.self, forCellWithReuseIdentifier: "wallpaper-entry")
         collectionView.register(HomeHeroCell.self, forCellWithReuseIdentifier: HomeHeroCell.reuseIdentifier)
 
         // 멤버 리스트셀등록
@@ -95,10 +98,6 @@ class HomeViewController: UIViewController {
         bindViewModel()
     }
 
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        navigationController?.setNavigationBarHidden(true, animated: animated)
-//    }
 
     private func bindViewModel() {
         viewModel.onState = { [weak self] state in
@@ -149,6 +148,8 @@ extension HomeViewController: UICollectionViewDelegate {
         switch item {
         case .member:
             break
+        case .wallpaper:
+            onWallpaper?()
         case .melonStreamingShortcut:
             viewModel.action(.moveToMelonMusicWave)
         case .schedule(let schedule):
@@ -202,6 +203,10 @@ extension HomeViewController {
                     guard let self else { return }
                     self.viewModel.action(.moveToMember(member))
                 }
+                return cell
+            case .wallpaper:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "wallpaper-entry", for: indexPath) as! WallpaperEntryCell
+                cell.configure(url: self?.wallpaperCoverURL)
                 return cell
             case .melonStreamingShortcut:
                 guard let cell = collectionView.dequeueReusableCell(
@@ -271,7 +276,7 @@ extension HomeViewController {
             case .otherAlbums:
                 header.configure(headerType: .otherAlbums)
 
-            case .melonStreamingShortcut:
+            case .melonStreamingShortcut, .wallpaper:
                 break
             }
 
@@ -291,8 +296,9 @@ extension HomeViewController {
         // 컬렉션뷰에 표시할 섹션을 순서대로 추가
         snapshot.appendSections([
             .members,
-            .melonStreamingShortcut,
+            .wallpaper,
             .schedules,
+            .melonStreamingShortcut,
             .albums,
             .otherAlbums
         ])
@@ -303,6 +309,7 @@ extension HomeViewController {
             toSection: .members
         )
         
+        snapshot.appendItems([.wallpaper], toSection: .wallpaper)
         snapshot.appendItems(
             [.melonStreamingShortcut],
             toSection: .melonStreamingShortcut
@@ -384,6 +391,7 @@ extension HomeViewController {
 // MARK: - 홈 컬렉션뷰에서 표시할 섹션 종류
 nonisolated enum HomeSection: Int, CaseIterable {
     case members       // 멤버 목록 섹션
+    case wallpaper
     case melonStreamingShortcut // 멜론 스트리밍 바로가기
     case schedules     // 다가오는 일정 섹션
     case albums        // 앨범
@@ -393,6 +401,7 @@ nonisolated enum HomeSection: Int, CaseIterable {
 // MARK: - 홈 컬렉션뷰에서 표시할 아이템 종류
 nonisolated private enum HomeItem: Hashable {
     case member([MemberEntity])               // 멤버 한 명
+    case wallpaper
     case melonStreamingShortcut
     case schedule(HomeScheduleCardModel)    // 일정 한 개
     case albums(Album)                             // 앨범

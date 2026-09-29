@@ -15,6 +15,11 @@ protocol FeedReadUseCaseProtocol {
         limit: Int
     ) async throws -> [FeedEntity]
 
+    /// 최신 피드를 가져오는 데이터
+    func fetchNewFeeds(
+        memberCode: MemberCode?
+    ) async throws -> [FeedEntity]
+    
     /// 선택한 피드의 상세 미디어 조회
     func fetchFeedMedia(
         feedID: UUID

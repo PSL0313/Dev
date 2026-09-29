@@ -26,6 +26,7 @@ final class MemberProfileViewModel {
     private(set) var feeds: [FeedEntity] = []
     private(set) var isInitialLoading = false
     private(set) var isLoadingMore = false
+    private(set) var isLoadingNewFeeds = false
     private(set) var hasReachedEndOfFeeds = false
     private(set) var errorMessage: String?
     private(set) var isLoadingFeedDetail = false
@@ -68,8 +69,14 @@ final class MemberProfileViewModel {
 
     @MainActor
     func reload() async {
-        guard !isInitialLoading, !isLoadingMore else { return }
-        await loadFirstPage(reset: true)
+        Task {
+            do {
+                let feeds = try await fetchNewFeed()
+                self.feeds.insert(contentsOf: feeds, at: 0)
+            } catch {
+                errorMessage = "신규 피드를 불러오지 못했어요"
+            }
+        }
     }
 
     @MainActor
@@ -94,6 +101,7 @@ final class MemberProfileViewModel {
             errorMessage = "추가 피드를 불러오지 못했어요"
         }
     }
+    
 
     func feed(at index: Int) -> FeedEntity? {
         guard feeds.indices.contains(index) else { return nil }
@@ -138,6 +146,10 @@ private extension MemberProfileViewModel {
             memberCode: memberCode,
             limit: Constant.pageSize
         )
+    }
+    
+    func fetchNewFeed() async throws -> [FeedEntity] {
+        try await FeedReadUseCase.fetchNewFeeds(memberCode: memberCode)
     }
 
     func loadFeedDetail(_ feed: FeedEntity) {

@@ -26,7 +26,30 @@ final class AdminCoordinator: BaseCoordinator {
             }
         }
         let viewController = AdminDashboardViewController(viewModel: viewModel)
+        viewController.onManageWallpapers = { [weak self] in self?.showWallpapers() }
         navigationController.setViewControllers([viewController], animated: false)
+    }
+
+    private func showWallpapers() {
+        let controller = WallpaperAdminListViewController(manage: container.makeManageWallpapersUseCase())
+        controller.onEditSeries = { [weak self] series in self?.showSeriesEditor(series) }
+        navigationController.pushViewController(controller, animated: true)
+    }
+
+    private func showSeriesEditor(_ series: WallpaperSeriesEntity?) {
+        let controller = WallpaperSeriesEditorViewController(series: series, manage: container.makeManageWallpapersUseCase())
+        controller.onWallpapers = { [weak self] selected in self?.showWallpaperItems(selected) }
+        navigationController.pushViewController(controller, animated: true)
+    }
+
+    private func showWallpaperItems(_ series: WallpaperSeriesEntity) {
+        let controller = WallpaperAdminItemsViewController(series: series, manage: container.makeManageWallpapersUseCase())
+        controller.onEdit = { [weak self] wallpaper in self?.showWallpaperEditor(series: series, wallpaper: wallpaper) }
+        navigationController.pushViewController(controller, animated: true)
+    }
+
+    private func showWallpaperEditor(series: WallpaperSeriesEntity, wallpaper: WallpaperEntity?) {
+        navigationController.pushViewController(WallpaperItemEditorViewController(series: series, wallpaper: wallpaper, manage: container.makeManageWallpapersUseCase()), animated: true)
     }
 
     // MARK: - 목록 → 생성 / 수정 / 삭제 확인

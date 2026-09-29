@@ -76,6 +76,59 @@ final class SupabaseFeedRemoteDataSource: FeedRemoteDataSourceProtocol {
         }
     }
 
+    // MARK: - 신규 데이터 요청(새로고침)
+    func fetchNewFeeds(memberCode: MemberCode? = nil, targetDate: Date) async throws -> FeedPageDTO {
+        do {
+
+            let feedMemberJoin = memberCode == nil ? "" : ", feed_members!inner()"
+
+            let columns = """
+            id,
+            user_id,
+            title,
+            source_name,
+            description,
+            capture_date,
+            uploaded_at,
+            source,
+            permalink,
+            thumbnail_url,
+            display_type,
+            content_count
+            \(feedMemberJoin)
+            """
+
+            // 쿼리 생성: 조회할 테이블과 칼럼 추가
+            var query = supabase
+                .from("feeds")
+                .select(columns)
+
+            // memberCode가 있을 때만 특정 멤버로 필터 추가
+            if let memberCode {
+                query = query.eq(
+                    "feed_members.member",
+                    value: memberCode.rawValue
+                )
+            }
+
+            // 실행
+            let result: [FeedResponseDTO] = try await query
+                .gt("capture_date", value: targetDate)
+                .order("capture_date", ascending: false)
+                .order("id", ascending: false)
+                .execute()
+                .value
+
+            return FeedPageDTO(
+                feeds: result,
+                hasMore: false
+            )
+        } catch {
+            throw SupabaseDataError.map(error)
+        }
+    }
+
+    
     // MARK: - 선택한 피드에 포함된 상세 미디어 조회
     func fetchFeedMedia(feedID: UUID) async throws -> [FeedImageDTO] {
         do {

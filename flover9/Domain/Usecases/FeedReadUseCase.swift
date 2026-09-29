@@ -65,6 +65,14 @@ final class FeedReadUseCase: FeedReadUseCaseProtocol {
 
         return feeds
     }
+    
+    // 새로고침하여 신규 피드를 가져오는 데이터
+    func fetchNewFeeds(
+        memberCode: MemberCode? = nil
+    ) async throws -> [FeedEntity] {
+        // Repository에 요청 범위 전달
+        try await repository.fetchNewFeeds(memberCode: memberCode)
+    }
 
 
     // MARK: - 선택한 피드의 상세 미디어 조회

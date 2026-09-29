@@ -10,6 +10,7 @@ import Testing
 @testable import flover9
 
 // MARK: - 기존 세션과 프로필 복원 동작 검증
+@MainActor
 @Suite("RestoreUserSessionUseCase")
 struct RestoreUserSessionUseCaseTests {
     // MARK: - 저장된 인증 세션이 없으면 false를 반환하고 이전 캐시 제거

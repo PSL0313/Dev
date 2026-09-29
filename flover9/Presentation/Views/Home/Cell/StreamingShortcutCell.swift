@@ -43,7 +43,7 @@ final class StreamingShortcutCell: UICollectionViewCell {
     private let melonLabel: UILabel = {
         let v = UILabel()
         v.text = "Musicwave"
-        v.font = .systemFont(ofSize: 25, weight: .bold)
+        v.font = .systemFont(ofSize: 20, weight: .bold)
         v.textColor = .white
         return v
     }()
@@ -58,8 +58,8 @@ final class StreamingShortcutCell: UICollectionViewCell {
 
     private let musicwaveLabel: UILabel = {
         let v = UILabel()
-        v.text = "Musicwave"
-        v.font = .systemFont(ofSize: 18, weight: .semibold)
+        v.text = "함께 듣는 프로미스나인"
+        v.font = .systemFont(ofSize: 12, weight: .semibold)
         v.textColor = .label
         return v
     }()
@@ -68,7 +68,7 @@ final class StreamingShortcutCell: UICollectionViewCell {
     private let shortcutIconView: UIView = {
         let v = UIView()
         v.backgroundColor = .systemGreen
-        v.layer.cornerRadius = 19
+        v.layer.cornerRadius = 14
         return v
     }()
 
@@ -156,9 +156,9 @@ final class StreamingShortcutCell: UICollectionViewCell {
 
         // Melon
         brandStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(20)
-            $0.leading.equalToSuperview().inset(20)
-            $0.trailing.lessThanOrEqualTo(coreImageView.snp.leading).offset(-12)
+            $0.top.equalToSuperview().inset(14)
+            $0.leading.equalToSuperview().inset(14)
+            $0.trailing.lessThanOrEqualTo(coreImageView.snp.leading).offset(-8)
         }
 
         melonLogoImageView.snp.makeConstraints {
@@ -169,18 +169,18 @@ final class StreamingShortcutCell: UICollectionViewCell {
         musicwaveLabel.snp.makeConstraints {
             $0.top.equalTo(brandStackView.snp.bottom).offset(4)
             $0.leading.equalTo(brandStackView)
-            $0.trailing.lessThanOrEqualTo(coreImageView.snp.leading).offset(-12)
+            $0.trailing.lessThanOrEqualTo(coreImageView.snp.leading).offset(-8)
         }
 
         // 바로가기
         shortcutStackView.snp.makeConstraints {
             $0.leading.equalTo(brandStackView)
-            $0.bottom.equalToSuperview().inset(18)
-            $0.trailing.lessThanOrEqualTo(coreImageView.snp.leading).offset(-12)
+            $0.bottom.equalToSuperview().inset(14)
+            $0.trailing.lessThanOrEqualTo(coreImageView.snp.leading).offset(-8)
         }
 
         shortcutIconView.snp.makeConstraints {
-            $0.width.height.equalTo(38)
+            $0.width.height.equalTo(28)
         }
 
         shortcutIconImageView.snp.makeConstraints {

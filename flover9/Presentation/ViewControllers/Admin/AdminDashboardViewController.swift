@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 
 final class AdminDashboardViewController: UIViewController {
+    var onManageWallpapers: (() -> Void)?
     // MARK: - Properties
     private let viewModel: AdminDashboardViewModel
 
@@ -79,6 +80,9 @@ final class AdminDashboardViewController: UIViewController {
             symbol: "calendar.badge.clock",
             category: .schedules
         ))
+        let wallpaperButton = AdminStyle.button("배경화면 관리", symbol: "photo.on.rectangle.angled", primary: false)
+        wallpaperButton.addAction(UIAction { [weak self] _ in self?.onManageWallpapers?() }, for: .touchUpInside)
+        cards.addArrangedSubview(wallpaperButton)
         stackView.addArrangedSubview(cards)
         stackView.addArrangedSubview(AdminStyle.label(
             "운영 안내\n저장한 내용은 서비스에 바로 반영돼요. 삭제 전에는 대상 항목을 한 번 더 확인해 주세요.",

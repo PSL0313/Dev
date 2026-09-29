@@ -90,7 +90,40 @@ final class SupabaseFeedRepository: FeedRepositoryProtocol {
         }
     }
 
+    // MARK: - 신규 데이터 요청
+    func fetchNewFeeds(
+        memberCode: MemberCode? = nil
+    ) async throws -> [FeedEntity] {
+        do {
 
+            // Cache에서 요청한 범위의 피드 데이터 조회
+            let cachedFeed = await cache.latestFeed(for: memberCode)
+
+            guard let cachedFeed else { return [] }
+            // 부족한 범위의 원격 피드 DTO 목록 조회
+            let feedPage = try await datasource.fetchNewFeeds(
+                memberCode: memberCode,
+                targetDate: cachedFeed.captureDate
+            )
+
+            // 원격에서 가져온 피드 Cache 저장
+            await cache.prepend(feedPage.feeds, for: memberCode)
+
+            // 추가적으로 가져올 원격 데이터가 없는 경우 Cache에 기록
+            if !feedPage.hasMore {
+                await cache.markAsFullyFetched(memberCode)
+            }
+
+            // Domain Entity 배열로 변환
+            return try feedPage.feeds.map { try $0.toEntity() }
+
+        } catch let error as FeedError {
+            throw error // DTO 변환에서 발생한 Domain 오류 유지
+        } catch {
+            throw mapFeedError(error) // Data 오류를 Feed Domain 오류로 변환
+        }
+    }
+    
     // MARK: - 선택한 피드의 상세 미디어 조회
     func fetchFeedMedia(feedID: UUID) async throws -> [FeedImageEntity] {
         do {

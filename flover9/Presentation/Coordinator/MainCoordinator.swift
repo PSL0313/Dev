@@ -36,16 +36,11 @@ final class MainCoordinator: BaseCoordinator {
         adminCoordinator.start()
         
         // test
-        let signOutTest = makeHomeCoordinator()
-        addChild(signOutTest)
-        signOutTest.start1()
-        
         // 탭바에 연결할 화면들
         tabBarController.viewControllers = [
             homeCoordinator.navigationController,
-            signOutTest.navigationController,
             profileCoordinator.navigationController,
-            adminCoordinator.navigationController        // 임시 네 번째 관리자 탭
+            adminCoordinator.navigationController        // 관리자 탭
         ]
         
         // 탭바에 연결된 화면들 중 처음에 보여질 탭
@@ -56,6 +51,17 @@ final class MainCoordinator: BaseCoordinator {
 }
 
 private extension MainCoordinator {
+    func showWallpaper() {
+        guard tabBarController.presentedViewController == nil else { return }
+        let coordinator = WallpaperCoordinator(container: container)
+        coordinator.onFinish = { [weak self, weak coordinator] in
+            guard let coordinator else { return }
+            self?.removeChild(coordinator)
+        }
+        addChild(coordinator)
+        coordinator.start()
+        tabBarController.present(coordinator.rootViewController, animated: true)
+    }
     // MARK: - 진입 위치를 변경할 때 이 탭 연결만 제거하면 된다.
     func makeAdminCoordinator() -> AdminCoordinator {
         let navigationController = UINavigationController()
@@ -83,6 +89,7 @@ private extension MainCoordinator {
             self?.onRequestAppReset?()                           // 하위 요청을 상위로 전달
         }
         
+        coordinator.onWallpaper = { [weak self] in self?.showWallpaper() }
         coordinator.onReadyForShowHome = { [weak self] in
             self?.onReadyForShowHome?()                 
         }
