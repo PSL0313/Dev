@@ -144,6 +144,19 @@ Xcode에서 패키지 의존성 해결을 기다린 뒤 `flover9` 스킴과 실�
 
 이 저장소는 계속 변경 중입니다. 현재 `MainCoordinator`에는 실험용 탭 연결이 포함되어 있고, UIKit 기반 화면에 SwiftUI·TCA Feature를 추가하는 작업을 진행하고 있습니다. 음악 재생은 현재 MVP 범위에서 제외했습니다.
 
-### 최근 빌드 확인 시 발견한 제한
+### 빌드 확인
 
-2026-10-12, Xcode 27.0에서 시뮬레이터용 Debug 빌드를 확인하는 과정에서 `swift-perception`의 `PerceptionMacros`가 `SwiftDiagnostics`, `SwiftSyntax`, `SwiftSyntaxBuilder`, `SwiftSyntaxMacros`, `SwiftCompilerPlugin` 모듈을 찾지 못해 중단됐습니다. 따라서 현재 환경에서 전체 빌드 성공을 확인한 상태는 아닙니다. 실행 전 TCA 관련 매크로 의존성 해결 여부를 확인해야 합니다.
+2026-10-12, Xcode 27.0에서 아래 명령으로 iOS 시뮬레이터용 Debug 빌드 성공을 확인했습니다.
+
+```bash
+xcodebuild -project flover9.xcodeproj \
+  -scheme flover9 \
+  -configuration Debug \
+  -destination 'generic/platform=iOS Simulator' \
+  -disableAutomaticPackageResolution \
+  CODE_SIGNING_ALLOWED=NO build
+```
+
+실행 대상은 `-destination`으로 지정합니다. 이 환경에서는 `-sdk iphonesimulator`까지 강제 지정하면 macOS에서 실행되어야 하는 `PerceptionMacros`가 iOS 시뮬레이터용으로 빌드되면서 SwiftSyntax 모듈을 찾지 못했습니다. SDK 강제 지정 없이 같은 패키지 버전과 앱 코드로 빌드에 성공했습니다.
+
+이 결과는 로컬 설정과 패키지가 준비된 환경의 컴파일 확인입니다. Firebase 설정 파일 준비, 로그인 및 실제 서버 기능의 실행 검증은 별도입니다.
