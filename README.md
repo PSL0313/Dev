@@ -33,7 +33,7 @@ flover9는 프로미스나인의 멤버별 콘텐츠를 모아 보고, 일정을
 
 | 영역 | 기술 |
 | --- | --- |
-| 언어 | Swift (프로젝트 언어 모드: Swift 5) |
+| 언어 | Swift (프로젝트 언어 모드: Swift 6) |
 | UI | UIKit, SwiftUI, SnapKit, Kingfisher |
 | 구조 | MVVM-C, Repository, UseCase, DIContainer |
 | 상태 관리 | TCA (`ComposableArchitecture`) — 캘린더·약관·닉네임 Feature |
@@ -160,3 +160,9 @@ xcodebuild -project flover9.xcodeproj \
 실행 대상은 `-destination`으로 지정합니다. 이 환경에서는 `-sdk iphonesimulator`까지 강제 지정하면 macOS에서 실행되어야 하는 `PerceptionMacros`가 iOS 시뮬레이터용으로 빌드되면서 SwiftSyntax 모듈을 찾지 못했습니다. SDK 강제 지정 없이 같은 패키지 버전과 앱 코드로 빌드에 성공했습니다.
 
 이 결과는 로컬 설정과 패키지가 준비된 환경의 컴파일 확인입니다. Firebase 설정 파일 준비, 로그인 및 실제 서버 기능의 실행 검증은 별도입니다.
+
+### Swift 6 전환 확인
+
+앱과 단위·UI 테스트 타깃의 Debug/Release 언어 모드를 Swift 6로 맞췄습니다. UseCase의 메인 액터 경계와 전달 가능한 데이터 타입을 명시하고, 백그라운드 다운로드의 진행률 갱신을 메인 액터에서 처리하도록 정리했습니다. 테스트의 최소 iOS 버전도 앱과 같은 27.0으로 맞췄습니다.
+
+2026-10-12, Xcode 27.0의 iPhone 18 Pro (iOS 27) 시뮬레이터에서 `flover9Tests` 전체 실행이 성공했습니다. UI 테스트 실행과 실기기의 백그라운드 다운로드·사진 저장 동작은 이 검증에 포함하지 않았습니다.

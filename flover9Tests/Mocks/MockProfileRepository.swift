@@ -44,4 +44,8 @@ import Foundation
     ) async throws -> UserProfile {
         throw TestDoubleError.unconfigured               // 잘못 호출되면 테스트 실패 유도
     }
+    // MARK: - 닉네임 조회는 세션 복원 테스트에서 사용하지 않음
+    func searchAvailableNickname(nickName: String) async throws -> (String, Bool) {
+        throw TestDoubleError.unconfigured
+    }
 }

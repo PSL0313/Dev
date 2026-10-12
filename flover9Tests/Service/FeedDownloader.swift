@@ -10,7 +10,7 @@ import XCTest
 
 @MainActor
 final class FeedDownloaderTests {
-    let sut = FeedDownloader()
+    let sut = FeedDownloader.shared
     
     
 }

@@ -7,7 +7,8 @@
 
 import Foundation
 
-protocol UpdateProfileUsecaseProtocol {
+@MainActor
+protocol UpdateProfileUsecaseProtocol: Sendable {
     func update(nickname: String) async throws 
     
     func isAvailableNickname(_ nickname: String) async throws -> (String, Bool)

@@ -7,7 +7,7 @@
 import Foundation
 
 // MARK: - 앱의 화면과 비즈니스 로직에서 사용하는 멤버 정보
-struct MemberEntity: Identifiable, Equatable, Sendable, Hashable {
+nonisolated struct MemberEntity: Identifiable, Equatable, Sendable, Hashable {
     var id: String { code }                 // 멤버 코드를 안정적인 식별자로 사용
 
     let code: String                        // 서버에서 사용하는 멤버 코드

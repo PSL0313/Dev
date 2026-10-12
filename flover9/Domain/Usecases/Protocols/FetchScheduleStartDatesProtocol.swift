@@ -7,7 +7,8 @@
 import Foundation
 
 // MARK: - 캘린더 쪽에서 사용할 Usecase
-protocol FetchScheduleStartDatesProtocol {
+@MainActor
+protocol FetchScheduleStartDatesProtocol: Sendable {
     // 특정 일자의 스케쥴 조회 조회
     func execute(date: Date) async throws -> [ScheduleEntity]
     

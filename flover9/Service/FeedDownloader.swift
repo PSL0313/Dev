@@ -20,6 +20,7 @@ import Photos
 
 actor FeedDownloader {
     static let shared = FeedDownloader()
+    @MainActor
     static func start() {
         FeedDownloader.shared.registerBackgroundDownload()
     }
@@ -35,17 +36,19 @@ actor FeedDownloader {
     private init() {}
     
     // MARK: - 백그라운드 작업을 등록
-    nonisolated func registerBackgroundDownload() {
+    @MainActor
+    func registerBackgroundDownload() {
         let registered = BGTaskScheduler.shared.register(
             forTaskWithIdentifier: identifier,
-            using: nil
+            using: .main
         ) { [weak self] task in
             guard let task = task as? BGContinuedProcessingTask else {
                 return
             }
 
             
-            let processingTask = Task { [weak self ] in
+            // 등록 콜백은 지정한 메인 큐에서 실행되며 작업 객체도 이 액터에 유지합니다.
+            let processingTask = Task { @MainActor [weak self] in
                 guard let self else {
                     task.setTaskCompleted(success: false)
                     return
@@ -73,7 +76,7 @@ actor FeedDownloader {
         print("레지스터 등록", registered)
     }
     
-    private func start(completeCounting: @escaping ((_ total: Int64 , _ completed: Int64) -> Void) ) async -> Bool {
+    private func start(completeCounting: @escaping @MainActor @Sendable (_ total: Int64, _ completed: Int64) -> Void ) async -> Bool {
         guard state != .running else { return true }
         state = .running
         defer { state = .idle }
@@ -97,7 +100,7 @@ actor FeedDownloader {
                 completedDownloadCount += 1
                 remainingDownloadCount = Int64(queue.count)
                 
-                completeCounting(
+                await completeCounting(
                     completedDownloadCount + remainingDownloadCount,
                     completedDownloadCount
                 )
