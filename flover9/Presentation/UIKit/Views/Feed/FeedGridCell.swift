@@ -58,15 +58,12 @@ final class FeedGridCell: UICollectionViewCell {
         let oneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: .now) ?? .now
         let isLocked = isFromm && feed.captureDate >= oneYearAgo
         dimView.isHidden = !isLocked
-        lockImageView.isHidden = !isLocked
+        lockImageView.isHidden = !isFromm
+        lockImageView.image = UIImage(
+            systemName: isLocked ? "lock.fill" : "lock.open.fill"
+        )
         hasMultipleImageView.isHidden = feed.contentCount <= 1
         
-        /// 출처가 fromm이지만 잠금 기간이 끝난 경우 이미지 교체
-        if isFromm == true && !isLocked {
-            lockImageView.isHidden = false
-            lockImageView.image = UIImage(systemName: "lock.open.fill")
-        }
-
         if let url = feed.thumbnailURL {
 
             let processor = DownsamplingImageProcessor(size: downsamplingSize())
