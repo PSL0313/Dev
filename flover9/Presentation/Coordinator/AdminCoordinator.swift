@@ -26,8 +26,59 @@ final class AdminCoordinator: BaseCoordinator {
             }
         }
         let viewController = AdminDashboardViewController(viewModel: viewModel)
+        viewController.onManageRoles = { [weak self] in self?.showRoleManagement() }
         viewController.onManageWallpapers = { [weak self] in self?.showWallpapers() }
         navigationController.setViewControllers([viewController], animated: false)
+    }
+
+    // 역할 변경은 대상·사유·최종 확인을 거친 뒤 UseCase에서 현재 권한을 재검사합니다.
+    private func showRoleManagement() {
+        let model = container.getRoleManagementViewModel()
+        let controller = RoleManagementViewController(viewModel: model)
+        model.onMessage = { [weak self] title, message in self?.showAlert(title: title, message: message) }
+        controller.onSelect = { [weak self, weak model, weak controller] member, access in
+            guard let self, let model, let controller else { return }
+            let alert = UIAlertController(title: member.displayName, message: "현재 역할: \(member.roleTitle)", preferredStyle: .actionSheet)
+            let choices: [UserRole?] = [nil, .creator, .manager]
+            for role in choices where role != member.role && access.canAssign(role, replacing: member.role) {
+                alert.addAction(UIAlertAction(title: role?.title ?? "일반 회원으로 변경", style: .default) { [weak self, weak model] _ in
+                    self?.requestRoleReason(member: member, role: role, transfer: false, model: model)
+                })
+            }
+            if access.role == .admin, access.allows(.rolesTransferAdmin), access.userID != member.id {
+                alert.addAction(UIAlertAction(title: "어드민 이전", style: .destructive) { [weak self, weak model] _ in
+                    self?.requestRoleReason(member: member, role: .admin, transfer: true, model: model)
+                })
+            }
+            if alert.actions.isEmpty {
+                showAlert(title: "권한 확인", message: "이 회원의 역할을 변경할 권한이 없어요.")
+                return
+            }
+            alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+            alert.popoverPresentationController?.sourceView = controller.view
+            alert.popoverPresentationController?.sourceRect = CGRect(x: controller.view.bounds.midX, y: controller.view.bounds.midY, width: 1, height: 1)
+            navigationController.topViewController?.present(alert, animated: true)
+        }
+        navigationController.pushViewController(controller, animated: true)
+    }
+
+    private func requestRoleReason(member: RoleMember, role: UserRole?, transfer: Bool, model: RoleManagementViewModel?) {
+        let alert = UIAlertController(title: transfer ? "어드민 이전 사유" : "역할 변경 사유", message: "\(member.displayName) · \(member.roleTitle) → \(role?.title ?? "일반 회원")", preferredStyle: .alert)
+        alert.addTextField { $0.placeholder = "변경 사유 (필수, 500자 이내)" }
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "다음", style: .default) { [weak self, weak model, weak alert] _ in
+            let reason = alert?.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            guard !reason.isEmpty, reason.count <= 500 else {
+                self?.showAlert(title: "사유 확인", message: "변경 사유를 1~500자로 입력해 주세요.")
+                return
+            }
+            let warning = transfer ? "\n이전 후 내 역할은 매니저로 바뀌고 매니저 임명과 어드민 이전 권한이 사라져요." : ""
+            self?.confirm(title: transfer ? "어드민를 이전할까요?" : "역할을 변경할까요?", message: "\(member.displayName)\n\(member.id.uuidString)\n\(member.roleTitle) → \(role?.title ?? "일반 회원")\n사유: \(reason)\(warning)", actionTitle: transfer ? "어드민 이전" : "변경") {
+                if transfer { model?.transfer(to: member, reason: reason) }
+                else { model?.change(member, to: role, reason: reason) }
+            }
+        })
+        navigationController.topViewController?.present(alert, animated: true)
     }
 
     private func showWallpapers() {

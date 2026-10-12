@@ -132,6 +132,8 @@ final class TestHomeViewModel {
                 return "네트워크 연결을 확인해 주세요."
             case .serverUnavailable:
                 return "서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요."
+            case .adminTransferRequired:
+                return authError.userMessage
             case .accountDeletionFailed:
                 return "회원탈퇴 처리에 실패했습니다."
             case .unknown:

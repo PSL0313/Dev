@@ -15,4 +15,7 @@ protocol ProfileRepositoryProtocol: Sendable {
         nickname: String?,
         profileImageURL: URL?
     ) async throws -> UserProfile             // 수정된 프로필 반환
+    
+    
+    func searchAvailableNickname(nickName: String) async throws -> (String, Bool) // 닉네임 변경을 위한 확인 절차 (확인한 이름, 결과)
 }

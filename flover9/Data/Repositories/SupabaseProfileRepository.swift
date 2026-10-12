@@ -13,6 +13,7 @@ import PostgREST
 
 // MARK: - Supabase를 통해 사용자 프로필 데이터를 처리하는 Repository
 actor SupabaseProfileRepository: ProfileRepositoryProtocol {
+    
     private let client: SupabaseClient    // Supabase 요청에 사용하는 클라이언트
     
     // MARK: - Supabase 클라이언트 주입
@@ -120,5 +121,21 @@ actor SupabaseProfileRepository: ProfileRepositoryProtocol {
         }
         
         return .unknown                              // 알 수 없는 오류
+    }
+    
+    nonisolated func searchAvailableNickname(nickName nickname: String) async throws -> (String, Bool) {
+        do {
+            let response = try await client
+                .from("profiles")
+                .select("id", head: true, count: .exact)
+                .eq("nickname", value: nickname)
+                .execute()
+            return (nickname, response.count == 0 )
+            
+        } catch let error as ProfileError {
+            throw error
+        } catch {
+            throw mapProfileError(error)
+        }
     }
 }

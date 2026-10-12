@@ -11,7 +11,6 @@ nonisolated struct ReadUserProfileDTO: Decodable, Sendable {
     let id: UUID                    // 사용자 고유 ID
     let nickname: String?           // 사용자 닉네임
     let profileImageURL: String?    // 프로필 이미지 주소
-    let role: String                // 데이터베이스의 사용자 권한
     let createdAt: String           // 프로필 생성 시각
     let updatedAt: String           // 프로필 마지막 수정 시각
 
@@ -19,7 +18,6 @@ nonisolated struct ReadUserProfileDTO: Decodable, Sendable {
     enum CodingKeys: String, CodingKey {
         case id                             // id
         case nickname                       // nickname
-        case role                           // role
         case profileImageURL = "profile_image_url"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
@@ -29,10 +27,6 @@ nonisolated struct ReadUserProfileDTO: Decodable, Sendable {
 // MARK: - 프로필 조회 DTO를 Domain Entity로 변환
 extension ReadUserProfileDTO {
     nonisolated func toEntity() throws -> UserProfile {
-        guard let userRole = UserRole(rawValue: role) else {
-            throw ProfileError.invalidRole       // 잘못된 권한 문자열 차단
-        }
-
         let fractionalFormatter = ISO8601DateFormatter()
         fractionalFormatter.formatOptions = [
             .withInternetDateTime,
@@ -59,7 +53,6 @@ extension ReadUserProfileDTO {
         return UserProfile(
             id: id,                               // 사용자 ID 전달
             nickname: nickname,                   // 닉네임 전달
-            role: userRole,                       // 변환된 사용자 권한 전달
             profileImageURL: imageURL,            // 변환된 이미지 주소 전달
             createdAt: createdDate,               // 변환된 생성 시각 전달
             updatedAt: updatedDate                // 변환된 수정 시각 전달

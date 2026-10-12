@@ -33,4 +33,13 @@ final class AuthenticateWithAppleUseCase: AuthenticateWithAppleUseCaseProtocol {
         
         await self.userSessionStore.save(session: session, profile: profile)
     }
+    
+    
+    func isNewUser() async throws -> Bool {
+        if let result = await userSessionStore.checkProfileSetupIfNeeded() {
+            return result
+        } else {
+            throw ProfileError.serverUnavailable
+        }
+    }
 }

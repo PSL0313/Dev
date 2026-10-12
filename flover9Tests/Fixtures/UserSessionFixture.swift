@@ -31,7 +31,6 @@ enum UserSessionFixture {
         return UserProfile(
             id: id,                                     // 지정된 테스트 사용자 ID
             nickname: nickname,                         // 지정된 테스트 닉네임
-            role: .user,                                // 기본 사용자 권한
             profileImageURL: nil,                       // 프로필 이미지 없음
             createdAt: date,                            // 고정된 생성 시각
             updatedAt: date                             // 고정된 수정 시각

@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import SwiftUI
 import SafariServices
 
+@MainActor
 final class HomeCoordinator: BaseCoordinator {
 
     var navigationController: UINavigationController
@@ -44,6 +46,8 @@ final class HomeCoordinator: BaseCoordinator {
                 self.showScheduleDetail(scheduleId: scheduleId)
             case .moveToMelonMusicWave:
                 self.presentMusicWave()
+            case .moveToCalendar:
+                self.showCalendar()
             }
         }
 
@@ -58,6 +62,7 @@ final class HomeCoordinator: BaseCoordinator {
             animated: false
         )
         viewModel.action(.start)
+        checkProfileSetupIfNeeded()
     }
 
     func start1() {
@@ -127,20 +132,47 @@ final class HomeCoordinator: BaseCoordinator {
         feed: FeedEntity,
         mediaItems: [FeedImageEntity]
     ) {
+        
         let viewController = FeedDetailBottomSheetViewController(
             feed: feed,
             mediaItems: mediaItems
         )
 
-        customTransitioningDelegate.attachInteraction(
-            to: viewController
+        let nav = UINavigationController(
+            rootViewController: viewController
         )
 
-        viewController.modalPresentationStyle = .custom
-        viewController.transitioningDelegate = customTransitioningDelegate
+        nav.modalPresentationStyle = .custom
+        nav.transitioningDelegate = customTransitioningDelegate
 
-        navigationController.present(
-            viewController,
+        customTransitioningDelegate.attachInteraction(to: nav)
+
+        navigationController.present(nav, animated: true)
+    }
+    
+    // MARK: - 캘린더로 이동
+    func showCalendar() {
+        var feature = container.makeCalendarFeature()
+        feature.onRoute = { [weak self] route in
+            guard let self else { return }
+            switch route {
+            case .scheduleDetail(let id):
+                self.showScheduleDetail(scheduleId: id)
+            }
+            
+        }
+        
+        
+        let store = container.makeStore(initialState: CalendarFeature.State(), feature: feature)
+        let view = CalendarView(store: store)
+        
+        let hostingController = UIHostingController(
+            rootView: view
+        )
+        
+        hostingController.hidesBottomBarWhenPushed = true
+        navigationController.pushViewController(
+            hostingController,
             animated: true
         )
     }
@@ -187,5 +219,53 @@ final class HomeCoordinator: BaseCoordinator {
         }
 
         navigationController.present(safari, animated: true)
+    }
+    
+    
+    @MainActor
+    private func checkProfileSetupIfNeeded() {
+        Task { [weak self] in
+            guard let self else { return }
+
+            let needsSetup = await container.userSessionStore
+                .checkProfileSetupIfNeeded()
+
+            guard needsSetup == true else { return }
+
+            showNicknameSetup()
+        }
+    }
+
+    @MainActor
+    private func showNicknameSetup() {
+        guard navigationController.presentedViewController == nil else {
+            return
+        }
+
+        var feature = container.makeNicknameFeature()
+
+        feature.onRoute = { [weak self] route in
+            guard let self else { return }
+
+            switch route {
+            case .completed:
+                navigationController.dismiss(animated: true)
+
+            case .failed(let message):
+                showAlert(title: "오류", message: message)
+            }
+        }
+
+        let store = container.makeStore(
+            initialState: NicknameFeature.State(),
+            feature: feature
+        )
+
+        let vc = UIHostingController(
+            rootView: SetNickname(.new, store: store)
+        )
+        vc.modalPresentationStyle = .fullScreen
+
+        navigationController.present(vc, animated: true)
     }
 }

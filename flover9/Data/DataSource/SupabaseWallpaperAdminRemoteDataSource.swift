@@ -11,6 +11,7 @@ import Supabase
 // 관리 API 호출과 새 이미지 업로드·검증·저장 재시도를 수행합니다.
 @MainActor final class SupabaseWallpaperAdminRemoteDataSource: WallpaperAdminRemoteDataSourceProtocol {
     nonisolated deinit {}
+    private let authorization: AuthorizationRepositoryProtocol
     private let client: SupabaseClient
     private let uploadSession: URLSession
     // 같은 이미지의 업로드를 재시도할 때 재사용할 티켓과 진행 상태입니다.
@@ -24,48 +25,30 @@ import Supabase
     private var uploads: [UUID: UploadState] = [:]
     private var pendingCommits: [UUID: Data] = [:]
     private var deletionRequests: [UUID: UUID] = [:]
-    init(client: SupabaseClient, uploadSession: URLSession = .shared) {
+    init(client: SupabaseClient, authorization: AuthorizationRepositoryProtocol, uploadSession: URLSession = .shared) {
+        self.authorization = authorization
         self.client = client
         self.uploadSession = uploadSession
     }
     func context() async throws -> WallpaperEditorContext {
-        // 편집 가능한 제작자 목록과 현재 사용자 권한을 조회하기 위한 프로필 응답입니다.
-        struct Profile: Decodable {
-            let id: UUID // 제작자의 profiles.id
-            let nickname: String? // 제작자 닉네임; 현재 DB에서는 nil 허용
-            let role: String // 편집 권한 판단에 사용할 사용자 역할
-        }
-        // 멤버 선택지에 필요한 코드와 표시 이름을 조회하는 응답입니다.
-        struct Member: Decodable {
-            let code: String // 멤버 고유 코드
-            let display_name: String // 멤버 선택 화면에 표시할 이름
-        }
-        let user = try await client.auth.user()
-        let profile: Profile = try await client
-            .from("profiles")
-            .select("id,nickname,role")
-            .eq("id", value: user.id)
-            .single()
-            .execute()
-            .value
-        guard ["manager", "admin", "blogger", "homema"].contains(profile.role) else {
-            throw WallpaperError.server("배경화면 관리 권한이 없어요.")
-        }
-        let manager = ["manager", "admin"].contains(profile.role)
-        let creators: [Profile]
-        if manager {
-            creators = try await client.from("profiles").select("id,nickname,role").in(
-                "role", values: ["manager", "admin", "blogger", "homema"]
-            ).order("nickname").execute().value
+        let access = try await authorization.current()
+        guard access.canManageWallpapers else { throw AuthorizationError.denied }
+        let creators: [WallpaperChoice]
+        if access.allows(.wallpaperAssignCreator) {
+            creators = try await authorization.creators().map { .init(id: $0.id.uuidString, title: $0.displayName) }
         } else {
-            creators = [profile]
+            let profile: RoleProfileDTO = try await client.from("profiles").select("id,nickname")
+                .eq("id", value: access.userID).single().execute().value
+            creators = [.init(id: profile.id.uuidString, title: profile.nickname ?? "닉네임 미설정")]
         }
-        let members: [Member] = try await client.from("members").select("code,display_name").eq(
+        let members: [WallpaperMemberOptionDTO] = try await client.from("members").select("code,display_name").eq(
             "is_active", value: true
         ).eq("entity_type", value: "member").order("sort_order").execute().value
         return .init(
-            userID: user.id, canFeature: manager,
-            creators: creators.map { .init(id: $0.id.uuidString, title: $0.nickname ?? "Creator") },
+            userID: access.userID, canFeature: access.allows(.wallpaperFeature),
+            canManageAny: access.allows(.wallpaperManageAny), canCreate: access.allows(.wallpaperCreate),
+            canAssignCreator: access.allows(.wallpaperAssignCreator),
+            creators: creators,
             members: members.map { .init(id: $0.code, title: $0.display_name) })
     }
     func listSeries() async throws -> [WallpaperSeriesEntity] {
@@ -73,7 +56,7 @@ import Supabase
         var result: [WallpaperSeriesDTO] = []
         while true {
             let query = client.from("wallpaper_series_catalog").select("*")
-            if !editor.canFeature { query.eq("creator_id", value: editor.userID) }
+            if !editor.canManageAny { query.eq("creator_id", value: editor.userID) }
             let page: [WallpaperSeriesDTO] = try await query.order("created_at", ascending: false).order("id").range(
                 from: result.count, to: result.count + 99
             ).execute().value
@@ -93,6 +76,7 @@ import Supabase
         }
     }
     func saveSeries(_ draft: WallpaperSeriesDraft, isNew: Bool) async throws {
+        guard try await authorization.current().canManageWallpapers else { throw AuthorizationError.denied }
         if let pending = pendingCommits[draft.requestID] {
             try await sendCommit(pending, requestID: draft.requestID)
             return
@@ -110,6 +94,7 @@ import Supabase
                 expectedRevision: isNew ? nil : draft.revision, payload: payload, ticketIDs: tickets))
     }
     func saveWallpaper(_ draft: WallpaperDraft, isNew: Bool) async throws {
+        guard try await authorization.current().canManageWallpapers else { throw AuthorizationError.denied }
         if let pending = pendingCommits[draft.requestID] {
             try await sendCommit(pending, requestID: draft.requestID)
             return
@@ -129,9 +114,11 @@ import Supabase
                 expectedRevision: isNew ? nil : draft.revision, payload: payload, ticketIDs: tickets))
     }
     func deleteSeries(_ series: WallpaperSeriesEntity) async throws {
+        guard try await authorization.current().canManageWallpapers else { throw AuthorizationError.denied }
         try await delete(action: "deleteSeries", id: series.id, seriesID: series.id, revision: series.revision)
     }
     func deleteWallpaper(_ wallpaper: WallpaperEntity) async throws {
+        guard try await authorization.current().canManageWallpapers else { throw AuthorizationError.denied }
         try await delete(
             action: "deleteWallpaper", id: wallpaper.id, seriesID: wallpaper.seriesID, revision: wallpaper.revision)
     }

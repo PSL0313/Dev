@@ -171,6 +171,7 @@ struct ScheduleCacheTests {
 
 @MainActor
 private final class FixtureDataSource: ScheduleRemoteDataSourceProtocol {
+    
     let schedule: ScheduleDTO
     var covers: [ScheduleDTO]
     var media: [ScheduleMediaDTO] = []
@@ -180,6 +181,7 @@ private final class FixtureDataSource: ScheduleRemoteDataSourceProtocol {
     private(set) var scheduleCalls = 0
     private(set) var detailCalls = 0
     private(set) var mediaCalls = 0
+    private(set) var monthCall = 0
     private(set) var requestedEventID: UUID?
 
     init() throws {
@@ -191,6 +193,10 @@ private final class FixtureDataSource: ScheduleRemoteDataSourceProtocol {
         coversCalls += 1
         await beforeReturningCovers?()
         return covers
+    }
+
+    func fetchSchedules(on date: Date) async throws -> [ScheduleDTO] {
+        throw TestDoubleError.unconfigured
     }
 
     func fetchSchedule(id: UUID) async throws -> ScheduleDTO {
@@ -208,6 +214,11 @@ private final class FixtureDataSource: ScheduleRemoteDataSourceProtocol {
         requestedEventID = eventID
         if let mediaError { throw mediaError }
         return media
+    }
+    
+    func fetchScheduleStartDates(year: Int, month: Int) async throws -> [ScheduleDateDTO] {
+        monthCall += 1
+        return []
     }
 }
 

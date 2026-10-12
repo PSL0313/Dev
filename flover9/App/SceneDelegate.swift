@@ -27,7 +27,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let window = UIWindow(windowScene: windowScene) // 앱 Window 생성
         self.window = window                        // SceneDelegate가 Window 보관
-
+        
+        configureBackgroundTaskSceduler()               // 앱 실행시 한번만 등록(BGT)
+        
         startAppFlow()                              // 최초 객체 그래프 생성
 
         window.makeKeyAndVisible()                  // Window를 화면에 표시
@@ -37,7 +39,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     @MainActor
     private func startAppFlow() {
         guard let window else { return }            // Window가 없으면 실행 불가
-
         let container = AppDIContainer()            // 새로운 DIContainer 생성
         let coordinator = AppCoordinator(
             window: window,
@@ -63,5 +64,25 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         appDIContainer = nil                       // 기존 의존성 그래프 해제
 
         startAppFlow()                             // 새로운 객체 그래프 생성
+    }
+    
+    private func configureBackgroundTaskSceduler() {
+        FeedDownloader.start()
+    }
+    
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        print("앱이 백그라운드로 이동")
+    }
+
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        print("앱이 포그라운드로 돌아오는 중")
+    }
+
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        print("앱 활성화")
+    }
+
+    func sceneWillResignActive(_ scene: UIScene) {
+        print("앱 비활성화 예정")
     }
 }

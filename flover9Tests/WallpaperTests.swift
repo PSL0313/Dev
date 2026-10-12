@@ -40,7 +40,7 @@ import XCTest
         let client = SupabaseClient(
             supabaseURL: URL(string: "https://wallpaper.test")!, supabaseKey: "test-key",
             options: .init(global: .init(session: session)))
-        return .init(client: client, uploadSession: session)
+        return .init(client: client, authorization: AuthorizationRepositoryStub(), uploadSession: session)
     }
     func testMetadataEditMakesNoUploadRequests() async throws {
         var actions: [String] = []

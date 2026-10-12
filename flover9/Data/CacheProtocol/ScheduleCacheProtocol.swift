@@ -12,10 +12,14 @@ protocol ScheduleCacheProtocol: Actor {
     func covers() -> [ScheduleDTO]?
     func schedule(for scheduleID: UUID) -> ScheduleDTO?
     func detail(for scheduleID: UUID) -> ScheduleDetailResponseDTO?
+    func fetchSchedules(on date: Date) -> [ScheduleDTO]?
+    func fetchScheduleStartDates(year: Int, month: Int) -> [Date]?
 
     func saveCovers(_ schedules: [ScheduleDTO])
     func saveDetail(_ response: ScheduleDetailResponseDTO)
-
+    func storeSchedules(_ schedules: [ScheduleDTO], for date: Date)
+    func storeScheduleDates(_ dates: [Date], year: Int, month: Int)
+    
     func resetCovers()
     func reset(_ scheduleID: UUID)
     func resetAll()

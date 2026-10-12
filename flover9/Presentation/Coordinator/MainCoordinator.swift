@@ -35,12 +35,18 @@ final class MainCoordinator: BaseCoordinator {
         profileCoordinator.start()
         adminCoordinator.start()
         
+        // Test
+        let testC = makeHomeCoordinator()
+        addChild(testC)
+        testC.start1()
+        
         // test
         // 탭바에 연결할 화면들
         tabBarController.viewControllers = [
             homeCoordinator.navigationController,
             profileCoordinator.navigationController,
-            adminCoordinator.navigationController        // 관리자 탭
+            adminCoordinator.navigationController,        // 관리자 탭
+            testC.navigationController
         ]
         
         // 탭바에 연결된 화면들 중 처음에 보여질 탭

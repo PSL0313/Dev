@@ -9,7 +9,6 @@ import Foundation
 nonisolated struct UserProfile: Sendable, Equatable {
     let id: UUID
     let nickname: String?
-    let role: UserRole
     let profileImageURL: URL?
     let createdAt: Date
     let updatedAt: Date

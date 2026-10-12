@@ -45,4 +45,9 @@ final class RestoreUserSessionUseCase: RestoreUserSessionUseCaseProtocol {
             throw error
         }
     }
+    
+    // 세션 클리어
+    func sessionClear() async {
+        try? await authRepository.signOut()
+    }
 }

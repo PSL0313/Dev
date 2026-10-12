@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ComposableArchitecture
 import Supabase
 
 /// 앱 전체 의존성을 조립하는 Composition Root입니다.
@@ -15,7 +16,7 @@ import Supabase
 final class AppDIContainer {
     // MARK: - 필수 생성 객체
     // MARK: - 앱 실행 중 공유할 사용자 상태 저장소
-    private let userSessionStore = UserSessionStore()
+    let userSessionStore = UserSessionStore()
 
     // 애플 뮤직 앨범 스토어
     private let musicAlbumStore: MusicAlbumStoreProtocol = {
@@ -89,7 +90,7 @@ final class AppDIContainer {
     // 배경화면
     private lazy var wallpaperSource: WallpaperRemoteDataSourceProtocol = SupabaseWallpaperRemoteDataSource(client: supabaseClient)
     // 배경화면 관리
-    private lazy var wallpaperAdminSource: WallpaperAdminRemoteDataSourceProtocol = SupabaseWallpaperAdminRemoteDataSource(client: supabaseClient)
+    private lazy var wallpaperAdminSource: WallpaperAdminRemoteDataSourceProtocol = SupabaseWallpaperAdminRemoteDataSource(client: supabaseClient, authorization: authorizationRepository)
     
 
     // MARK: - Repository
@@ -143,6 +144,15 @@ final class AppDIContainer {
         FirebaseRemoteConfigRepository()
     }()
 
+    // 프로필과 독립된 권한 저장소입니다. 화면 진입과 관리 작업마다 최신 값을 조회합니다.
+    private lazy var authorizationRepository: AuthorizationRepositoryProtocol = AuthorizationRepository(
+        source: SupabaseAuthorizationRemoteDataSource(client: supabaseClient))
+    private lazy var authorizationUseCase: AuthorizationUseCaseProtocol = AuthorizationUseCase(repository: authorizationRepository)
+
+    func getRoleManagementViewModel() -> RoleManagementViewModel {
+        RoleManagementViewModel(useCase: authorizationUseCase)
+    }
+
     // MARK: - 관리자 기능 의존성 조립
     private lazy var adminRepository: AdminRepositoryProtocol = {
         AdminRepository(
@@ -159,7 +169,7 @@ final class AppDIContainer {
     private lazy var wallpaperAdminRepository: WallpaperAdminRepositoryProtocol = WallpaperAdminRepository(source: wallpaperAdminSource)
     
     private lazy var adminUseCase: AdminUseCaseProtocol = {
-        AdminUseCase(repository: adminRepository, createFeedUseCase: createFeedUseCase)
+        AdminUseCase(repository: adminRepository, createFeedUseCase: createFeedUseCase, authorization: authorizationUseCase)
     }()
 
     func getAdminDashboardViewModel() -> AdminDashboardViewModel {
@@ -243,6 +253,12 @@ final class AppDIContainer {
             scheduleRepository: scheduleRepository
         ) // 일정 상세 화면에 사용할 기능 조립
     }()
+    
+    private lazy var fetchScheduleStartDatesUsecase: FetchScheduleStartDatesProtocol = {
+        FetchScheduleStartDatesUseCase(
+            repository: scheduleRepository
+        )
+    }()
 
     // 피드와 첨부 미디어 일괄 생성 UseCase
     private lazy var createFeedUseCase: CreateFeedUseCaseProtocol = {
@@ -283,13 +299,37 @@ final class AppDIContainer {
     }
     
     func canManageWallpapers() async -> Bool {
-        (try? await makeManageWallpapersUseCase().context()) != nil
+        (try? await authorizationUseCase.current().canManageWallpapers) == true
     }
     
     // 시리즈별 검색
     func makeBrowseWallpapersUseCase() -> BrowseWallpapersUseCase {
         BrowseWallpapersUseCase(repository: wallpaperRepository)
     }
+    
+    func makeUpdateProfileUsecase() -> UpdateProfileUsecaseProtocol {
+        UpdateProfileUsecase(
+            profileRepository: profileRepository,
+            userSessionStore: userSessionStore
+        )
+    }
+    
+    // MARK: - makeFeature(ComposableArchitecture)
+    func makeCalendarFeature() -> CalendarFeature {
+        CalendarFeature(
+            fetchScheduleCoversUseCase: fetchScheduleCoversUseCase,
+            fetchScheduleStartDatesUseCase: fetchScheduleStartDatesUsecase
+        )
+    }
+    
+    func makeAgreementFeature() -> AgreementFeature {
+        AgreementFeature()
+    }
+    
+    func makeNicknameFeature() -> NicknameFeature {
+        NicknameFeature(updateProfileUsecase: makeUpdateProfileUsecase())
+    }
+    
 
 
     // MARK: - get ViewModels
@@ -351,6 +391,18 @@ final class AppDIContainer {
     func makeWallpaperSearchViewModel() -> WallpaperSearchViewModel {
         WallpaperSearchViewModel(browse: makeBrowseWallpapersUseCase())
     }
+    
+    // MARK: - StoreMaker(ComposableArchitecture)
+    func makeStore<T: Reducer>(
+        initialState: T.State,
+        feature: T
+    ) -> StoreOf<T> {
+        Store(initialState: initialState) {
+            feature
+        }
+    }
+    
+    
 }
 
 // MARK: - Platform

@@ -37,7 +37,7 @@ final class FirebaseErrorLogger: ErrorLogging, @unchecked Sendable {
 
     func record(_ error: AuthError) async {
         switch error {
-        case .cancelled:
+        case .cancelled, .adminTransferRequired:
             return                              // 사용자 취소는 기록하지 않음
 
         case .sessionExpired,
@@ -231,6 +231,7 @@ private extension FirebaseErrorLogger {
         case .networkUnavailable: return 1004
         case .serverUnavailable: return 1005
         case .accountDeletionFailed: return 1006
+        case .adminTransferRequired: return 1007
         case .unknown: return 1099
         }
     }

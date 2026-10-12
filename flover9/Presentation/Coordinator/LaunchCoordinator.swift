@@ -41,10 +41,11 @@ final class LaunchCoordinator: BaseCoordinator {
                 showLogin()
             case .main:
                 onReadyForMain?()
-            case .failed(let title, let message):
+            case .failed(let title, let message ,let action):
                 showAlert(
                     title: title,
-                    message: message
+                    message: message,
+                    action: action
                 )
             case .updateRequired:
                 openAppStore()
@@ -74,6 +75,8 @@ final class LaunchCoordinator: BaseCoordinator {
                     title: title,
                     message: message
                 )                                               // 실제 발생한 오류 안내
+            case .newUser:
+                showAgreementView()
             }
         }
         let vc = SignInViewController(viewModel: viewModel, appleSignInService: container.makeAppleSignInService())
@@ -83,10 +86,50 @@ final class LaunchCoordinator: BaseCoordinator {
         
     }
     
+    private func showAgreementView() {
+        var feature = container.makeAgreementFeature()
+        
+        feature.onRoute = { [weak self] route in
+            guard let self else { return }
+            
+            switch route {
+            case .agree:
+                self.rootContainer.dismiss(animated: true)
+                self.showSetNickName()
+            }
+            
+        }
+        let store = container.makeStore(initialState: AgreementFeature.State(), feature: feature)
+        let vc = UIHostingController(rootView: AgreementView(store: store))
+        vc.modalPresentationStyle = .fullScreen
+        
+        self.rootContainer.present(vc, animated: true)
+    }
+    
+    private func showSetNickName() {
+        var feature = container.makeNicknameFeature()
+        feature.onRoute = { [weak self] route in
+            guard let self else { return }
+            switch route {
+            case .completed:
+                self.rootContainer.dismiss(animated: true) { [weak self] in
+                    self?.rootContainer.hideSignIn()
+                }
+            case .failed(let msg):
+                self.showAlert(title: "오류", message: msg)
+            }
+        }
+        let store = container.makeStore(initialState: NicknameFeature.State(), feature: feature)
+        let vc = UIHostingController(rootView: SetNickname(.new, store: store))
+        vc.modalPresentationStyle = .fullScreen
+        self.rootContainer.present(vc, animated: true)
+    }
+    
     // MARK: - 확인 버튼만 있는 안내 Alert 표시
     private func showAlert(
         title: String,
-        message: String
+        message: String,
+        action: (() -> Void)? = nil
     ) {
         let alert = UIAlertController(
             title: title,                              // Alert 제목
@@ -97,7 +140,9 @@ final class LaunchCoordinator: BaseCoordinator {
         let confirmAction = UIAlertAction(
             title: "확인",                             // 버튼 제목
             style: .default
-        )
+        ) { _ in
+            action?()
+        }
 
         alert.addAction(confirmAction)                  // 확인 버튼 추가
         rootContainer.present(alert, animated: true)                  // 현재 ViewController가 표시

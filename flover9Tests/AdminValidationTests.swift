@@ -11,11 +11,10 @@ import XCTest
 final class AdminValidationTests: XCTestCase {
     // MARK: - 관리자 화면은 운영 권한만 허용
     func testManagementRoles() {
-        XCTAssertTrue(AdminUseCase.canManage(.admin))
-        XCTAssertTrue(AdminUseCase.canManage(.manager))
-        XCTAssertFalse(AdminUseCase.canManage(.user))
-        XCTAssertFalse(AdminUseCase.canManage(.blogger))
-        XCTAssertFalse(AdminUseCase.canManage(.homema))
+        XCTAssertTrue(UserAuthorization(userID: UUID(), role: .admin, permissions: [.feedManageAny]).canOpenManagement)
+        XCTAssertTrue(UserAuthorization(userID: UUID(), role: .creator, permissions: [.wallpaperManageOwn]).canOpenManagement)
+        XCTAssertFalse(UserAuthorization(userID: UUID(), role: .manager, permissions: []).canOpenManagement)
+        XCTAssertFalse(UserAuthorization(userID: UUID(), role: nil, permissions: []).canOpenManagement)
     }
 
     // MARK: - 종료 시간과 시간대 검증

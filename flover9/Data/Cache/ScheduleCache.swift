@@ -8,8 +8,13 @@ import Foundation
 
 // MARK: - FeedCache와 동일하게 actor 수명 동안만 유지되는 메모리 캐시
 actor ScheduleCache: ScheduleCacheProtocol {
+    
+    
     private var cachedCovers: [ScheduleDTO]?
     private var detailsByScheduleID: [UUID: ScheduleDetailResponseDTO] = [:]
+    private var scheduleStartDatesByYearMonth: [Int: [Int: [Date]]] = [:]
+    private var schedulesByDate: [Date: [ScheduleDTO]] = [:]
+    
 
     // MARK: - Read
     func covers() -> [ScheduleDTO]? {
@@ -24,7 +29,16 @@ actor ScheduleCache: ScheduleCacheProtocol {
     func detail(for scheduleID: UUID) -> ScheduleDetailResponseDTO? {
         detailsByScheduleID[scheduleID]
     }
-
+    
+    func fetchSchedules(on date: Date) -> [ScheduleDTO]? {
+        let normalizedDate = Calendar.current.startOfDay(for: date)
+        return schedulesByDate[normalizedDate]
+    }
+    
+    func fetchScheduleStartDates(year: Int, month: Int) -> [Date]? {
+        scheduleStartDatesByYearMonth[year]?[month]
+    }
+    
     // MARK: - Write
     func saveCovers(_ schedules: [ScheduleDTO]) {
         cachedCovers = schedules
@@ -34,6 +48,23 @@ actor ScheduleCache: ScheduleCacheProtocol {
     func saveDetail(_ response: ScheduleDetailResponseDTO) {
         detailsByScheduleID[response.schedule.id] = response
     }
+    
+    func storeSchedules(
+        _ schedules: [ScheduleDTO],
+        for date: Date
+    ) {
+        let normalizedDate = Calendar.current.startOfDay(for: date)
+        schedulesByDate[normalizedDate] = schedules
+    }
+    
+    func storeScheduleDates(
+        _ dates: [Date],
+        year: Int,
+        month: Int
+    ) {
+        scheduleStartDatesByYearMonth[year, default: [:]][month] = dates
+    }
+    
 
     // MARK: - Reset
     /// FeedCache의 목록 초기화처럼 상세 캐시는 유지한다.

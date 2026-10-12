@@ -11,4 +11,7 @@ protocol AuthenticateWithAppleUseCaseProtocol: Sendable {
     func execute(
         credential: AppleSignInCredential
     ) async throws    // 로그인 결과에 따른 경로 반환
+    
+    // 신규 사용자인지
+    func isNewUser() async throws -> Bool
 }

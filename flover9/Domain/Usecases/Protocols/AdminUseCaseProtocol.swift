@@ -10,7 +10,7 @@ import Foundation
 @MainActor
 protocol AdminUseCaseProtocol {
     func endEditing(id: UUID)
-    func authorize() async throws -> UserProfile
+    func authorize() async throws -> ManagementIdentity
     func fetchMedia(category: AdminCategory, id: UUID) async throws -> [AdminMediaItem]
     func fetchItems(category: AdminCategory, offset: Int, query: String) async throws -> [AdminContent]
     func saveFeed(_ draft: AdminFeedDraft, isNew: Bool) async throws

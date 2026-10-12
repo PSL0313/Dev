@@ -4,7 +4,7 @@
 //
 //  Created by 박선린 on 7/31/26.
 //
-
+import Foundation
 
 // MARK: - 로그인한 사용자의 세션과 프로필을 메모리에 보관
 actor UserSessionStore {
@@ -29,14 +29,22 @@ actor UserSessionStore {
         return (session, profile)               // 현재 사용자 정보 반환
     }
     
-    /// 현재 사용자의 프로필만 조회
-    func currentUseRole() -> UserRole? {
-        return self.profile?.role
-    }
 
     // MARK: - 수정된 프로필 교체
     func updateProfile(_ profile: UserProfile) {
         self.profile = profile                  // 최신 프로필로 교체
+    }
+    
+    // MARK: - 신규 사용자인지 확인
+    func checkProfileSetupIfNeeded() -> Bool? {
+        guard let profile else {
+            return nil
+        }
+
+        let nickname = profile.nickname?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        return nickname?.isEmpty ?? true
     }
 
     // MARK: - 로그아웃하거나 탈퇴할 때 사용자 정보 제거

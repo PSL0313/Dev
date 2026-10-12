@@ -19,7 +19,7 @@ nonisolated enum AdminError: Error, Equatable, Sendable {
     var userMessage: String {
         switch self {
         case .permissionDenied:
-            return "관리자 또는 매니저 계정으로만 이용할 수 있어요."
+            return "이 콘텐츠를 관리할 권한이 없어요. 권한을 다시 확인해 주세요."
         case .invalidInput(let message):
             return message
         case .networkUnavailable:

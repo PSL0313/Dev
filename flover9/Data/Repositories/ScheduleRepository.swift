@@ -88,6 +88,48 @@ final class ScheduleRepository: ScheduleRepositoryProtocol {
         }
     }
 
+    // MARK: - 해당 날짜에 존재하는 일정들 조회
+    func fetchSchedules(on date: Date) async throws -> [ScheduleEntity] {
+        let normalizedDate = Calendar.current.startOfDay(for: date)
+        
+        if let response = await cache.fetchSchedules(on: normalizedDate) {
+            return response.map { $0.toEntity() }
+        }
+        
+        do {
+            let response = try await dataSource.fetchSchedules(on: normalizedDate)
+            await cache.storeSchedules(response, for: normalizedDate)
+            return response.map { $0.toEntity() }
+        } catch let error as ScheduleError {
+            throw error                             // 이미 분류된 Domain 오류 유지
+        } catch {
+            throw mapScheduleError(error)           // Data 오류를 Domain 오류로 변환
+        }
+        
+    }
+    
+    // MARK: - 특정 월에 표시할 일정 목록 조회
+    func fetchScheduleStartDates(
+        year: Int,
+        month: Int
+    ) async throws -> [Date] {
+        do {
+            if let response = await cache.fetchScheduleStartDates(year: year, month: month) {
+                return response
+            }
+            
+            let response = try await dataSource.fetchScheduleStartDates(year: year, month: month)
+            let result = response.map { $0.startAt }
+            await cache.storeScheduleDates(result, year: year, month: month)
+            
+            return result
+        } catch let error as ScheduleError {
+            throw error
+        } catch {
+            throw mapScheduleError(error)
+        }
+    }
+    
     // MARK: - Reset
     func resetCovers() async {
         cacheGeneration &+= 1

@@ -163,6 +163,12 @@ struct ScheduleEventTests {
 
     private struct FixtureRepository: ScheduleRepositoryProtocol {
         let content: ScheduleDetailContent
+        func fetchSchedules(on date: Date) async throws -> [ScheduleEntity] {
+            throw TestDoubleError.unconfigured
+        }
+        func fetchScheduleStartDates(year: Int, month: Int) async throws -> [Date] {
+            throw TestDoubleError.unconfigured
+        }
         func fetchScheduleCovers() async throws -> [ScheduleEntity] { [content.schedule] }
         func fetchScheduleDetail(scheduleID: UUID) async throws -> ScheduleDetailContent { content }
         func resetCovers() async {}

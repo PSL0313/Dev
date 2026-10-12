@@ -9,4 +9,7 @@
 // MARK: - 저장된 Supabase 세션으로 기존 사용자 정보를 복원하는 기능
 protocol RestoreUserSessionUseCaseProtocol: Sendable {
     func execute() async throws -> Bool
+    
+    // 세션 클리어
+    func sessionClear() async 
 }

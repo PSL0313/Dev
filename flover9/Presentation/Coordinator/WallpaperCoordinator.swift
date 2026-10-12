@@ -44,9 +44,9 @@ final class WallpaperCoordinator: BaseCoordinator {
         let settings = WallpaperSettingsViewController()
         settings.onManage = { [weak self] in self?.showManagement() }
         settings.onClose = { [weak self] in self?.close() }
-        Task { [weak self, weak settings] in
-            guard let self else { return }
-            settings?.canManage = await container.canManageWallpapers()
+        settings.checkAccess = { [weak self] in
+            guard let self else { return false }
+            return await container.canManageWallpapers()
         }
         let roots: [(UINavigationController, UIViewController, String, String)] = [
             (homeNavigation, home, "홈", "house"),

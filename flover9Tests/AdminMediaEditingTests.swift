@@ -142,8 +142,9 @@ private final class MediaEditorUseCaseStub: AdminUseCaseProtocol {
     private(set) var savedDraft: AdminFeedDraft?
     let feed = FeedEntity(id: UUID(), title: "테스트 피드", sourceName: "공식 계정", description: "편집 화면 확인", captureDate: .now, source: "instagram", permalink: "https://example.com/feed", thumbnailURL: nil, displayType: .feed, contentCount: 2)
     func endEditing(id: UUID) {}
-    func authorize() async throws -> UserProfile {
-        UserProfile(id: UUID(),nickname: "관리자",role: .manager,profileImageURL: nil,createdAt: .now,updatedAt: .now)
+    func authorize() async throws -> ManagementIdentity {
+        let id = UUID()
+        return .init(profile: UserProfile(id: id,nickname: "관리자",profileImageURL: nil,createdAt: .now,updatedAt: .now), authorization: .init(userID: id,role: .manager,permissions: [.feedManageAny,.scheduleManage]))
     }
     func fetchMedia(category: AdminCategory, id: UUID) async throws -> [AdminMediaItem] {
         try (0..<2).map { index in

@@ -15,6 +15,7 @@
 		CC297E0C3020595F0009DD4A /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = CC297E0B3020595F0009DD4A /* FirebaseRemoteConfig */; };
 		CCAFBC5B302DE67B00BEAE69 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = CCAFBC5A302DE67B00BEAE69 /* SnapKit */; };
 		CCBE833C30186B1C00FD819A /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = CCBE833B30186B1C00FD819A /* Supabase */; };
+		CCF378C5306CCA89006DC124 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = CCF378C4306CCA89006DC124 /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 			files = (
 				CC297E083020595F0009DD4A /* FirebaseMessaging in Frameworks */,
 				CCAFBC5B302DE67B00BEAE69 /* SnapKit in Frameworks */,
+				CCF378C5306CCA89006DC124 /* ComposableArchitecture in Frameworks */,
 				CC297E063020595F0009DD4A /* FirebaseCrashlytics in Frameworks */,
 				CC0B312A302B1FE1000EAF3F /* Kingfisher in Frameworks */,
 				CC297E0A3020595F0009DD4A /* FirebasePerformance in Frameworks */,
@@ -148,6 +150,7 @@
 				CCE89F5230165BE20086D7B9 /* Sources */,
 				CCE89F5330165BE20086D7B9 /* Frameworks */,
 				CCE89F5430165BE20086D7B9 /* Resources */,
+				CC98C60B3074BB56006C69AD /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -166,6 +169,7 @@
 				CC297E0B3020595F0009DD4A /* FirebaseRemoteConfig */,
 				CC0B3129302B1FE1000EAF3F /* Kingfisher */,
 				CCAFBC5A302DE67B00BEAE69 /* SnapKit */,
+				CCF378C4306CCA89006DC124 /* ComposableArchitecture */,
 			);
 			productName = flover9;
 			productReference = CCE89F5630165BE20086D7B9 /* flover9.app */;
@@ -254,6 +258,7 @@
 				CC297E023020595F0009DD4A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				CC0B3128302B1FE1000EAF3F /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				CCAFBC59302DE67B00BEAE69 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				CCF378C3306CCA89006DC124 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CCE89F5730165BE20086D7B9 /* Products */;
@@ -290,6 +295,32 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CC98C60B3074BB56006C69AD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib\n``` :chatgpt-content-reference{index=\"4\"}",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CCE89F5230165BE20086D7B9 /* Sources */ = {
@@ -344,10 +375,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = flover_9;
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Apple Music의 앨범 정보 조회와 음악 재생을 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "일정을 사용자의 캘린더에 추가하기 위해 캘린더 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "다운로드한 배경화면을 사진 보관함에 저장합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -384,10 +417,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = flover_9;
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Apple Music의 앨범 정보 조회와 음악 재생을 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "일정을 사용자의 캘린더에 추가하기 위해 캘린더 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "다운로드한 배경화면을 사진 보관함에 저장합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -690,6 +725,14 @@
 				minimumVersion = 2.5.1;
 			};
 		};
+		CCF378C3306CCA89006DC124 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.26.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -732,6 +775,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CCBE833A30186B1C00FD819A /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		CCF378C4306CCA89006DC124 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCF378C3306CCA89006DC124 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

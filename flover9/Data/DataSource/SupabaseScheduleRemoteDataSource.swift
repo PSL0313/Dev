@@ -57,6 +57,85 @@ final class SupabaseScheduleRemoteDataSource: ScheduleRemoteDataSourceProtocol {
             throw SupabaseDataError.map(error)
         }
     }
+    
+    // MARK: - 해당 날짜에 존재하는 일정들 조회
+    func fetchSchedules(on date: Date) async throws -> [ScheduleDTO] {
+        do {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = .current
+            
+            let startOfDay = calendar.startOfDay(for: date)
+            
+            guard let nextDay = calendar.date(
+                byAdding: .day,
+                value: 1,
+                to: startOfDay
+            ) else {
+                throw SupabaseDataError.unknown
+            }
+            
+            let start = startOfDay.ISO8601Format()
+            let end = nextDay.ISO8601Format()
+            
+            return try await supabaseClient
+                .from("schedules")
+                .select(scheduleColumns)
+                .gte("start_at", value: start)
+                .lt("start_at", value: end)
+                .order("start_at", ascending: true)
+                .execute()
+                .value
+            
+        } catch {
+            throw SupabaseDataError.map(error)
+        }
+    }
+    
+    // MARK: - 특정 월에 표시할 일정 목록 조회
+    func fetchScheduleStartDates(
+        year: Int,
+        month: Int
+    ) async throws -> [ScheduleDateDTO] {
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .current
+
+        guard
+            let monthStart = calendar.date(
+                from: DateComponents(
+                    year: year,
+                    month: month,
+                    day: 1
+                )
+            ),
+            let nextMonthStart = calendar.date(
+                byAdding: .month,
+                value: 1,
+                to: monthStart
+            )
+        else {
+            throw SupabaseDataError.unknown
+        }
+
+        let start = monthStart.ISO8601Format()
+        let end = nextMonthStart.ISO8601Format()
+
+        do {
+            let schedules: [ScheduleDateDTO] = try await supabaseClient
+                .from("schedules")
+                .select("start_at")
+                .gte("start_at", value: start)
+                .lt("start_at", value: end)
+                .order("start_at", ascending: true)
+                .execute()
+                .value
+
+            return schedules
+
+        } catch {
+            throw SupabaseDataError.map(error)
+        }
+    }
 
     // MARK: - 식별자에 해당하는 일정 요약 정보 조회
     func fetchSchedule(id: UUID) async throws -> ScheduleDTO {

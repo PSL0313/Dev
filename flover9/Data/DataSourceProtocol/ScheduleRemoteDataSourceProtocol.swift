@@ -10,6 +10,14 @@ import Foundation
 @MainActor
 protocol ScheduleRemoteDataSourceProtocol: Sendable {
     func fetchScheduleCovers() async throws -> [ScheduleDTO] // 표지에 표시할 일정 요약 목록 조회
+    
+    func fetchScheduleStartDates(
+        year: Int,
+        month: Int
+    ) async throws -> [ScheduleDateDTO] // 특정 월에 존재하는 일정 가져오기
+    
+    func fetchSchedules(on date: Date) async throws -> [ScheduleDTO] // 특정 날짜의 일정들을 조회
+    
     func fetchSchedule(id: UUID) async throws -> ScheduleDTO // 특정 일정의 요약 정보 조회
     func fetchScheduleDetail(scheduleID: UUID) async throws -> ScheduleDetailDTO? // 선택 상세 정보 조회
     func fetchScheduleMedia(scheduleID: UUID, eventID: UUID?) async throws -> [ScheduleMediaDTO] // 첨부 미디어 목록 조회

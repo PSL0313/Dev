@@ -12,37 +12,41 @@ import Foundation
 final class AdminUseCase: AdminUseCaseProtocol {
     func endEditing(id: UUID) { repository.endEditing(id: id) }
     private let repository: AdminRepositoryProtocol
+    private let authorization: AuthorizationUseCaseProtocol
     private let createFeedUseCase: CreateFeedUseCaseProtocol
 
-    init(repository: AdminRepositoryProtocol, createFeedUseCase: CreateFeedUseCaseProtocol) {
+    init(repository: AdminRepositoryProtocol, createFeedUseCase: CreateFeedUseCaseProtocol, authorization: AuthorizationUseCaseProtocol) {
+        self.authorization = authorization
         self.repository = repository
         self.createFeedUseCase = createFeedUseCase
     }
 
-    func authorize() async throws -> UserProfile {
+    func authorize() async throws -> ManagementIdentity {
+        let access = try await authorization.current()
+        guard access.canOpenManagement else { throw AdminError.permissionDenied }
         let profile = try await repository.fetchProfile()
-        guard Self.canManage(profile.role) else {
-            throw AdminError.permissionDenied
-        }
-        return profile
+        guard profile.id == access.userID else { throw AuthorizationError.sessionExpired }
+        return .init(profile: profile, authorization: access)
     }
 
-    nonisolated static func canManage(_ role: UserRole) -> Bool {
-        role == .admin || role == .manager
+    private func require(_ category: AdminCategory) async throws {
+        let access = try await authorization.current()
+        let permission: AppPermission = category == .feeds ? .feedManageAny : .scheduleManage
+        guard access.allows(permission) else { throw AdminError.permissionDenied }
     }
 
     func fetchMedia(category: AdminCategory, id: UUID) async throws -> [AdminMediaItem] {
-        _ = try await authorize()
+        try await require(category)
         return try await repository.fetchMedia(category: category, id: id)
     }
 
     func fetchItems(category: AdminCategory, offset: Int, query: String) async throws -> [AdminContent] {
-        _ = try await authorize()
+        try await require(category)
         return try await repository.fetchItems(category: category, offset: offset, query: query)
     }
 
     func saveFeed(_ draft: AdminFeedDraft, isNew: Bool) async throws {
-        _ = try await authorize()
+        try await require(.feeds)
         guard !draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw AdminError.invalidInput("피드 제목을 입력해 주세요.")
         }
@@ -95,7 +99,7 @@ final class AdminUseCase: AdminUseCaseProtocol {
     }
 
     func saveSchedule(_ draft: AdminScheduleDraft, isNew: Bool) async throws {
-        _ = try await authorize()
+        try await require(.schedules)
         try Self.validateSchedule(draft)
         try await repository.saveSchedule(draft, isNew: isNew)
     }
@@ -110,7 +114,7 @@ final class AdminUseCase: AdminUseCaseProtocol {
     }
 
     func saveEvent(_ draft: AdminEventDraft, isNew: Bool) async throws {
-        _ = try await authorize()
+        try await require(.events)
         guard !draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw AdminError.invalidInput("행사 이름을 입력해 주세요.")
         }
@@ -123,7 +127,11 @@ final class AdminUseCase: AdminUseCaseProtocol {
     }
 
     func delete(_ item: AdminContent) async throws -> Bool {
-        _ = try await authorize()
+        switch item {
+        case .feed: try await require(.feeds)
+        case .schedule: try await require(.schedules)
+        case .event: try await require(.events)
+        }
         return try await repository.delete(item)
     }
 

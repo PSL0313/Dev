@@ -29,6 +29,23 @@ actor SupabaseAuthRepository: AuthRepositoryProtocol {
                     nonce: credential.rawNonce             // 원본 nonce
                 )
             )
+            
+            // Supabase 로그인 성공 후
+            if let nameComponents = credential.fullName {
+                let fullName = PersonNameComponentsFormatter()
+                    .string(from: nameComponents)
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+
+                if !fullName.isEmpty {
+                    try? await client.auth.update(
+                        user: UserAttributes(
+                            data: [
+                                "full_name": .string(fullName)
+                            ]
+                        )
+                    )
+                }
+            }
 
             return session.toEntity()                      // Domain 세션으로 변환
         } catch {
@@ -136,7 +153,12 @@ actor SupabaseAuthRepository: AuthRepositoryProtocol {
             case .relayError:
                 return .serverUnavailable            // Edge Function 연결 실패
 
-            case .httpError(let code, _):
+            case .httpError(let code, let data):
+                if code == 409,
+                   let body = try? JSONSerialization.jsonObject(with: data) as? [String: String],
+                   body["message"] == "Transfer ownership before deleting your account" {
+                    return .adminTransferRequired
+                }
                 switch code {
                 case 401, 403:
                     return .unauthenticated           // Function 인증 또는 권한 실패
