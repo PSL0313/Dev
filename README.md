@@ -18,20 +18,20 @@ UIKit과 SwiftUI를 함께 사용하는 iOS 프로젝트입니다. 화면 전환
 
 관리 기능은 로그인한 사용자의 서버 권한에 따라 제한됩니다. 공개 클라이언트 키만으로 관리자 권한이 부여되지는 않습니다.
 
-## 기술 스택
+## 주요 기술과 적용 범위
 
-| 영역 | 기술 |
+프로젝트에서 사용한 기술과 적용한 범위를 정리했습니다. TCA는 일부 화면에 적용하며 학습 중입니다.
+
+| 영역 | 기술 및 적용 범위 |
 | --- | --- |
-| 언어 | Swift (프로젝트 언어 모드: Swift 6) |
-| UI | UIKit, SwiftUI, SnapKit, Kingfisher |
-| 구조 | MVVM-C, Repository, UseCase, DIContainer |
-| 상태 관리 | TCA (`ComposableArchitecture`) — 캘린더·약관·닉네임 Feature |
-| 비동기 처리 | async/await, actor, TaskGroup |
-| 데이터·인증 | Supabase, Sign in with Apple |
-| 미디어 저장 연동 | Edge Functions, Cloudflare R2 |
-| 앱 운영 | Firebase Remote Config, Crashlytics |
-| 테스트 | Swift Testing 및 테스트 대역 |
-| 의존성 관리 | Swift Package Manager |
+| 언어·비동기 처리 | Swift 6, async/await. actor로 캐시 접근을 관리하고 TaskGroup으로 미디어를 병렬 업로드합니다. |
+| 화면 구현 | UIKit을 중심으로 SwiftUI 화면을 함께 사용합니다. SnapKit으로 레이아웃을 구성하고 Kingfisher로 이미지를 표시합니다. |
+| 화면 구조·의존성 | MVVM-C를 바탕으로 화면 이동을 분리합니다. ViewModel에 필요한 UseCase와 Repository 의존성을 DIContainer에서 조립합니다. |
+| 일부 화면의 상태 관리 | TCA를 캘린더·약관·닉네임 Feature에 적용하며 Action과 비동기 결과에 따른 상태 변경을 학습하고 있습니다. |
+| 데이터·인증 연동 | Supabase를 통한 데이터 조회와 저장, Sign in with Apple을 통한 로그인과 세션 복원을 구현합니다. |
+| 미디어 업로드 연동 | Edge Functions를 호출해 업로드 배치를 준비하고, 서명 URL로 Cloudflare R2에 파일을 전송한 뒤 게시물 확정을 요청합니다. |
+| 설정·오류 기록 연동 | Firebase Remote Config로 앱 설정을 조회하고 Crashlytics로 오류를 기록합니다. |
+| 테스트 | Swift Testing과 테스트 대역으로 세션 복원, 권한 검증, 조회·캐시 등의 동작을 확인합니다. |
 
 ## 코드에서 살펴볼 부분
 
