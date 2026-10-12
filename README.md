@@ -1,25 +1,14 @@
-<div align="center">
-  <img src="flover9/App/Assets/AppIcon.icon/Assets/four-leaf-clear-glass-transparent-1200.png" width="100" alt="flover9 로고" />
-  <h1>flover9</h1>
-  <p>좋아하는 멤버의 피드와 일정, 배경화면을 한곳에서 탐색하는 iOS 앱</p>
-  <p>개인 프로젝트 · 개발 중</p>
-</div>
+# iOS 클라이언트 구현 기록
 
-## 프로젝트 소개
+UIKit과 SwiftUI를 함께 사용하는 iOS 프로젝트입니다. 화면 전환, 데이터 조회와 캐시, 인증, 미디어 업로드, 권한 기반 관리 기능의 구현 구조를 정리합니다.
 
-flover9는 프로미스나인의 멤버별 콘텐츠를 모아 보고, 일정을 확인하고, 미디어와 배경화면을 탐색하는 개인 프로젝트입니다. 저는 UIKit과 SwiftUI로 화면을 만들고, 화면 전환부터 인증·데이터 조회·미디어 업로드·관리 기능까지 연결하고 있습니다.
-
-현재 작업 기준은 `develop` 브랜치입니다. 개발 중인 기능과 실험용 화면이 함께 포함되어 있으며, 아직 App Store에 출시하지 않았습니다.
-
-- 개발: **박선린 / Park Seollin** ([PSL0313](https://github.com/PSL0313))
-- 저장소: [PSL0313/Dev](https://github.com/PSL0313/Dev)
-- 개발 기간: 2026.08 ~ 현재
+현재 작업 기준은 `develop` 브랜치이며, 개발 중인 기능과 실험용 화면이 포함되어 있습니다.
 
 ## 주요 기능
 
 | 기능 | 구현 내용 |
 | --- | --- |
-| 멤버별 피드 | 그리드 목록, offset 기반 페이지네이션, 멤버별 캐시, 상세 미디어 조회 |
+| 피드 조회 | 그리드 목록, offset 기반 페이지네이션, 식별자별 캐시, 상세 미디어 조회 |
 | 미디어 상세 | 이미지 표시, 상세 화면 전환, 드래그 닫기 및 미리보기 |
 | 일정 | 월별 일정 날짜 조회, 날짜별 목록, 일정 상세 및 캘린더 연동 |
 | 로그인·프로필 | Apple 로그인, 세션 복원, 약관 동의, 닉네임 설정 |
@@ -50,9 +39,9 @@ flover9는 프로미스나인의 멤버별 콘텐츠를 모아 보고, 일정을
 
 `limit`만으로는 요청 개수만 알 수 있어 다음 페이지와 이미 읽은 구간을 구분하기 어렵습니다. 저는 `offset`과 `limit`으로 요청 범위를 명시하고, 캐시에서 해당 구간을 먼저 읽도록 구현했습니다. 부족한 데이터만 원격에서 가져와 합칩니다.
 
-- [FeedReadUseCase](flover9/Domain/Usecases/FeedReadUseCase.swift): 멤버별 조회 위치 관리
+- [FeedReadUseCase](flover9/Domain/Usecases/FeedReadUseCase.swift): 식별자별 조회 위치 관리
 - [SupabaseFeedRepository](flover9/Data/Repositories/SupabaseFeedRepository.swift): 캐시와 원격 조회 조합
-- [FeedCache](flover9/Data/Cache/FeedCache.swift): actor 기반 멤버별 피드·미디어 캐시
+- [FeedCache](flover9/Data/Cache/FeedCache.swift): actor 기반 식별자별 피드·미디어 캐시
 
 ### 미디어 전송과 게시물 확정 분리
 
@@ -142,7 +131,7 @@ Xcode에서 패키지 의존성 해결을 기다린 뒤 `flover9` 스킴과 실�
 
 ## 개발 상태
 
-이 저장소는 계속 변경 중입니다. 현재 `MainCoordinator`에는 실험용 탭 연결이 포함되어 있고, UIKit 기반 화면에 SwiftUI·TCA Feature를 추가하는 작업을 진행하고 있습니다. 음악 재생은 현재 MVP 범위에서 제외했습니다.
+이 저장소는 계속 변경 중입니다. 현재 `MainCoordinator`에는 실험용 탭 연결이 포함되어 있고, UIKit 기반 화면에 SwiftUI·TCA Feature를 추가하는 작업을 진행하고 있습니다.
 
 ### 빌드 확인
 
