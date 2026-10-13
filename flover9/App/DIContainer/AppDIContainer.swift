@@ -36,7 +36,11 @@ final class AppDIContainer {
 
     // MARK: - Firebase 오류 기록 객체
     private lazy var errorLogger: ErrorLogging = {
+        #if FIREBASE_DISABLED
+        DisabledErrorLogger()
+        #else
         FirebaseErrorLogger()
+        #endif
     }()
 
     // MARK: - Initializer
@@ -141,7 +145,11 @@ final class AppDIContainer {
 
     // Remote Config 저장소
     private lazy var remoteConfigRepository:RemoteConfigRepositoryProtocol = {
+        #if FIREBASE_DISABLED
+        DevelopmentAppAvailabilityRepository()
+        #else
         FirebaseRemoteConfigRepository()
+        #endif
     }()
 
     // 프로필과 독립된 권한 저장소입니다. 화면 진입과 관리 작업마다 최신 값을 조회합니다.

@@ -96,7 +96,18 @@ cd Dev
 open flover9.xcodeproj
 ```
 
-Xcode에서 패키지 의존성 해결을 기다린 뒤 `flover9` 스킴과 실행 기기를 선택합니다.
+Xcode에서 패키지 의존성 해결을 기다린 뒤, **Firebase 설정 파일 없이 실행하려면 `flover9-NoFirebase` 스킴을 선택하세요.**
+
+1. Xcode 상단 실행 버튼(▶) 옆의 스킴 이름을 클릭합니다.
+2. `flover9-NoFirebase`를 선택합니다. **Product > Scheme** 메뉴에서도 변경할 수 있습니다.
+3. 실행할 시뮬레이터 또는 기기를 선택하고 `⌘R`로 실행합니다.
+
+| 스킴 | Run·Test 빌드 설정 | Firebase |
+| --- | --- | --- |
+| `flover9-NoFirebase` | `flover9-NoFirebase` | 비활성화, 설정 파일 없이 실행 |
+| `flover9` | `Debug` | 활성화, 설정 파일 필요 |
+
+스킴을 선택하면 연결된 빌드 설정이 적용되므로 코드를 직접 수정할 필요가 없습니다. Firebase 연동을 확인할 때는 아래 설정 파일을 준비한 뒤 `flover9` 스킴으로 전환하세요. 두 스킴의 Archive는 Release 설정을 사용하므로 Firebase 설정 파일이 필요합니다.
 
 ### 3. Supabase 설정
 
@@ -108,9 +119,11 @@ Xcode에서 패키지 의존성 해결을 기다린 뒤 `flover9` 스킴과 실�
 - 다른 프로젝트를 사용하려면 `Secrets.xcconfig.example`을 `Secrets.xcconfig`로 복사하고 공개 클라이언트 설정을 입력합니다. 로컬 설정이 기본값을 덮어쓰며 이 파일은 Git에서 제외됩니다.
 - 연결 대상은 앱 개발에 사용하는 백엔드입니다. 별도의 샘플 데이터 전용 환경은 아닙니다.
 
-### 4. Firebase 설정 — 별도 준비 필요
+### 4. Firebase 설정 — Firebase를 사용하는 빌드에 필요
 
-현재 앱은 시작할 때 `FirebaseApp.configure()`를 호출합니다. **Supabase 설정만으로 모든 실행 준비가 끝나는 것은 아닙니다.**
+`flover9-NoFirebase` 빌드 설정은 `FIREBASE_DISABLED` 컴파일 조건으로 Firebase 초기화를 생략합니다. 원격 점검·업데이트 확인은 `.available`을 반환하는 개발용 저장소로 대체하고, Analytics·Crashlytics 오류 기록 및 Crashlytics 빌드 스크립트는 실행하지 않습니다. `GoogleService-Info.plist`는 앱 번들에서 제외하며 Firebase 패키지 의존성은 유지합니다.
+
+일반 Debug 및 Release 빌드는 Firebase 연동을 사용하므로 다음 설정이 필요합니다.
 
 1. 사용할 Firebase 프로젝트에 앱의 Bundle Identifier와 일치하는 iOS 앱을 등록합니다.
 2. 해당 앱의 `GoogleService-Info.plist`를 내려받습니다.
@@ -127,31 +140,14 @@ Xcode에서 패키지 의존성 해결을 기다린 뒤 `flover9` 스킴과 실�
 
 `flover9Tests`에는 세션 복원, 권한 관리, 일정 조회·캐시, 미디어 편집, 배경화면 및 레이아웃 관련 테스트가 있습니다.
 
-환경 설정을 마친 뒤 Xcode에서 **Product > Test** (`⌘U`)로 실행할 수 있습니다. 테스트 코드가 존재한다는 사실과 특정 환경에서의 전체 테스트 통과는 구분하며, 서버를 포함한 종단 간 동작은 별도 확인이 필요합니다.
+Firebase 없이 테스트하려면 `flover9-NoFirebase` 스킴을 선택하세요. 환경 설정을 마친 뒤 Xcode에서 **Product > Test** (`⌘U`)로 실행할 수 있습니다. 테스트 코드가 존재한다는 사실과 특정 환경에서의 전체 테스트 통과는 구분하며, 서버를 포함한 종단 간 동작은 별도 확인이 필요합니다.
 
 ## 개발 상태
 
 이 저장소는 계속 변경 중입니다. 현재 `MainCoordinator`에는 실험용 탭 연결이 포함되어 있고, UIKit 기반 화면에 SwiftUI·TCA Feature를 추가하는 작업을 진행하고 있습니다.
 
-### 빌드 확인
+### Firebase 없는 개발 실행 확인
 
-2026-10-12, Xcode 27.0에서 아래 명령으로 iOS 시뮬레이터용 Debug 빌드 성공을 확인했습니다.
+스킴 분리 전인 2026-10-13, iPhone 18 Pro 시뮬레이터의 Firebase를 비활성화한 Debug 빌드에서 `flover9Tests` 전체 실행이 성공했습니다. 추가한 회귀 테스트는 앱 번들에 Firebase 설정 파일이 없고 Firebase가 초기화되지 않은 상태에서 개발용 운영 설정 조회와 오류 기록 호출이 동작하는지 확인합니다. Release 빌드의 Firebase 초기화와 실제 서버 연동은 이번 검증 범위에 포함하지 않았습니다.
 
-```bash
-xcodebuild -project flover9.xcodeproj \
-  -scheme flover9 \
-  -configuration Debug \
-  -destination 'generic/platform=iOS Simulator' \
-  -disableAutomaticPackageResolution \
-  CODE_SIGNING_ALLOWED=NO build
-```
-
-실행 대상은 `-destination`으로 지정합니다. 이 환경에서는 `-sdk iphonesimulator`까지 강제 지정하면 macOS에서 실행되어야 하는 `PerceptionMacros`가 iOS 시뮬레이터용으로 빌드되면서 SwiftSyntax 모듈을 찾지 못했습니다. SDK 강제 지정 없이 같은 패키지 버전과 앱 코드로 빌드에 성공했습니다.
-
-이 결과는 로컬 설정과 패키지가 준비된 환경의 컴파일 확인입니다. Firebase 설정 파일 준비, 로그인 및 실제 서버 기능의 실행 검증은 별도입니다.
-
-### Swift 6 전환 확인
-
-앱과 단위·UI 테스트 타깃의 Debug/Release 언어 모드를 Swift 6로 맞췄습니다. UseCase의 메인 액터 경계와 전달 가능한 데이터 타입을 명시하고, 백그라운드 다운로드의 진행률 갱신을 메인 액터에서 처리하도록 정리했습니다. 테스트의 최소 iOS 버전도 앱과 같은 27.0으로 맞췄습니다.
-
-2026-10-12, Xcode 27.0의 iPhone 18 Pro (iOS 27) 시뮬레이터에서 `flover9Tests` 전체 실행이 성공했습니다. UI 테스트 실행과 실기기의 백그라운드 다운로드·사진 저장 동작은 이 검증에 포함하지 않았습니다.
+이 결과는 스킴 분리 전 검증 기록이며, `flover9-NoFirebase` 스킴으로 전환한 후의 전체 테스트는 별도로 확인해야 합니다.

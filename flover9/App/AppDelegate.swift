@@ -16,7 +16,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         
         // MARK: - Configure Firebase
+        #if !FIREBASE_DISABLED
         FirebaseApp.configure()
+        #endif
         
         return true
     }
