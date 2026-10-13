@@ -81,6 +81,9 @@ flover9Tests/            도메인·데이터·레이아웃 테스트 및 테스
 
 ## 실행 방법
 
+> [!IMPORTANT]
+> 이 저장소에는 Firebase 설정 파일이 포함되어 있지 않습니다. Xcode 상단 또는 **Product > Scheme**에서 **`flover9-NoFirebase`** 스킴으로 변경한 뒤, 실행 기기를 선택하고 **`⌘R`로 빌드 및 실행**해 주세요. 이 스킴에서는 Firebase 기능이 비활성화됩니다.
+
 ### 1. 개발 환경
 
 - **Xcode 27 이상**, iOS 27 SDK 및 실행 가능한 iOS 27 시뮬레이터 또는 기기
@@ -96,18 +99,7 @@ cd Dev
 open flover9.xcodeproj
 ```
 
-Xcode에서 패키지 의존성 해결을 기다린 뒤, **Firebase 설정 파일 없이 실행하려면 `flover9-NoFirebase` 스킴을 선택하세요.**
-
-1. Xcode 상단 실행 버튼(▶) 옆의 스킴 이름을 클릭합니다.
-2. `flover9-NoFirebase`를 선택합니다. **Product > Scheme** 메뉴에서도 변경할 수 있습니다.
-3. 실행할 시뮬레이터 또는 기기를 선택하고 `⌘R`로 실행합니다.
-
-| 스킴 | Run·Test 빌드 설정 | Firebase |
-| --- | --- | --- |
-| `flover9-NoFirebase` | `flover9-NoFirebase` | 비활성화, 설정 파일 없이 실행 |
-| `flover9` | `Debug` | 활성화, 설정 파일 필요 |
-
-스킴을 선택하면 연결된 빌드 설정이 적용되므로 코드를 직접 수정할 필요가 없습니다. Firebase 연동을 확인할 때는 아래 설정 파일을 준비한 뒤 `flover9` 스킴으로 전환하세요. 두 스킴의 Archive는 Release 설정을 사용하므로 Firebase 설정 파일이 필요합니다.
+패키지 의존성 해결이 끝나면 위 안내에 따라 스킴을 변경하고 실행합니다.
 
 ### 3. Supabase 설정
 
@@ -119,20 +111,7 @@ Xcode에서 패키지 의존성 해결을 기다린 뒤, **Firebase 설정 파�
 - 다른 프로젝트를 사용하려면 `Secrets.xcconfig.example`을 `Secrets.xcconfig`로 복사하고 공개 클라이언트 설정을 입력합니다. 로컬 설정이 기본값을 덮어쓰며 이 파일은 Git에서 제외됩니다.
 - 연결 대상은 앱 개발에 사용하는 백엔드입니다. 별도의 샘플 데이터 전용 환경은 아닙니다.
 
-### 4. Firebase 설정 — Firebase를 사용하는 빌드에 필요
-
-`flover9-NoFirebase` 빌드 설정은 `FIREBASE_DISABLED` 컴파일 조건으로 Firebase 초기화를 생략합니다. 원격 점검·업데이트 확인은 `.available`을 반환하는 개발용 저장소로 대체하고, Analytics·Crashlytics 오류 기록 및 Crashlytics 빌드 스크립트는 실행하지 않습니다. `GoogleService-Info.plist`는 앱 번들에서 제외하며 Firebase 패키지 의존성은 유지합니다.
-
-일반 Debug 및 Release 빌드는 Firebase 연동을 사용하므로 다음 설정이 필요합니다.
-
-1. 사용할 Firebase 프로젝트에 앱의 Bundle Identifier와 일치하는 iOS 앱을 등록합니다.
-2. 해당 앱의 `GoogleService-Info.plist`를 내려받습니다.
-3. `flover9/App/GoogleService-Info.plist`에 놓고 앱 타깃의 번들 리소스에 포함되는지 확인합니다.
-4. 앱 실행 후 Remote Config·Crashlytics 연결 설정을 확인합니다.
-
-이 Firebase 설정 파일은 현재 저장소에서 제외되어 있습니다. 다른 Firebase 프로젝트를 사용하면 앱 점검·업데이트 설정도 해당 프로젝트의 값으로 동작합니다.
-
-### 5. 실행 범위
+### 4. 실행 범위
 
 앱을 빌드하고 실행하더라도 로그인·데이터 조회·관리 기능은 연결된 서버 상태와 계정 권한에 영향을 받습니다. 이 저장소는 iOS 클라이언트이며, 다른 Supabase 프로젝트의 URL과 키만 입력한다고 같은 서비스가 만들어지는 것은 아닙니다. 동일한 기능에는 DB 구조, 접근 정책, Edge Functions 및 미디어 저장소 설정이 필요합니다.
 
@@ -145,9 +124,3 @@ Firebase 없이 테스트하려면 `flover9-NoFirebase` 스킴을 선택하세�
 ## 개발 상태
 
 이 저장소는 계속 변경 중입니다. 현재 `MainCoordinator`에는 실험용 탭 연결이 포함되어 있고, UIKit 기반 화면에 SwiftUI·TCA Feature를 추가하는 작업을 진행하고 있습니다.
-
-### Firebase 없는 개발 실행 확인
-
-스킴 분리 전인 2026-10-13, iPhone 18 Pro 시뮬레이터의 Firebase를 비활성화한 Debug 빌드에서 `flover9Tests` 전체 실행이 성공했습니다. 추가한 회귀 테스트는 앱 번들에 Firebase 설정 파일이 없고 Firebase가 초기화되지 않은 상태에서 개발용 운영 설정 조회와 오류 기록 호출이 동작하는지 확인합니다. Release 빌드의 Firebase 초기화와 실제 서버 연동은 이번 검증 범위에 포함하지 않았습니다.
-
-이 결과는 스킴 분리 전 검증 기록이며, `flover9-NoFirebase` 스킴으로 전환한 후의 전체 테스트는 별도로 확인해야 합니다.
