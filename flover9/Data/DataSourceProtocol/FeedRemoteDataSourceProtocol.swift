@@ -15,7 +15,6 @@ protocol FeedRemoteDataSourceProtocol {
         offset: Int
     ) async throws -> FeedPageDTO
 
-    func fetchNewFeeds(memberCode: MemberCode?, targetDate: Date) async throws -> FeedPageDTO
     
     func fetchFeedMedia(
         feedID: UUID

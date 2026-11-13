@@ -76,6 +76,8 @@ final class MemberProfileViewModel {
     }
 
     // MARK: - UseCase
+    private var nextFeedOffset = 0
+
     private let FeedReadUseCase: FeedReadUseCaseProtocol
 
     // MARK: - Initializer
@@ -104,10 +106,10 @@ final class MemberProfileViewModel {
             return
         }
 
-        await loadFirstPage(reset: true)
+        await loadFirstPage()
     }
 
-    // 기존 피드보다 새로운 피드 조회 및 삽입
+    // 서버에서 첫 페이지 다시 조회
     func reload() async {
         // 다른 피드 조회 작업 진행 여부 확인
         guard !isLoadingNewFeeds,
@@ -124,25 +126,16 @@ final class MemberProfileViewModel {
         }
 
         do {
-            let newFeeds = try await fetchNewFeed()
-
-            // 기존 피드 ID 확인
-            var existingIDs = Set(feeds.map(\.id))
-
-            // 중복되지 않은 신규 피드 추출
-            let uniqueFeeds = newFeeds.filter {
-                existingIDs.insert($0.id).inserted
-            }
-
-            // 신규 피드 존재 여부 확인
-            guard !uniqueFeeds.isEmpty else {
-                return
-            }
-
-            feeds.insert(contentsOf: uniqueFeeds, at: 0)
+            let page = try await FeedReadUseCase.fetchFeeds(
+                memberCode: memberCode,
+                offset: 0,
+                limit: Constant.pageSize,
+                refresh: true
+            )
+            applyFirstPage(page)
 
         } catch {
-            errorMessage = "신규 피드를 불러오지 못했어요"
+            errorMessage = "피드를 새로고침하지 못했어요"
         }
     }
 
@@ -184,6 +177,7 @@ final class MemberProfileViewModel {
             }
 
             feeds.append(contentsOf: uniqueFeeds)
+            nextFeedOffset += page.count
 
             // 마지막 페이지 여부 확인
             hasReachedEndOfFeeds = page.count < Constant.pageSize
@@ -216,8 +210,8 @@ final class MemberProfileViewModel {
 // MARK: - Private Methods
 private extension MemberProfileViewModel {
 
-    // 페이지 조회 상태 초기화 및 첫 페이지 조회
-    func loadFirstPage(reset: Bool) async {
+    // 첫 페이지 조회
+    func loadFirstPage() async {
         // 다른 피드 조회 작업 진행 여부 확인
         guard !isInitialLoading,
               !isLoadingMore,
@@ -232,38 +226,33 @@ private extension MemberProfileViewModel {
             isInitialLoading = false
         }
 
-        // 기존 페이지 조회 상태 초기화
-        if reset {
-            FeedReadUseCase.reset(memberCode: memberCode)
-            hasReachedEndOfFeeds = false
-            feeds.removeAll()
-        }
-
         do {
-            let page = try await fetchNextPage()
-
-            feeds = page
-
-            // 마지막 페이지 여부 확인
-            hasReachedEndOfFeeds = page.count < Constant.pageSize
+            let page = try await FeedReadUseCase.fetchFeeds(
+                memberCode: memberCode,
+                offset: 0,
+                limit: Constant.pageSize,
+                refresh: false
+            )
+            applyFirstPage(page)
 
         } catch {
             errorMessage = "피드를 불러오지 못했어요"
         }
     }
 
+    func applyFirstPage(_ page: [FeedEntity]) {
+        feeds = page
+        nextFeedOffset = page.count
+        hasReachedEndOfFeeds = page.count < Constant.pageSize
+    }
+
     // 다음 페이지 피드 조회
     func fetchNextPage() async throws -> [FeedEntity] {
         try await FeedReadUseCase.fetchFeeds(
             memberCode: memberCode,
-            limit: Constant.pageSize
-        )
-    }
-
-    // 최신 피드 조회
-    func fetchNewFeed() async throws -> [FeedEntity] {
-        try await FeedReadUseCase.fetchNewFeeds(
-            memberCode: memberCode
+            offset: nextFeedOffset,
+            limit: Constant.pageSize,
+            refresh: false
         )
     }
 

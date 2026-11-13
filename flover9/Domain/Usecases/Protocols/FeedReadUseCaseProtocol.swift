@@ -12,22 +12,12 @@ protocol FeedReadUseCaseProtocol {
     /// 피드 목록 조회
     func fetchFeeds(
         memberCode: MemberCode?,
-        limit: Int
+        offset: Int,
+        limit: Int,
+        refresh: Bool
     ) async throws -> [FeedEntity]
 
-    /// 최신 피드를 가져오는 데이터
-    func fetchNewFeeds(
-        memberCode: MemberCode?
-    ) async throws -> [FeedEntity]
-    
-    /// 선택한 피드의 상세 미디어 조회
     func fetchFeedMedia(
         feedID: UUID
     ) async throws -> [FeedImageEntity]
-
-    /// 특정 멤버의 피드 조회 위치 초기화
-    func reset(memberCode: MemberCode?)
-
-    /// 전체 피드 조회 위치 초기화
-    func resetAll()
 }

@@ -44,11 +44,6 @@ actor FeedCache: FeedCacheProtocol {
         return Array(feeds[offset..<end])
     }
     
-    /// 가장 최신 피드를 저장한다.
-    func latestFeed(for memberCode: MemberCode?) -> FeedResponseDTO? {
-        feedsByMember[memberCode, default: []].first
-    }
-
     /// 캐시에 저장된 피드의 이미지 데이터 전달
     func images(for feedID: UUID) -> [FeedImageDTO]? {
         guard fetchedImageFeedIDs.contains(feedID) else {
@@ -79,13 +74,13 @@ actor FeedCache: FeedCacheProtocol {
         fetchedImageFeedIDs.insert(feedID)
     }
 
-    /// 새로고침으로 받아온 데이터를 앞부분에 추가
-    func prepend(
-        _ feeds: [FeedResponseDTO],
-        for memberCode: MemberCode?
-    ) {
-        feedsByMember[memberCode, default: []]
-            .insert(contentsOf: feeds, at: 0)
+    func replaceFirstPage(_ page: FeedPageDTO, memberCode: MemberCode?) {
+        feedsByMember[memberCode] = page.feeds
+        if page.hasMore {
+            fullyFetchedMembers.remove(memberCode)
+        } else {
+            fullyFetchedMembers.insert(memberCode)
+        }
     }
 
     // MARK: - Server Pagination
