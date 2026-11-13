@@ -376,6 +376,7 @@ private extension CalendarView {
                         entity: schedule
                     )
                 }
+                .buttonStyle(.plain)
 
             }
         }

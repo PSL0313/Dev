@@ -104,14 +104,10 @@ private extension HomeViewModel {
     func start() {
         self.task = Task {
             do {
-                // 구조적 병렬 작업 시작
-                async let membersTask: [MemberEntity] = fetchMembersUseCase.execute()
                 fetchAlbums()
-
-                let (members) = try await (
-                    membersTask
-                )
-
+                
+                // 구조적 병렬 작업 시작
+                let members: [MemberEntity] = try await fetchMembersUseCase.execute()
                 async let schedules: [HomeScheduleCardModel] = fetchScheduleCoversUseCase.execute(members)
 
                 // 변수 저장
